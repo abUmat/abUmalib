@@ -24,11 +24,13 @@ class SlideWindowAggregationDeque:
         for _ in range(cnt): A.append(self.a0.popleft())
         while A: self.append(A.pop())
         #rebuild0
-        self.f0 = self.e
-        self.r0 = deque([self.e])
+        f0 = self.e
+        self.r0 = deque([f0])
+        append = self.r0.append; swagfunc = self.swagfunc
         for a in self.a0:
-            self.f0 = self.swagfunc(a, self.f0)
-            self.r0.append(self.f0)
+            f0 = swagfunc(a, f0)
+            append(f0)
+        self.f0 = f0
 
     def _transfer1to0(self):
         cnt = (len(self.a1)+1)>>1
@@ -36,11 +38,13 @@ class SlideWindowAggregationDeque:
         for _ in range(cnt): A.append(self.a1.popleft())
         while A: self.appendleft(A.pop())
         #rebuild1
-        self.f1 = self.e
-        self.r1 = deque([self.e])
+        f1 = self.e
+        self.r1 = deque([f1])
+        append = self.r1.append; swagfunc = self.swagfunc
         for a in self.a1:
-            self.f1 = self.swagfunc(self.f1, a)
-            self.r1.append(self.f1)
+            f1 = swagfunc(f1, a)
+            append(f1)
+        self.f1 = f1
 
     def pop(self):
         if not self.a1: self._transfer0to1()
