@@ -52,7 +52,7 @@ class RollingHash:
         return res
 
     #get longest common prefix self.s[l1:r2] and rh2.s[l2:r2] O(log(length))
-    def LCP(self, rh, l1, r1, l2, r2):
+    def lcp(self, rh, l1, r1, l2, r2):
         length = min(r1-l1, r2-l2)
         low = 0
         high = length

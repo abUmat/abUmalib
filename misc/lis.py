@@ -1,4 +1,4 @@
-def LIS(A, non_decreasing=False):
+def lis(A, non_decreasing=False):
     if non_decreasing:
         from bisect import bisect_right as bis
     else:
