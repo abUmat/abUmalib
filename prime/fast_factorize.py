@@ -24,7 +24,7 @@ def pollard_rho(n):
                 for _ in range(min(m, r-k)):
                     y = f(y)
                     q = q*abs(x-y)%n
-                g = _gcd(q,n)
+                g = gcd(q, n)
                 k += m
             r <<= 1
         if g == n:
@@ -32,7 +32,7 @@ def pollard_rho(n):
             y = ys
             while g == 1:
                 y = f(y)
-                g = _gcd(abs(x-y),n)
+                g = gcd(abs(x-y), n)
         if g == n: continue
         if is_prime(g): return g
         elif is_prime(n//g): return n//g

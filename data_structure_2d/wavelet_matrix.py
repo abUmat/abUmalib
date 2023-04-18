@@ -1,4 +1,4 @@
-def bit_count(x):
+def _bit_count(x):
     '''xの立っているビット数をカウントする関数
     (xは32bit整数)'''
 
@@ -23,16 +23,16 @@ class bit_vector:
         for i in range(self.n>>5):
             # Python 3.10までお預け
             # self.count[i+1] = self.count[i] + self.block[i].bit_count()
-            self.count[i+1] = self.count[i] + bit_count(self.block[i])
+            self.count[i+1] = self.count[i] + _bit_count(self.block[i])
         self.zeros -= self.n - self.rank0(self.n)
     def rank0(self, i):
         # Python 3.10までお預け
         # return i - self.count[i>>6] - (self.block[i>>6]&((1<<(i&self.mask))-1)).bit_count()
-        return i - self.count[i>>5] - bit_count(self.block[i>>5]&((1<<(i&31))-1))
+        return i - self.count[i>>5] - _bit_count(self.block[i>>5]&((1<<(i&31))-1))
     def rank1(self, i):
         # Python 3.10までお預け
         # return self.count[i>>6] + (self.block[i>>6]&((1<<(i&self.mask))-1)).bit_count()
-        return self.count[i>>5] - bit_count(self.block[i>>5]&((1<<(i&31))-1))
+        return self.count[i>>5] - _bit_count(self.block[i>>5]&((1<<(i&31))-1))
 
 class WaveletMatrix:
     def __init__(self, arr):
