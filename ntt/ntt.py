@@ -1,9 +1,4 @@
-def _ctz(ll):
-    cnt = 0
-    while not ll & 1:
-        ll >>= 1
-        cnt += 1
-    return cnt
+def _ctz(x): return (x & -x).bit_length() - 1
 
 class NTT:
     def __init__(self, MOD) -> None:
