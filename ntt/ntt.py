@@ -1,10 +1,11 @@
-def _ctz(x): return (x & -x).bit_length() - 1
-
+# my module
+from gcc_builtins import *
+# my module
 class NTT:
     def __init__(self, MOD) -> None:
         self.MOD = MOD
         self.pr = self._get_pr()
-        cnt = _ctz(MOD - 1)
+        cnt = ctz(MOD - 1)
         self.level = cnt
         self.dw = [None] * cnt
         self.dy = [None] * cnt
@@ -82,7 +83,7 @@ class NTT:
                     t0, t1 = a[j0], a[j0 + v] * xx % mod; t2, t3 = a[j2] * ww % mod, a[j2 + v] * wx % mod
                     t0p2, t1p3 = t0 + t2, t1 + t3; t0m2, t1m3 = t0 - t2, (t1 - t3) * imag % mod
                     a[j0], a[j0 + v] = t0p2 + t1p3, t0p2 - t1p3; a[j2], a[j2 + v] = t0m2 + t1m3, t0m2 - t1m3
-                xx = xx * self.dw[_ctz(jh + 4)] % mod
+                xx = xx * self.dw[ctz(jh + 4)] % mod
             u <<= 2
             v >>= 2
         for i in range(len(a)): a[i] %= mod
@@ -113,7 +114,7 @@ class NTT:
                     t0, t1 = a[j0], a[j0 + v]; t2, t3 = a[j2], a[j2 + v]
                     t0p1, t2p3 = t0 + t1, t2 + t3; t0m1, t2m3 = (t0 - t1) * xx % mod, (t2 - t3) * yy % mod
                     a[j0], a[j0 + v] = t0p1 + t2p3, t0m1 + t2m3; a[j2], a[j2 + v] = (t0p1 - t2p3) * ww % mod, (t0m1 - t2m3) * ww % mod
-                xx = xx * self.dy[_ctz(jh + 4)] % mod
+                xx = xx * self.dy[ctz(jh + 4)] % mod
             u >>= 4
             v <<= 2
         if k & 1:
@@ -123,11 +124,11 @@ class NTT:
 
     def ntt(self, a):
         if len(a) <= 1: return
-        self._fft4(a, _ctz(len(a)))
+        self._fft4(a, ctz(len(a)))
 
     def intt(self, a):
         if len(a) <= 1: return
-        self._ifft(a, _ctz(len(a)))
+        self._ifft(a, ctz(len(a)))
         mod = self.MOD
         iv = pow(len(a), mod - 2, mod)
         for i in range(len(a)): a[i] = a[i] * iv % mod

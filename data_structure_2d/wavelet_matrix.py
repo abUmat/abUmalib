@@ -1,38 +1,29 @@
-def _bit_count(x):
-    '''xの立っているビット数をカウントする関数
-    (xは32bit整数)'''
-
-    # 2bitごとの組に分け、立っているビット数を2bitで表現する
-    x = x - ((x >> 1) & 0x55555555)
-    # 4bit整数に 上位2bit + 下位2bit を計算した値を入れる
-    x = (x & 0x33333333) + ((x >> 2) & 0x33333333)
-    x = (x + (x >> 4)) & 0x0f0f0f0f # 8bitごと
-    x = x + (x >> 8) # 16bitごと
-    x = x + (x >> 16) # 32bitごと = 全部の合計
-    return x & 0x0000007f
-
+# my module
+from gcc_builtins import *
+# my module
 class bit_vector:
-    def get(self, i): return self.block[i>>5]>>(i&31)&1
-    def set(self, i): self.block[i>>5] |= 1<<(i&31)
+    def get(self, i):
+        return self.block[i>>5]>>(i&31)&1
+
+    def set(self, i):
+        self.block[i>>5] |= 1<<(i&31)
+
     def __init__(self, n):
         self.n = n
         self.zeros = n
         self.block = [0] * ((n>>5) + 1)
         self.count = [0] * ((n>>5) + 1)
+
     def build(self):
         for i in range(self.n>>5):
-            # Python 3.10までお預け
-            # self.count[i+1] = self.count[i] + self.block[i].bit_count()
-            self.count[i+1] = self.count[i] + _bit_count(self.block[i])
+            self.count[i+1] = self.count[i] + popcount(self.block[i])
         self.zeros -= self.n - self.rank0(self.n)
+
     def rank0(self, i):
-        # Python 3.10までお預け
-        # return i - self.count[i>>6] - (self.block[i>>6]&((1<<(i&self.mask))-1)).bit_count()
-        return i - self.count[i>>5] - _bit_count(self.block[i>>5]&((1<<(i&31))-1))
+        return i - self.count[i>>5] - popcount(self.block[i>>5]&((1<<(i&31))-1))
+
     def rank1(self, i):
-        # Python 3.10までお預け
-        # return self.count[i>>6] + (self.block[i>>6]&((1<<(i&self.mask))-1)).bit_count()
-        return self.count[i>>5] - _bit_count(self.block[i>>5]&((1<<(i&31))-1))
+        return self.count[i>>5] - popcount(self.block[i>>5]&((1<<(i&31))-1))
 
 class WaveletMatrix:
     def __init__(self, arr):
@@ -55,8 +46,12 @@ class WaveletMatrix:
         self.n = n
         self.arr = arr
 
-    def set(self, i, x): self.arr[i] = x
-    def succ0(self, l, r, h): return self.bv[h].rank0(l), self.bv[h].rank0(r)
+    def set(self, i, x):
+        self.arr[i] = x
+
+    def succ0(self, l, r, h):
+        return self.bv[h].rank0(l), self.bv[h].rank0(r)
+
     def succ1(self, l, r, h):
         l1 = l - self.bv[h].rank0(l)
         r1 = r - self.bv[h].rank0(r)
@@ -85,7 +80,8 @@ class WaveletMatrix:
                 r += self.bv[h].zeros - r0
         return res
 
-    def kth_largest(self, l, r, k): return self.kth_smallest(l, r, r-l-k-1)
+    def kth_largest(self, l, r, k):
+        return self.kth_smallest(l, r, r-l-k-1)
 
     def pref_freq(self, l, r, upper):
         if upper >= 1<<self.lg: return r-l
@@ -101,7 +97,8 @@ class WaveletMatrix:
                 l, r = l0, r0
         return res
 
-    def range_freq(self, l, r, lower, upper): return self.pref_freq(l, r, upper) - self.pref_freq(l, r, lower)
+    def range_freq(self, l, r, lower, upper):
+        return self.pref_freq(l, r, upper) - self.pref_freq(l, r, lower)
 
     def prev_value(self, l, r, upper):
         cnt = self.pref_freq(l, r, upper)
