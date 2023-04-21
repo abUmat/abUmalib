@@ -48,7 +48,7 @@ class ArbitraryNTT: # namespace
         return cls._multiply(a, b, mod)
 
     @classmethod
-    def multiply_u128(cls, s: List[int], t: List[int]):
+    def multiply_u128(cls, s: List[int], t: List[int]) -> List[int]:
         if not s and not t: return []
         if min(len(s), len(t)) < 128:
             ret = [0] * (len(s) + len(t) - 1)
