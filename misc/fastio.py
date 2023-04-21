@@ -34,8 +34,10 @@ class Fastio:
         self.sb.append('\n')
 fastio = Fastio()
 rd = fastio.fastin
+def rdl(n): return [rd() for _ in range(n)]
 wt = fastio.fastout
 wtn = fastio.fastoutln
+def wtnl(l): wtn(' '.join(map(str, l)))
 flush = fastio.flush
 register(flush)
 sys.stdin, sys.stdout = None, None

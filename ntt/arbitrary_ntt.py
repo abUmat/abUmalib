@@ -2,15 +2,15 @@
 from ntt.ntt import *
 # my module
 class ArbitraryNTT: # namespace
-    m0 = 167772161
-    m1 = 469762049
-    m2 = 754974721
-    r01 = pow(m0, m1 - 2, m1)
-    r02 = pow(m0, m2 - 2, m2)
-    r12 = pow(m1, m2 - 2, m2)
-    r02r12 = r02 * r12 % m2
-    w1 = m0
-    w2 = m0 * m1
+    __m0 = 0xa000001 # 167772161
+    __m1 = 0x1c000001 # 469762049
+    __m2 = 0x2d000001 # 754974721
+    __r01 = pow(__m0, __m1 - 2, __m1)
+    __r02 = pow(__m0, __m2 - 2, __m2)
+    __r12 = pow(__m1, __m2 - 2, __m2)
+    __r02r12 = __r02 * __r12 % __m2
+    __w1 = __m0
+    __w2 = __m0 * __m1
 
     @staticmethod
     def mul(a, b, mod):
@@ -22,17 +22,17 @@ class ArbitraryNTT: # namespace
 
     @classmethod
     def _multiply(cls, s, t, mod=0):
-        d0 = cls.mul(s, t, cls.m0)
-        d1 = cls.mul(s, t, cls.m1)
-        d2 = cls.mul(s, t, cls.m2)
+        d0 = cls.mul(s, t, cls.__m0)
+        d1 = cls.mul(s, t, cls.__m1)
+        d2 = cls.mul(s, t, cls.__m2)
         n = len(d0)
         ret = [0] * n
-        if mod: W1, W2 = cls.w1 % mod, cls.w2 % mod
-        else: W1, W2 = cls.w1, cls.w2
+        if mod: W1, W2 = cls.__w1 % mod, cls.__w2 % mod
+        else: W1, W2 = cls.__w1, cls.__w2
         for i in range(n):
             n1, n2, a = d1[i], d2[i], d0[i]
-            b = (n1 + cls.m1 - a) * cls.r01 % cls.m1
-            c = ((n2 + cls.m2 - a) * cls.r02r12 + (cls.m2 - b) * cls.r12) % cls.m2
+            b = (n1 + cls.__m1 - a) * cls.__r01 % cls.__m1
+            c = ((n2 + cls.__m2 - a) * cls.__r02r12 + (cls.__m2 - b) * cls.__r12) % cls.__m2
             ret[i] = a + b * W1 + c * W2
         return [x % mod for x in ret] if mod else ret
 

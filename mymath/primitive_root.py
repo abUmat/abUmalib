@@ -1,6 +1,4 @@
-#素数の原始根 O(N**0.25?)
 from random import randint
-
 # my module
 from prime.fast_factorize import factorize
 # my module
