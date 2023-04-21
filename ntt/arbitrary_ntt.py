@@ -13,7 +13,7 @@ class ArbitraryNTT: # namespace
     __w2 = __m0 * __m1
 
     @staticmethod
-    def mul(a, b, mod):
+    def mul(a: List[int], b: List[int], mod: int) -> List[int]:
         ntt = NTT(mod)
         s, t = [0] * len(a), [0] * len(b)
         for i in range(len(a)): s[i] = a[i] % mod
@@ -21,7 +21,7 @@ class ArbitraryNTT: # namespace
         return ntt.multiply(s, t)
 
     @classmethod
-    def _multiply(cls, s, t, mod=0):
+    def _multiply(cls, s: List[int], t: List[int], mod: int=0) -> List[int]:
         d0 = cls.mul(s, t, cls.__m0)
         d1 = cls.mul(s, t, cls.__m1)
         d2 = cls.mul(s, t, cls.__m2)
@@ -37,7 +37,7 @@ class ArbitraryNTT: # namespace
         return [x % mod for x in ret] if mod else ret
 
     @classmethod
-    def multiply(cls, a, b, mod=0):
+    def multiply(cls, a: List[int], b: List[int], mod: int=0) -> List[int]:
         if not a and not b: return []
         if min(len(a), len(b)) < 128:
             ret = [0] * (len(a) + len(b) - 1)
@@ -48,7 +48,7 @@ class ArbitraryNTT: # namespace
         return cls._multiply(a, b, mod)
 
     @classmethod
-    def multiply_u128(cls, s, t):
+    def multiply_u128(cls, s: List[int], t: List[int]):
         if not s and not t: return []
         if min(len(s), len(t)) < 128:
             ret = [0] * (len(s) + len(t) - 1)

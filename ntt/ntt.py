@@ -1,8 +1,9 @@
+from typing import List
 # my module
 from gcc_builtins import *
 # my module
 class NTT:
-    def __init__(self, MOD) -> None:
+    def __init__(self, MOD: int) -> None:
         self.MOD = MOD
         self.pr = self._get_pr()
         cnt = ctz(MOD - 1)
@@ -11,7 +12,7 @@ class NTT:
         self.dy = [None] * cnt
         self._setwy(cnt)
 
-    def _get_pr(self):
+    def _get_pr(self) -> int:
         mod = self.MOD
         ds = [None] * 32
         idx = 0
@@ -42,7 +43,7 @@ class NTT:
             pr += 1
         return pr
 
-    def _setwy(self, k):
+    def _setwy(self, k: int) -> None:
         mod = self.MOD
         w, y = [None] * self.level, [None] * self.level
         w[k - 1] = pow(self.pr, (mod - 1) // (1 << k), mod)
@@ -55,7 +56,7 @@ class NTT:
             self.dw[i] = self.dw[i - 1] * y[i - 2] * w[i] % mod
             self.dy[i] = self.dy[i - 1] * w[i - 2] * y[i] % mod
 
-    def _fft4(self, a, k):
+    def _fft4(self, a: List[int], k: int) -> None:
         mod = self.MOD
         if len(a) <= 1: return
         if k == 1:
@@ -88,7 +89,7 @@ class NTT:
             v >>= 2
         for i in range(len(a)): a[i] %= mod
 
-    def _ifft(self, a, k):
+    def _ifft(self, a: List[int], k: int) -> None:
         mod = self.MOD
         if len(a) <= 1: return
         if k == 1:
@@ -122,18 +123,18 @@ class NTT:
             for j in range(u): a[j], a[j + u] = a[j] + a[j + u], a[j] - a[j + u]
         for i in range(len(a)): a[i] %= mod
 
-    def ntt(self, a):
+    def ntt(self, a: List[int]) -> None:
         if len(a) <= 1: return
         self._fft4(a, ctz(len(a)))
 
-    def intt(self, a):
+    def intt(self, a: List[int]) -> None:
         if len(a) <= 1: return
         self._ifft(a, ctz(len(a)))
         mod = self.MOD
         iv = pow(len(a), mod - 2, mod)
         for i in range(len(a)): a[i] = a[i] * iv % mod
 
-    def multiply(self, a, b):
+    def multiply(self, a: List[int], b: List[int]) -> List[int]:
         mod = self.MOD
         l = len(a) + len(b) - 1
         if min(len(a), len(b)) <= 40:
@@ -158,7 +159,7 @@ class NTT:
         for i, x in enumerate(s): s[i] = x * invm % mod
         return s
 
-    def ntt_doubling(self, a):
+    def ntt_doubling(self, a: List[int]) -> None:
         mod = self.MOD
         M = len(a)
         self.intt(a)
