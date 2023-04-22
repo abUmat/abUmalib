@@ -19,9 +19,10 @@ if __name__ == '__main__':
                         bundle_flag = 1
                 elif bundle_flag:
                     path = '/'.join(line.split()[1].split('.')) + '.py'
-                    G[path].add(file)
-                    q.append(path)
-                    deg[file] += 1
+                    if file not in G[path]:
+                        G[path].add(file)
+                        q.append(path)
+                        deg[file] += 1
     q = [k for k in G.keys() if not deg[k]]
     res = []
     for file in q:
