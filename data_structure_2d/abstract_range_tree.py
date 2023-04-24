@@ -1,7 +1,7 @@
 from bisect import bisect_left as lower_bound
 from typing import Callable, TypeVar, Generic
 T = TypeVar('T')
-class RangeTree(Generic(T)):
+class RangeTree:
     '''
     init -> add_point -> build -> add -> sum
     '''
