@@ -1,14 +1,14 @@
 from functools import reduce
 
-def _gcd(a: int, b: int) -> int:
+def gcd2(a: int, b: int) -> int:
     while a: a, b = b % a, a
     return b
 
-def gcd(*numbers) -> int: return reduce(_gcd, numbers)
+def gcd(*numbers) -> int: return reduce(gcd2, numbers)
 
-def _lcm(x: int, y: int) -> int: return (x * y) // _gcd(x, y)
+def lcm2(x: int, y: int) -> int: return (x * y) // gcd2(x, y)
 
-def lcm(*integers) -> int: return reduce(_lcm, integers)
+def lcm(*integers) -> int: return reduce(lcm2, integers)
 
 def extgcd(a: int, b: int):
     'Tuple[gcd(a, b), x, y] s.t. ax + by = gcd(a, b) (Extended Euclidean algorithm)'
