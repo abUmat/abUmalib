@@ -1,4 +1,5 @@
 from functools import cmp_to_key
+from typing import List
 class Point:
     def __init__(self, x=0, y=0) -> None:
         self.x = x
@@ -13,7 +14,7 @@ class Point:
     def __sub__(self, other):
         return Point(self.x - other.x, self.y - other.y)
 
-    def __mul__(self, scalar):
+    def __mul__(self, scalar: int):
         return Point(self.x * scalar, self.y * scalar)
 
     def __matmul__(self, other):
@@ -46,18 +47,19 @@ class Point:
     def __ge__(self, other):
         return not self > other or self == other
 
-    def pos(self):
+    def pos(self) -> int:
         if self.y < 0: return -1
         if self.y == 0 and 0 <= self.x: return 0
         return 1
 
-def ccw(a, b, c):
+def ccw(a: Point, b: Point, c: Point) -> int:
+    '1 anti-clockwise / 0 straight / -1 clockwise'
     t = (b - a) | (c - a)
     if t < 0: return -1
     if t == 0: return 0
     return 1
 
-def lower_hull(ps):
+def lower_hull(ps: List[Point]) -> List[Point]:
     N = len(ps)
     ps.sort()
     if N <= 2: return ps
@@ -69,7 +71,7 @@ def lower_hull(ps):
         k += 1
     return convex[:k]
 
-def upper_hull(ps):
+def upper_hull(ps: List[Point]) -> List[Point]:
     N = len(ps)
     ps.sort()
     if N <= 2: return ps
@@ -81,7 +83,7 @@ def upper_hull(ps):
         k += 1
     return convex[:k]
 
-def convex_hull(ps):
+def convex_hull(ps: List[Point]) -> List[Point]:
     N = len(ps)
     ps.sort()
     if N <= 2: return ps
@@ -98,7 +100,8 @@ def convex_hull(ps):
         k += 1
     return convex[:k-1]
 
-def argument_sort(v):
+def argument_sort(v: List[Point]) -> None:
+    'sort v by argument -Pi to Pi'
     def compare(a, b):
         apos, bpos = a.pos(), b.pos()
         cross = a | b
