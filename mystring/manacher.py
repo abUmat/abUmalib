@@ -1,4 +1,5 @@
 def manacher(S):
+    '各iに対し, S[i-k+1:i+k-1]が回文となる最大のkを求める'
     c = 0
     n = len(S)
     res = [0] * n
