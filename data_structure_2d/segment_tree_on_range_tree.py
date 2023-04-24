@@ -7,7 +7,6 @@ class RangeTree:
     e: identity element of op
     op: operator merge
     """
-    mask = (1 << 30) - 1
     def __init__(self, e: int, op):
         self.e = e
         self.op = op
@@ -20,7 +19,7 @@ class RangeTree:
 
     def build(self) -> None:
         'initialize'
-        mask = self.mask; e = self.e; op = self.op
+        mask = (1 << 30) -1; e = self.e; op = self.op
         self.ps = ps = sorted(set(self.ps))
         self.xs = [p >> 30 for p in ps]
         self.N = N = len(ps)

@@ -5,7 +5,6 @@ class RangeTree:
     '''
     init -> add_point -> build -> add -> sum
     '''
-    mask = (1 << 30) - 1
     def __init__(self, nw: Callable[[int], T], ad: Callable[[T, int, int], None], sm: Callable[[T, int, int], int], mrg: Callable[[int, int], int], ti: int) -> None:
         """
         nw: return new data_structure
@@ -28,7 +27,7 @@ class RangeTree:
 
     def build(self) -> None:
         'initialize'
-        mask = self.mask
+        mask = (1 << 30) -1
         self.ps = ps = sorted(set(self.ps))
         self.xs = [p >> 30 for p in ps]
         ds_new = self.ds_new
