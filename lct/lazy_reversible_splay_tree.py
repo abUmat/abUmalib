@@ -1,7 +1,6 @@
 # my module
 from lct.lazy_reversible_bbst_base import *
 # my module
-
 class LazyReversibleSplayTreeNode:
     def __init__(self, e, id_, val=None, lazy=None):
         self.l = None

@@ -1,7 +1,6 @@
 # my module
 from lct.splay_tree_base import *
 # my module
-
 class LazyReversibleBBST(SplayTreeBase):
     def __init__(self, Node, e, id_, op, mapping, composition, ts):
         super().__init__(Node, e, id_)
