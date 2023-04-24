@@ -1,4 +1,4 @@
-class PrimePowerBinomial:
+class _PrimePowerBinomial:
     N_MAX = 20000000
     M_MAX = (1<<30)-1
     def __init__(self, _p, _q):
@@ -115,10 +115,10 @@ class ArbitraryModBinomial:
                     j += 1
                     k *= i
                 self.M.append(k)
-                self.cs.append(PrimePowerBinomial(i, j))
+                self.cs.append(_PrimePowerBinomial(i, j))
         if mod != 1:
             self.M.append(mod)
-            self.cs.append(PrimePowerBinomial(mod, 1))
+            self.cs.append(_PrimePowerBinomial(mod, 1))
 
     def __call__(self, n, m):
         if self.mod == 1: return 0

@@ -67,14 +67,17 @@ class Binominal:
         return res
 
     def C(self, n: int, r: int) -> int:
+        'nCr'
         if n < 0 or n < r or r < 0: return 0
         return (self.fac(n) * self.finv(n - r) % self.mod) * self.finv(r) % self.mod
 
     def P(self, n: int, r: int) -> int:
+        'nPr'
         if n < 0 or n < r or r < 0: return 0
         return self.fac(n) * self.finv(n - r) % self.mod
 
     def H(self, n: int, r: int) -> int:
+        'nHr'
         if n < 0 or r < 0: return 0
         return self.C(n + r - 1, r) if r else 1
 
