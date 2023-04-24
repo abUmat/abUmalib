@@ -2,6 +2,9 @@ from bisect import bisect_left as lower_bound
 from typing import Callable, TypeVar, Generic
 T = TypeVar('T')
 class RangeTree(Generic(T)):
+    '''
+    init -> add_point -> build -> add -> sum
+    '''
     mask = (1 << 30) - 1
     def __init__(self, nw: Callable[[int], T], ad: Callable[[T, int, int], None], sm: Callable[[T, int, int], int], mrg: Callable[[int, int], int], ti: int) -> None:
         """
