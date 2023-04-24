@@ -1,7 +1,6 @@
-from random import randint
-from math import gcd
-
-def _get_base(R=37):
+def _get_base(R: int=37) -> int:
+    from math import gcd
+    from random import randint
     while 1:
         k = randint(1, 0x1ffffffffffffffd)
         if gcd(k, 0x1ffffffffffffffe) != 1: continue
@@ -17,7 +16,7 @@ class RollingHash:
     BASE = _get_base()
 
     @classmethod
-    def mul(cls, a, b):
+    def mul(cls, a: int, b: int) -> int:
         au = a >> 31
         ad = a & cls.MASK31
         bu = b >> 31
@@ -28,7 +27,7 @@ class RollingHash:
         return cls.calc_mod(au*bu*2 + midu + (midd << 31) + ad * bd)
 
     @classmethod
-    def calc_mod(cls, x):
+    def calc_mod(cls, x: int) -> int:
         xu = x >> 61
         xd = x & cls.MASK61
         res = xu + xd
@@ -44,19 +43,19 @@ class RollingHash:
             self.hash[i+1] = self.calc_mod(self.mul(self.hash[i], self.BASE) + ord(s[i]))
             self.power[i+1] = self.mul(self.power[i], self.BASE)
 
-    #get hash of s[l:r]
-    def get(self, l, r):
+    def get(self, l: int, r: int) -> int:
+        'get hash of s[l, r)'
         res = self.hash[r] - self.mul(self.hash[l], self.power[r-l])
         if res < 0: res += self.MOD
         return res
 
-    #connect S(hash : h1) and T(hash : h2, length : h2len)
-    def connect(self, h1, h2, h2len):
+    def connect(self, h1: int, h2: int, h2len: int) -> int:
+        'connect S(hash = h1) and T(hash = h2, length = h2len)'
         res = self.calc_mod(self.mul(h1, self.power[h2len]) + h2)
         return res
 
-    #get longest common prefix self.s[l1:r2] and rh2.s[l2:r2] O(log(length))
-    def lcp(self, rh, l1, r1, l2, r2):
+    def lcp(self, rh, l1: int, r1: int, l2: int, r2: int) -> int:
+        'longetst common prefix of self.s[l1, r1) and rh2.s[l2, r2) O(log(length))'
         length = min(r1-l1, r2-l2)
         low = -1
         high = length + 1
