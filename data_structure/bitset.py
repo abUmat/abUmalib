@@ -47,4 +47,5 @@ class Bitset:
         for i in range(self.bits_size): _bits[i] = self.bits[i] ^ other.bits[i]
         return _bitset
 
-    def __getitem__(self, x): return self.bits[x // 63] >> (x % 63) & 1
+    def __getitem__(self, x):
+        return self.bits[x // 63] >> (x % 63) & 1

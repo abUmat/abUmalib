@@ -1,5 +1,9 @@
+from typing import Callable, Iterable
 class SparseTable():
-    def __init__(self, op, arr):
+    '''
+    更新がないかつ冪等性が成り立つ場合
+    '''
+    def __init__(self, arr: Iterable[int], op: Callable[[int, int], int]=min) -> None:
         n = len(arr)
         h = n.bit_length()
         self.table = [[0] * n for _ in range(h)]
@@ -10,6 +14,6 @@ class SparseTable():
             for i in range(n - l * 2 + 1): t[i] = op(p[i], p[i + l])
         self.op = op
 
-    def query(self, l, r):
+    def query(self, l: int, r: int) -> int:
         k = (r - l).bit_length() - 1
         return self.op(self.table[k][l], self.table[k][r - (1 << k)])

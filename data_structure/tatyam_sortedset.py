@@ -1,5 +1,4 @@
 # https://github.com/tatyam-prime/SortedSet/blob/main/SortedSet.py
-import math
 from bisect import bisect_left, bisect_right
 from typing import Generic, Iterable, Iterator, TypeVar, Union, List
 T = TypeVar('T')
@@ -10,16 +9,16 @@ class SortedSet(Generic[T]):
 
     def _build(self, a=None) -> None:
         "Evenly divide `a` into buckets."
+        from math import ceil, sqrt
         if a is None: a = list(self)
         size = self.size = len(a)
-        bucket_size = int(math.ceil(math.sqrt(size / self.BUCKET_RATIO)))
+        bucket_size = int(ceil(sqrt(size / self.BUCKET_RATIO)))
         self.a = [a[size * i // bucket_size : size * (i + 1) // bucket_size] for i in range(bucket_size)]
 
     def __init__(self, a: Iterable[T] = []) -> None:
         "Make a new SortedSet from iterable. / O(N) if sorted and unique / O(N log N)"
         a = list(a)
-        if not all(a[i] < a[i + 1] for i in range(len(a) - 1)):
-            a = sorted(set(a))
+        if not all(a[i] < a[i + 1] for i in range(len(a) - 1)): a = sorted(set(a))
         self._build(a)
 
     def __iter__(self) -> Iterator[T]:
@@ -63,8 +62,7 @@ class SortedSet(Generic[T]):
         if i != len(a) and a[i] == x: return False
         a.insert(i, x)
         self.size += 1
-        if len(a) > len(self.a) * self.REBUILD_RATIO:
-            self._build()
+        if len(a) > len(self.a) * self.REBUILD_RATIO: self._build()
         return True
 
     def discard(self, x: T) -> bool:
@@ -81,26 +79,22 @@ class SortedSet(Generic[T]):
     def lt(self, x: T) -> Union[T, None]:
         "Find the largest element < x, or None if it doesn't exist."
         for a in reversed(self.a):
-            if a[0] < x:
-                return a[bisect_left(a, x) - 1]
+            if a[0] < x: return a[bisect_left(a, x) - 1]
 
     def le(self, x: T) -> Union[T, None]:
         "Find the largest element <= x, or None if it doesn't exist."
         for a in reversed(self.a):
-            if a[0] <= x:
-                return a[bisect_right(a, x) - 1]
+            if a[0] <= x: return a[bisect_right(a, x) - 1]
 
     def gt(self, x: T) -> Union[T, None]:
         "Find the smallest element > x, or None if it doesn't exist."
         for a in self.a:
-            if a[-1] > x:
-                return a[bisect_right(a, x)]
+            if a[-1] > x: return a[bisect_right(a, x)]
 
     def ge(self, x: T) -> Union[T, None]:
         "Find the smallest element >= x, or None if it doesn't exist."
         for a in self.a:
-            if a[-1] >= x:
-                return a[bisect_left(a, x)]
+            if a[-1] >= x: return a[bisect_left(a, x)]
 
     def __getitem__(self, x: int) -> T:
         "Return the x-th element, or IndexError if it doesn't exist."
@@ -115,8 +109,7 @@ class SortedSet(Generic[T]):
         "Count the number of elements < x."
         ans = 0
         for a in self.a:
-            if a[-1] >= x:
-                return ans + bisect_left(a, x)
+            if a[-1] >= x: return ans + bisect_left(a, x)
             ans += len(a)
         return ans
 
@@ -124,9 +117,6 @@ class SortedSet(Generic[T]):
         "Count the number of elements <= x."
         ans = 0
         for a in self.a:
-            if a[-1] > x:
-                return ans + bisect_right(a, x)
+            if a[-1] > x: return ans + bisect_right(a, x)
             ans += len(a)
         return ans
-
-################################
