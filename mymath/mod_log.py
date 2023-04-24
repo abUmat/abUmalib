@@ -2,6 +2,7 @@
 from mymath.gcd_lcm import *
 # my module
 def mod_log(a: int, b: int, p: int) -> int:
+    'return k s.t. a**k == y (mod p) if exist, else -1'
     def inv(a: int, p: int) -> int:
         b = p; x = 1; y = 0
         while a:

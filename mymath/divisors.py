@@ -1,4 +1,5 @@
-def divisors(n):
+def divisors(n: int):
+    'divisors of n (sorted)'
     lower , upper = [], []
     for i in range(1, n+1):
         if i*i > n: break
