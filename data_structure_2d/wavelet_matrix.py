@@ -1,40 +1,41 @@
 # my module
 from gcc_builtins import *
 # my module
-class bit_vector:
-    def get(self, i):
+from typing import Iterable
+class _BitVector:
+    def get(self, i: int) -> int:
         return self.block[i>>5]>>(i&31)&1
 
-    def set(self, i):
+    def set(self, i: int) -> int:
         self.block[i>>5] |= 1<<(i&31)
 
-    def __init__(self, n):
+    def __init__(self, n: int) -> None:
         self.n = n
         self.zeros = n
-        self.block = [0] * ((n>>5) + 1)
-        self.count = [0] * ((n>>5) + 1)
+        self.block = [0] * ((n >> 5) + 1)
+        self.count = [0] * ((n >> 5) + 1)
 
-    def build(self):
-        for i in range(self.n>>5):
-            self.count[i+1] = self.count[i] + popcount(self.block[i])
+    def build(self) -> None:
+        for i in range(self.n >> 5): self.count[i + 1] = self.count[i] + popcount(self.block[i])
         self.zeros -= self.n - self.rank0(self.n)
 
-    def rank0(self, i):
-        return i - self.count[i>>5] - popcount(self.block[i>>5]&((1<<(i&31))-1))
+    def rank0(self, i: int) -> int:
+        return i - self.count[i >> 5] - popcount(self.block[i >> 5] & ((1 << (i & 31)) - 1))
 
-    def rank1(self, i):
-        return self.count[i>>5] - popcount(self.block[i>>5]&((1<<(i&31))-1))
+    def rank1(self, i: int) -> int:
+        return self.count[i >> 5] - popcount(self.block[i >> 5] & ((1 << (i & 31)) - 1))
 
 class WaveletMatrix:
-    def __init__(self, arr):
-        n = len(arr)
-        lg = max(max(arr, default=0), 1).bit_length()
-        self.bv = [bit_vector(n) for _ in range(lg)]
+    def __init__(self, arr: Iterable[int]) -> None:
+        self.arr = arr
+        self.n = n = len(arr)
+        self.lg = lg = max(max(arr, default=0), 1).bit_length()
+        self.bv = [_BitVector(n) for _ in range(lg)]
         cur = arr[::]
         nxt = [0] * n
         for h in range(lg)[::-1]:
             for i in range(n):
-                if cur[i]>>h&1: self.bv[h].set(i)
+                if cur[i] >> h & 1: self.bv[h].set(i)
             self.bv[h].build()
             it = [0, self.bv[h].zeros]
             for i, a in enumerate(cur):
@@ -42,23 +43,13 @@ class WaveletMatrix:
                 nxt[it[tmp]] = a
                 it[tmp] += 1
             cur = nxt[::]
-        self.lg = lg
-        self.n = n
-        self.arr = arr
 
-    def set(self, i, x):
+    def set(self, i: int, x: int) -> None:
+        'assign x to arr[i]'
         self.arr[i] = x
 
-    def succ0(self, l, r, h):
-        return self.bv[h].rank0(l), self.bv[h].rank0(r)
-
-    def succ1(self, l, r, h):
-        l1 = l - self.bv[h].rank0(l)
-        r1 = r - self.bv[h].rank0(r)
-        zeros = self.bv[h].zeros
-        return zeros+l1, zeros+r1
-
-    def access(self, k):
+    def access(self, k: int) -> int:
+        'get arr[i]'
         res = 0
         for h in range(self.lg)[::-1]:
             f = self.bv[h].get(k)
@@ -66,7 +57,8 @@ class WaveletMatrix:
             k = k - self.bv[h].rank0(k) + self.bv[h].zeros if f else self.bv[h].rank0(k)
         return res
 
-    def kth_smallest(self, l, r, k):
+    def kth_smallest(self, l: int, r: int, k: int) -> int:
+        'get kth smallest number in [l, r)'
         res = 0
         for h in range(self.lg)[::-1]:
             l0, r0 = self.bv[h].rank0(l), self.bv[h].rank0(r)
@@ -80,10 +72,12 @@ class WaveletMatrix:
                 r += self.bv[h].zeros - r0
         return res
 
-    def kth_largest(self, l, r, k):
+    def kth_largest(self, l: int, r: int, k: int) -> int:
+        'get kth largest number in [l, r)'
         return self.kth_smallest(l, r, r-l-k-1)
 
-    def pref_freq(self, l, r, upper):
+    def pref_freq(self, l: int, r: int, upper: int) -> int:
+        'get the number of x in [l, r) s.t. x < upper'
         if upper >= 1<<self.lg: return r-l
         res = 0
         for h in range(self.lg)[::-1]:
@@ -97,13 +91,16 @@ class WaveletMatrix:
                 l, r = l0, r0
         return res
 
-    def range_freq(self, l, r, lower, upper):
+    def range_freq(self, l: int, r: int, lower: int, upper: int) -> int:
+        'get the number of x in [l, r) s.t. lower <= x < upper'
         return self.pref_freq(l, r, upper) - self.pref_freq(l, r, lower)
 
-    def prev_value(self, l, r, upper):
+    def prev_value(self, l: int, r: int, upper: int) -> int:
+        'get the maximan x in [l, r) s.t. x < upper'
         cnt = self.pref_freq(l, r, upper)
         return self.kth_smallest(l, r, cnt-1) if cnt else -1
 
-    def next_value(self, l, r, lower):
+    def next_value(self, l: int, r: int, lower: int) -> int:
+        'get the minimum x in [l, r) s.t. x >= lower'
         cnt = self.pref_freq(l, r, lower)
         return -1 if cnt == r-l else self.kth_smallest(l, r, cnt)
