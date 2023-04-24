@@ -13,7 +13,7 @@ class RangeTree:
         self.op = op
         self.ps = []
 
-    def add_point(self, x: int, y: int) -> int:
+    def add_point(self, x: int, y: int) -> None:
         'add point (x, y) for initialize'
         self.ps.append(x << 30 | y)
         # self.ps.append((x, y))
