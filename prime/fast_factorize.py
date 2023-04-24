@@ -3,9 +3,6 @@ from random import randrange
 from prime.is_prime import *
 from mymath.gcd_lcm import *
 # my module
-
-#素因数分解 O(N**0.25)
-
 def pollard_rho(n):
     b = n.bit_length()-1
     b = (b>>2)<<2
@@ -24,7 +21,7 @@ def pollard_rho(n):
                 for _ in range(min(m, r-k)):
                     y = f(y)
                     q = q*abs(x-y)%n
-                g = gcd(q, n)
+                g = gcd2(q, n)
                 k += m
             r <<= 1
         if g == n:
@@ -32,12 +29,13 @@ def pollard_rho(n):
             y = ys
             while g == 1:
                 y = f(y)
-                g = gcd(abs(x-y), n)
+                g = gcd2(abs(x-y), n)
         if g == n: continue
         if is_prime(g): return g
         elif is_prime(n//g): return n//g
         else: n = g
 def factorize(n):
+    'O(N**0.25) pollard rho algorithm'
     res = {}
     for p in range(2,1000):
         if p*p > n: break

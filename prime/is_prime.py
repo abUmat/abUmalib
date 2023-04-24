@@ -1,5 +1,5 @@
-#miller_rabin O(logN)
 def is_prime(n):
+    'O(logN) miller rabin algorithm'
     if n == 2: return 1
     if n == 1 or not n&1: return 0
     #miller_rabin
