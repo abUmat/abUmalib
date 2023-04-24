@@ -1,5 +1,5 @@
 # my module
-from ongoing.divisor_multiple_transform import *
+from multiplicative_function.divisor_multiple_transform import *
 # my module
 def gcd_convolution(a, b, mod):
     s, t = a[::], b[::]
