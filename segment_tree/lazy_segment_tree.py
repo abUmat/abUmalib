@@ -1,7 +1,6 @@
 # my module
 from segment_tree.segment_tree import *
 # my module
-
 class LazySegmentTree(SegmentTree):
     def __init__(self, n, e, id_, op, mapping, composition, arr=None):
         super().__init__(n, e, op, arr)
@@ -44,7 +43,7 @@ class LazySegmentTree(SegmentTree):
                 self._all_apply(l, F)
                 l += 1
             if r&1:
-                r -= 1
+                r ^= 1
                 self._all_apply(r, F)
             l >>= 1
             r >>= 1
@@ -71,7 +70,7 @@ class LazySegmentTree(SegmentTree):
                 sml = self.op(sml, self.data[l])
                 l += 1
             if r&1:
-                r -= 1
+                r ^= 1
                 smr = self.op(self.data[r], smr)
             l >>= 1
             r >>= 1
@@ -111,7 +110,7 @@ class LazySegmentTree(SegmentTree):
                     r = r<<1|1
                     if func(self.op(self.data[r], sm)):
                         sm = self.op(self.data[r], sm)
-                        r -= 1
+                        r ^= 1
                 return r+1 - self.size
             sm = self.op(self.data[r], sm)
             if (r&-r) == r: break

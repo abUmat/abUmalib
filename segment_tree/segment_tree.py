@@ -38,7 +38,7 @@ class SegmentTree:
                 sml = self.op(sml, self.data[l])
                 l += 1
             if r&1:
-                r -= 1
+                r ^= 1
                 smr = self.op(self.data[r], smr)
             l >>= 1
             r >>= 1

@@ -48,7 +48,7 @@ class LiChaoTree:
                 self._update(a, b, left)
                 left += 1
             if right&1:
-                right -= 1
+                right ^= 1
                 self._update(a, b, right)
             left >>= 1
             right >>= 1
