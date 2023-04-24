@@ -31,6 +31,7 @@ class RangeTree:
         seg[N:] = [SegmentTree(1, e, op) for _ in range(N)]
 
     def add(self, x: int, y: int, a: int) -> None:
+        'add value to point (x, y)'
         seg = self.seg; ys = self.ys
         i = lower_bound(self.ps, x << 30 | y)
         i += self.N
@@ -39,6 +40,7 @@ class RangeTree:
             i >>= 1
 
     def sum(self, xl: int, yl: int, xr: int, yr: int) -> int:
+        'sum of rectangle [(xl, yl), (xr, yr))'
         L = R = self.e; op = self.op; seg = self.seg; ys = self.ys
         a = lower_bound(self.xs, xl); b = lower_bound(self.xs, xr)
         a += self.N; b += self.N
