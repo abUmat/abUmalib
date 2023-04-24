@@ -1,5 +1,5 @@
 from bisect import bisect_left as lower_bound
-from typing import Callable, TypeVar, Generic
+from typing import Callable, TypeVar
 T = TypeVar('T')
 class RangeTree:
     '''
