@@ -14,7 +14,7 @@ class NTT:
 
     def _get_pr(self) -> int:
         mod = self.MOD
-        ds = [None] * 32
+        ds = [0] * 32
         idx = 0
         m = mod - 1
         for i in range(2, m):
@@ -148,16 +148,15 @@ class NTT:
         while M < l: M <<= 1; k += 1
         self._setwy(k)
         s, t = [0] * M, [0] * M
-        for i, x in enumerate(a): s[i] = x
-        for i, x in enumerate(b): t[i] = x
+        s[:len(a)] = a[::]
+        t[:len(b)] = b[::]
         self._fft4(s, k)
         self._fft4(t, k)
         for i, x in enumerate(t): s[i] = s[i] * x % mod
         self._ifft(s, k)
         s = s[:l]
         invm = pow(M, mod - 2, mod)
-        for i, x in enumerate(s): s[i] = x * invm % mod
-        return s
+        return [x * invm % mod for x in s]
 
     def ntt_doubling(self, a: List[int]) -> None:
         mod = self.MOD
