@@ -1,5 +1,5 @@
-#素数カウント O(N**0.75 / logN)
-def prime_pi(n):
+def prime_pi(n: int):
+    'O(N**0.75 / logN)'
     if n <= 3:
         if n <= 1: return 0
         return 2
