@@ -1,5 +1,5 @@
 # my module
-from lct.splay_tree_base import *
+from lct.splay_base import *
 # my module
 class LazyReversibleBBST(SplayTreeBase):
     def __init__(self, Node, e: int, id_: int, op: Callable[[int, int], int], mapping: Callable[[int, int], int], composition: Callable[[int, int], int], ts: Callable[[int], int]) -> None:
