@@ -1,11 +1,12 @@
 from typing import Callable, Tuple, Iterable
-__rngx = 2463534242
 def _rng():
-    global __rngx
-    __rngx ^= __rngx<<13&0xFFFFFFFF
-    __rngx ^= __rngx>>17&0xFFFFFFFF
-    __rngx ^= __rngx<<5&0xFFFFFFFF
-    return __rngx&0xFFFFFFFF
+    rngx = 2463534242
+    while 1:
+        rngx ^= rngx<<13&0xFFFFFFFF
+        rngx ^= rngx>>17&0xFFFFFFFF
+        rngx ^= rngx<<5&0xFFFFFFFF
+        yield rngx&0xFFFFFFFF
+rand_generator = _rng()
 
 class LazyReversibleTreapNode:
     def __init__(self, e, id_):
@@ -16,7 +17,7 @@ class LazyReversibleTreapNode:
         self.lazy = id_
         self.cnt = 1
         self.rev = 0
-        self.pr = _rng()
+        self.pr = next(rand_generator)
 
 class LazyReversibleTreap:
     def __init__(self, e: int, id_: int, op: Callable[[int, int], int], mapping: Callable[[int, int], int], composition: Callable[[int, int], int], ts: Callable[[int], int]) -> None:
