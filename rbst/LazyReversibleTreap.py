@@ -9,12 +9,12 @@ def _rng():
 rand_generator = _rng()
 
 class LazyReversibleTreapNode:
-    def __init__(self, e, id_):
+    def __init__(self, val, lazy):
         self.l = None
         self.r = None
-        self.key = e
-        self.sum = e
-        self.lazy = id_
+        self.key = val
+        self.sum = val
+        self.lazy = lazy
         self.cnt = 1
         self.rev = 0
         self.pr = next(rand_generator)
@@ -166,15 +166,15 @@ class LazyReversibleTreap:
         self._dfs(ps[root])
         self.root = ps[root]
 
-    def insert(self, t: LazyReversibleTreapNode, k: int, e: int) -> None:
+    def insert(self, t: LazyReversibleTreapNode, k: int, val: int) -> None:
         '''
         insert new node to kth_index of t
         t: reference node
         k: index
-        e: value
+        val: value
         '''
         x1, x2 = self._split(t, k)
-        self.root = self._merge(self._merge(x1, LazyReversibleTreapNode(e, self.id)), x2)
+        self.root = self._merge(self._merge(x1, LazyReversibleTreapNode(val, self.id)), x2)
 
     def erase(self, t: LazyReversibleTreapNode, k: int) -> None:
         '''

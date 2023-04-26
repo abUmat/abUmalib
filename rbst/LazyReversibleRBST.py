@@ -8,12 +8,12 @@ def _rng():
         yield rngx&0xFFFFFFFF
 
 class LazyReversibleRBSTNode:
-    def __init__(self, e, id_):
+    def __init__(self, val, lazy):
         self.l = None
         self.r = None
-        self.key = e
-        self.sum = e
-        self.lazy = id_
+        self.key = val
+        self.sum = val
+        self.lazy = lazy
         self.cnt = 1
         self.rev = 0
 
@@ -38,8 +38,8 @@ class LazyReversibleRBST:
     def _count(t: LazyReversibleRBSTNode) -> int:
         return t.cnt if t else 0
 
-    def _new(self, e: int, id_: int) -> LazyReversibleRBSTNode:
-        return LazyReversibleRBSTNode(e, id_)
+    def _new(self, val: int, lazy: int) -> LazyReversibleRBSTNode:
+        return LazyReversibleRBSTNode(val, lazy)
 
     def _toggle(self, t: LazyReversibleRBSTNode) -> None:
         if not t: return
