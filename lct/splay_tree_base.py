@@ -79,15 +79,14 @@ class SplayTreeBase:
         L, R = [], []
         while t:
             self._push(t)
+            t.p = None
             if k <= self._count(t.l):
                 R.append(t)
                 t = t.l
-                if t: t.p = None
             else:
                 k -= self._count(t.l) + 1
                 L.append(t)
                 t = t.r
-                if t: t.p = None
         l = None
         while L:
             tmp = L.pop()
