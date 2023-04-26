@@ -76,26 +76,33 @@ class SplayTreeBase:
         return t
 
     def _split(self, t: T, k: int) -> Tuple[T, T]:
-        if not t: return None, None
-        if k == 0: return None, t
-        cnt = t.cnt if t else 0
-        if k == cnt: return t, None
-        self._push(t)
-        cnt = t.l.cnt if t.l else 0
-        if k <= cnt:
-            x1, x2 = self._split(t.l, k)
-            t.l = x2
-            t.p = None
-            if x2: x2.p = t
-            self._update(t)
-            return x1, t
-        else:
-            x1, x2 = self._split(t.r, k-cnt-1)
-            t.r = x1
-            t.p = None
-            if x1: x1.p = t
-            self._update(t)
-            return t, x2
+        L, R = [], []
+        while t:
+            self._push(t)
+            if k <= self._count(t.l):
+                R.append(t)
+                t = t.l
+                if t: t.p = None
+            else:
+                k -= self._count(t.l) + 1
+                L.append(t)
+                t = t.r
+                if t: t.p = None
+        l = None
+        while L:
+            tmp = L.pop()
+            tmp.r = l
+            if l: l.p = tmp
+            self._update(tmp)
+            l = tmp
+        r = None
+        while R:
+            tmp = R.pop()
+            tmp.l = r
+            if r: r.p = tmp
+            self._update(tmp)
+            r = tmp
+        return self._update(l), self._update(r)
 
     def _merge(self, l: T, r: T) -> T:
         if not l and not r: return None
