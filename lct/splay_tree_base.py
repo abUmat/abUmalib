@@ -32,7 +32,7 @@ class SplayTreeBase:
             if t.p.r == t: return 1
         return 0
 
-    def _rot(self, t):
+    def _rot(self, t: T) -> None:
         x = t.p; y = x.p
         if x.l == t:
             z = t.r; x.l = z
