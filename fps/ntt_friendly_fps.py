@@ -46,25 +46,26 @@ FormalPowerSeries.ntt_pr = ntt_pr
 def inv(self: FormalPowerSeries, deg=-1) -> FormalPowerSeries:
     # assert(self[0] != 0)
     mod = self.mod
-    ntt_ptr = NTT(mod)
+    ntt = NTT(mod)
     if deg == -1: deg = len(self)
     res = FormalPowerSeries([0] * deg)
     res.mod = mod
     res[0] = pow(self[0], mod - 2, mod)
     d = 1
     while d < deg:
-        f = FormalPowerSeries([0] * (d << 1)); f.mod = mod; f.ntt_ptr = ntt_ptr
-        g = FormalPowerSeries([0] * (d << 1)); g.mod = mod; g.ntt_ptr = ntt_ptr
-        for j in range(min(len(self), d << 1)): f[j] = self[j]
-        for j in range(d): g[j] = res[j]
-        f.ntt()
-        g.ntt()
-        f = FormalPowerSeries([f[j] * g[j] % mod for j in range(d << 1)]); f.mod = mod; f.ntt_ptr = ntt_ptr
-        f.intt()
+        f = [0] * (d << 1)
+        g = [0] * (d << 1)
+        tmp = min(len(self), d << 1)
+        f[:tmp] = self[:tmp]
+        g[:d] = res[:d]
+        ntt.ntt(f)
+        ntt.ntt(g)
+        f = [x * y % mod for x, y in zip(f, g)]
+        ntt.intt(f)
         f[:d] = [0] * d
-        f.ntt()
-        f = FormalPowerSeries([f[j] * g[j] % mod for j in range(d << 1)]); f.mod = mod; f.ntt_ptr = ntt_ptr
-        f.intt()
+        ntt.ntt(f)
+        f = [x * y % mod for x, y in zip(f, g)]
+        ntt.intt(f)
         for j in range(d, min(d << 1, deg)):
             if f[j]: res[j] = mod - f[j]
             else: res[j] = 0
