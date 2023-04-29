@@ -98,9 +98,7 @@ class FormalPowerSeries(list):
 
     def diff(self):
         mod = self.mod
-        n = len(self)
-        res = FormalPowerSeries([0] * max(0, n - 1)); res.mod = mod
-        for i in range(1, n): res[i - 1] = self[i] * i % mod
+        res = FormalPowerSeries([i * x % mod for i, x in enumerate(self) if i]); res.mod = mod
         return res
 
     def integral(self):
