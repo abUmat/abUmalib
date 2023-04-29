@@ -166,59 +166,54 @@ class LazyReversibleTreap:
         self._dfs(ps[root])
         self.root = ps[root]
 
-    def insert(self, t: LazyReversibleTreapNode, k: int, val: int) -> None:
+    def insert(self, k: int, val: int) -> None:
         '''
-        insert new node to kth_index of t
-        t: reference node
+        insert new node to kth_index
         k: index
         val: value
         '''
-        x1, x2 = self._split(t, k)
+        x1, x2 = self._split(self.root, k)
         self.root = self._merge(self._merge(x1, LazyReversibleTreapNode(val, self.id)), x2)
 
-    def erase(self, t: LazyReversibleTreapNode, k: int) -> None:
+    def erase(self, k: int) -> None:
         '''
-        erase kth_indexed_node of t
-        t: reference node
+        erase kth_indexed_node
         k: index
         '''
-        x1, x2 = self._split(t, k)
+        x1, x2 = self._split(self.root, k)
         self.root = self._merge(x1, self._split(x2, 1)[1])
 
-    def reverse(self, t: LazyReversibleTreapNode, l: int, r: int) -> None:
+    def reverse(self, l: int, r: int) -> None:
         '''
-        reverse [l, r) of t
-        t: reference node
+        reverse [l, r)
         l: left
         r: right
         '''
-        x1, x2 = self._split(t, l)
+        x1, x2 = self._split(self.root, l)
         y1, y2 = self._split(x2, r-l)
         self._toggle(y1)
         self.root = self._merge(x1, self._merge(y1, y2))
 
-    def apply(self, t: LazyReversibleTreapNode, l: int, r: int, F: int) -> None:
+    def apply(self, l: int, r: int, F: int) -> None:
         '''
-        apply F to [l, r) of t
-        t: reference node
+        apply F to [l, r)
         l: left
         r: right
         F: operator
         '''
-        x1, x2 = self._split(t, l)
+        x1, x2 = self._split(self.root, l)
         y1, y2 = self._split(x2, r-l)
         self._propagate(y1, F)
         self.root = self._merge(x1, self._merge(y1, y2))
 
-    def fold(self, t: LazyReversibleTreapNode, l: int, r: int) -> int:
+    def fold(self, l: int, r: int) -> int:
         '''
-        product [l, r) of t
-        t: reference node
+        product [l, r)
         l: left
         r: right
         return: sum
         '''
-        x1, x2 = self._split(t, l)
+        x1, x2 = self._split(self.root, l)
         y1, y2 = self._split(x2, r-l)
         res = self._sum(y1)
         self.root = self._merge(x1, self._merge(y1, y2))
