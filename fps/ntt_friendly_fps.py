@@ -77,56 +77,50 @@ def exp(self: FormalPowerSeries, deg=-1) -> FormalPowerSeries:
     # assert(not self or self[0] == 0)
     if deg == -1: deg = len(self)
     mod = self.mod
-    inv = FormalPowerSeries([0, 1]); inv.mod = mod
+    ntt = NTT(mod)
+    inv = [0, 1]
 
-    def inplace_integral(F: FormalPowerSeries) -> FormalPowerSeries:
+    def inplace_integral(F: List[int]) -> List[int]:
         n = len(F)
         while len(inv) <= n:
-            i = len(inv)
-            j, k = divmod(mod, i)
-            inv.append(-inv[k] * j % mod)
-        F = FormalPowerSeries([x * inv[i + 1] % mod for i, x in enumerate(F)]); F.mod = mod
-        F.insert(0, 0)
-        return F
+            j, k = divmod(mod, len(inv))
+            inv.append((-inv[k] * j) % mod)
+        return [0] + [x * inv[i + 1] % mod for i, x in enumerate(F)]
 
-    def inplace_diff(F: FormalPowerSeries) -> FormalPowerSeries:
-        if not F: return
-        F = F[1:]
-        coef = 1
-        F = FormalPowerSeries([x * (i + 1) % mod for i, x in enumerate(F)]); F.mod = mod
-        return F
+    def inplace_diff(F: List[int]) -> List[int]:
+        return [x * i % mod for i, x in enumerate(F) if i]
 
-    b = FormalPowerSeries([1, (self[1] if 1 < len(self) else 0)]); b.mod = mod
-    c = FormalPowerSeries([1]); c.mod = mod
-    z1 = FormalPowerSeries(); z1.mod = mod
-    z2 = FormalPowerSeries([1, 1]); z2.mod = mod
+    b = [1, (self[1] if 1 < len(self) else 0)]
+    c = [1]
+    z1 = []
+    z2 = [1, 1]
     m = 2
     while m < deg:
-        y = b.resized(m << 1)
-        y.ntt()
+        y = b + [0] * m
+        ntt.ntt(y)
         z1 = z2
-        z = FormalPowerSeries([y[i] * z1[i] % mod for i in range(m)]); z.mod = mod
-        z.intt()
+        z = [p * q for p, q in zip(y, z1)]
+        ntt.intt(z)
         z[:m >> 1] = [0] * (m >> 1)
-        z.ntt()
-        for i in range(m): z[i] = z[i] * -z1[i] % mod
-        z.intt()
+        ntt.ntt(z)
+        z = [-(p * q) % mod for p, q in zip(z, z1)]
+        ntt.intt(z)
         c[m >> 1:] = z[m >> 1:]
-        z2 = c.resized(m << 1)
-        z2.ntt()
-        x = FormalPowerSeries(self[:min(len(self), m)]); x.mod = mod
-        x = x.resized(m)
+        z2 = c + [0] * m
+        ntt.ntt(z2)
+        tmp = min(len(self), m)
+        x = self[:tmp] + [0] * (m - tmp)
         x = inplace_diff(x)
         x.append(0)
-        x.ntt()
-        for i in range(m): x[i] = x[i] * y[i] % mod
-        x.intt()
-        x -= b.diff()
-        x = x.resized(m << 1)
+        ntt.ntt(x)
+        x = [p * q % mod for p, q in zip(x, y)]
+        ntt.intt(x)
+        for i in range(len(b) - 1): x[i] -= b[i + 1] * (i + 1) % mod
+        x += [0] * m
         for i in range(m - 1): x[m + i], x[i] = x[i], 0
-        x.ntt()
-        for i in range(m << 1): x[i] = x[i] * z2[i] % mod
-        x.intt()
+        ntt.ntt(x)
+        x = [p * q % mod for p, q in zip(x, z2)]
+        ntt.intt(x)
         x.pop()
         x = inplace_integral(x)
         for i in range(min(len(self), m << 1)):
@@ -134,9 +128,9 @@ def exp(self: FormalPowerSeries, deg=-1) -> FormalPowerSeries:
             else:
                 x[i] += self[i]
                 if x[i] >= mod: x[i] -= mod
-        x.ntt()
-        for i in range(m << 1): x[i] = x[i] * y[i] % mod
-        x.intt()
+        ntt.ntt(x)
+        x = [p * q % mod for p, q in zip(x, y)]
+        ntt.intt(x)
         b[m:] = x[m:]
         m <<= 1
     return b[:deg]
