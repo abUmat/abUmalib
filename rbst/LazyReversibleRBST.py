@@ -34,21 +34,11 @@ class LazyReversibleRBST:
         self.ts = ts
         self.rand = _rng()
 
-    @staticmethod
-    def _count(t: LazyReversibleRBSTNode) -> int:
-        return t.cnt if t else 0
-
-    def _new(self, val: int, lazy: int) -> LazyReversibleRBSTNode:
-        return LazyReversibleRBSTNode(val, lazy)
-
     def _toggle(self, t: LazyReversibleRBSTNode) -> None:
         if not t: return
         t.l, t.r = t.r, t.l
         t.sum = self.ts(t.sum)
         t.rev ^= 1
-
-    def _sum(self, t: LazyReversibleRBSTNode) -> int:
-        return t.sum if t else self.e
 
     def _propagate(self, t: LazyReversibleRBSTNode, F: int) -> None:
         if not t: return
@@ -113,11 +103,12 @@ class LazyReversibleRBST:
         L, R = [], []
         while t:
             self._push(t)
-            if k <= self._count(t.l):
+            cnt = t.l.cnt if t.l else 0
+            if k <= cnt:
                 R.append(t)
                 t = t.l
             else:
-                k -= self._count(t.l) + 1
+                k -= cnt + 1
                 L.append(t)
                 t = t.r
         l = None
@@ -135,9 +126,9 @@ class LazyReversibleRBST:
         return self._update(l), self._update(r)
 
     def _build(self, v: Iterable[int], l: int, r: int) -> LazyReversibleRBSTNode:
-        if l + 1 == r: return self._new(v[l], self.id)
+        if l + 1 == r: return LazyReversibleRBSTNode(v[l], self.id)
         m = l + r>>1
-        pm = self._new(v[m], self.id)
+        pm = LazyReversibleRBSTNode(v[m], self.id)
         if l < m: pm.l = self._build(v, l, m)
         if m + 1 < r: pm.r = self._build(v, m + 1, r)
         return self._update(pm)
@@ -194,6 +185,6 @@ class LazyReversibleRBST:
         '''
         x1, x2 = self._split(self.root, l)
         y1, y2 = self._split(x2, r-l)
-        res = self._sum(y1)
+        res = y1.sum if y1 else self.e
         self.root = self._merge(x1, self._merge(y1, y2))
         return res
