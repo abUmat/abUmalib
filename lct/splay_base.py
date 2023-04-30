@@ -1,13 +1,13 @@
+import sys
+sys.setrecursionlimit = 10**8
 from typing import TypeVar, Tuple, Iterable, Callable
 T = TypeVar("T")
 class SplayTreeBase:
-    def __init__(self, Node, e: int, id_: int) -> None:
+    def __init__(self, Node) -> None:
         self.Node = Node
-        self.e = e
-        self.id = id_
 
-    def _new(self, val: int) -> T:
-        return self.Node(val, self.id)
+    def new(self, val: int) -> T:
+        return self.Node(val)
 
     @staticmethod
     def _delete(t: T) -> None:
@@ -19,7 +19,7 @@ class SplayTreeBase:
 
     @staticmethod
     def _is_root(t: T) -> bool:
-        return ((t.p is None) or (t.p.l != t and t.p.r != t))
+        return (t.p is None) or (t.p.l != t and t.p.r != t)
 
     @staticmethod
     def _count(t: T) -> int:
@@ -53,15 +53,16 @@ class SplayTreeBase:
 
     def _splay(self, t: T) -> None:
         self._push(t)
-        while not self._is_root(t):
-            q = t.p
-            if self._is_root(q):
+        q = t.p
+        while not ((q is None) or (q.l != t and q.r != t)):
+            r = q.p
+            if (r is None) or (r.l != t and r.r != t):
                 self._push(q); self._push(t); self._rot(t)
             else:
-                r = q.p
                 self._push(r); self._push(q); self._push(t)
                 if self._pos(q) == self._pos(t): self._rot(q); self._rot(t)
                 else: self._rot(t); self._rot(t)
+            q = t.p
 
     def _get_left(self, t: T) -> T:
         while t.l:
@@ -120,7 +121,8 @@ class SplayTreeBase:
         return l
 
     def _build(self, v: Iterable[int], l: int, r: int) -> T:
-        if l + 1 >= r: return self._new(v[l])
+        if not v: return None
+        if l + 1 >= r: return self.new(v[l])
         return self._merge(self._build(v, l, l + r >> 1), self._build(v, l + r >> 1, r))
 
     def build(self, v: Iterable[int]) -> None:
@@ -135,7 +137,7 @@ class SplayTreeBase:
         '''
         self._splay(t)
         x1, x2 = self._split(t, k)
-        self.root = self._merge(self._merge(x1, self._new(val)), x2)
+        self.root = self._merge(self._merge(x1, self.new(val)), x2)
 
     def erase(self, t: T, k: int) -> None:
         '''
