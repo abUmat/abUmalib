@@ -127,7 +127,7 @@ class LazyReversibleRBST:
 
     def _build(self, v: Iterable[int], l: int, r: int) -> LazyReversibleRBSTNode:
         if l + 1 == r: return LazyReversibleRBSTNode(v[l], self.id)
-        m = l + r>>1
+        m = l + r >> 1
         pm = LazyReversibleRBSTNode(v[m], self.id)
         if l < m: pm.l = self._build(v, l, m)
         if m + 1 < r: pm.r = self._build(v, m + 1, r)
