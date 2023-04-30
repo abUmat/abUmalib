@@ -123,7 +123,14 @@ class SplayTreeBase:
     def _build(self, v: Iterable[int], l: int, r: int) -> T:
         if not v: return None
         if l + 1 >= r: return self.new(v[l])
-        return self._merge(self._build(v, l, l + r >> 1), self._build(v, l + r >> 1, r))
+        n = len(v)
+        log = (n - 1).bit_length()
+        size = 1 << log
+        data = [self.e] * (size << 1)
+        for i, val in enumerate(v, size): data[i] = self.new(val)
+        for i in range(1, size)[::-1]:
+            data[i] = self._merge(data[i << 1], data[i << 1  | 1])
+        return data[1]
 
     def build(self, v: Iterable[int]) -> None:
         self.root = self._build(v, 0, len(v))
