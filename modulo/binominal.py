@@ -24,24 +24,21 @@ class Binominal:
 
     def fac(self, i: int) -> int:
         if i < 0: return 0
-        f = self.f; extend = self.extend
-        while i >= len(f): extend()
-        return f[i]
+        while i >= len(self.f): self.extend()
+        return self.f[i]
 
     def finv(self, i: int) -> int:
         if i < 0: return 0
-        g = self.g; extend = self.extend
-        while i >= len(g): extend()
-        return g[i]
+        while i >= len(self.g): self.extend()
+        return self.g[i]
 
     def inv(self, i: int) -> int:
         if i < 0:
             tmp = pow(-i, self.mod - 2, self.mod)
             if tmp: return self.mod - tmp
             else: return 0
-        h = self.h; extend = self.extend
-        while i > len(h): extend()
-        return h[i]
+        while i > len(self.h): self.extend()
+        return self.h[i]
 
     def __call__(self, n: int, r: int) -> int:
         return self.C(n, r)
