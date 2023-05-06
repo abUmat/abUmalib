@@ -1,5 +1,5 @@
 from typing import List
-class Binominal:
+class Binomial:
     def __init__(self, mod: int, max: int=0) -> None:
         self.mod = mod
         self.f = f = [1]
@@ -59,7 +59,7 @@ class Binominal:
         res = 1
         r = min(r, n - r)
         for i in range(1, r + 1):
-            res = (res * pow(i, mod - 2, mod)  % mod) * n
+            res = (res * pow(i, mod - 2, mod)  % mod) * n % mod
             n -= 1
         return res
 

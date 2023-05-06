@@ -1,10 +1,10 @@
 # my module
 from gcc_builtins import *
 from fps.formal_power_series import *
-from modulo.binominal import *
+from modulo.binomial import *
 from fps.taylor_shift import *
 # my module
-def stirling1(N: int, C: Binominal) -> FormalPowerSeries:
+def stirling1(N: int, C: Binomial) -> FormalPowerSeries:
     mod = C.mod
     if N <= 0:
         res = FormalPowerSeries([1]); res.mod = mod
@@ -18,18 +18,18 @@ def stirling1(N: int, C: Binominal) -> FormalPowerSeries:
     res.reduction()
     return res
 
-def stirling2(N: int, C: Binominal) -> FormalPowerSeries:
+def stirling2(N: int, C: Binomial) -> FormalPowerSeries:
     mod = C.mod
     f = FormalPowerSeries([pow(i, N, mod) * C.finv(i) % mod for i in range(N + 1)]); f.mod = mod
     g = FormalPowerSeries([-C.finv(i) if i & 1 else C.finv(i) for i in range(N + 1)]); g.mod = mod
     return (f * g)[:N + 1]
 
-def bernoulli(N: int, C: Binominal) -> FormalPowerSeries:
+def bernoulli(N: int, C: Binomial) -> FormalPowerSeries:
     mod = C.mod
     res = FormalPowerSeries([C.finv(i + 1) for i in range(N + 1)]); res.mod = mod
     return res.inv(N + 1)
 
-def partition(N: int, C: Binominal) -> FormalPowerSeries:
+def partition(N: int, C: Binomial) -> FormalPowerSeries:
     mod = C.mod
     res = [0] * (N + 1)
     res[0] = 1

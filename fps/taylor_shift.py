@@ -1,8 +1,8 @@
 # my module
 from fps.formal_power_series import *
-from modulo.binominal import *
+from modulo.binomial import *
 # my module
-def taylor_shift(f: FormalPowerSeries, a: int, C: Binominal):
+def taylor_shift(f: FormalPowerSeries, a: int, C: Binomial):
     mod = f.mod
     N = len(f)
     res = [f[i] * C.fac(i) % mod for i in range(N)]

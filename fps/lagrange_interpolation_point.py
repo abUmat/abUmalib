@@ -1,7 +1,7 @@
 # my module
-from modulo.binominal import *
+from modulo.binomial import *
 # my module
-def lagrange_interpolation(y: List[int], x: int, C: Binominal, mod: int) -> int:
+def lagrange_interpolation(y: List[int], x: int, C: Binomial, mod: int) -> int:
     N = len(y) - 1
     if x <= N: return y[x] % mod
     res = 0

@@ -20,7 +20,7 @@ def exp_enumerate(p: int, n: int, mod: int) -> List[int]:
             if i % ps[j] == 0: break
     return f
 
-def sum_of_exp(f: List[int], a: int, n: int, C: Binominal, mod: int) -> int:
+def sum_of_exp(f: List[int], a: int, n: int, C: Binomial, mod: int) -> int:
     'destructive'
     if n == 0: return 0
     if a == 0: return f[0]
@@ -52,11 +52,11 @@ def sum_of_exp(f: List[int], a: int, n: int, C: Binominal, mod: int) -> int:
     tn = lagrange_interpolation(f, n - 1, C, mod)
     return (tn * pow(a, n - 1, mod) + c) % mod
 
-def sum_of_exp2(d: int, r: int, n: int, C: Binominal, mod: int) -> int:
+def sum_of_exp2(d: int, r: int, n: int, C: Binomial, mod: int) -> int:
     f = exp_enumerate(d, d, mod)
     return sum_of_exp(f, r, n, C, mod)
 
-def sum_of_exp_limit(f: List[int], a: int, C: Binominal, mod: int) -> int:
+def sum_of_exp_limit(f: List[int], a: int, C: Binomial, mod: int) -> int:
     'destructive'
     if a == 0: return f[0]
     m = len(f)
@@ -74,6 +74,6 @@ def sum_of_exp_limit(f: List[int], a: int, C: Binominal, mod: int) -> int:
     c = (c % mod) * pow(pow((-a + 1) % mod, m, mod), mod - 2, mod) % mod
     return c
 
-def sum_of_exp_limit2(d: int, r: int, C: Binominal, mod: int) -> int:
+def sum_of_exp_limit2(d: int, r: int, C: Binomial, mod: int) -> int:
     f = exp_enumerate(d, d, mod)
     return sum_of_exp_limit(f, r, C, mod)
