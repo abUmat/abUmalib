@@ -1,43 +1,30 @@
 from typing import List
 class Binomial:
-    def __init__(self, mod: int, max: int=0) -> None:
+    def __init__(self, mod: int) -> None:
+        max_length = min(mod, 10000000)
         self.mod = mod
-        self.f = f = [1]
-        self.g = [1]
-        self.h = [1]
-        while max >= len(f): self.extend()
-
-    def extend(self) -> None:
-        mod = self.mod
-        f, g, h = self.f, self.g, self.h
-        n = len(f)
-        m = n << 1
-        f[n:] = [0] * n
-        g[n:] = [0] * n
-        h[n:] = [0] * n
-        for i in range(n, m): f[i] = f[i - 1] * i % mod
-        g[-1] = pow(f[-1], mod - 2, mod)
-        h[-1] = g[-1] * f[-2] % mod
-        for i in range(m - 2, n - 1, -1):
-            g[i] = g[i + 1] * (i + 1) % mod
-            h[i] = g[i] * f[i - 1] % mod
+        self.f = f = [0] * max_length
+        self.g = g = [0] * max_length
+        self.h = h = [0] * max_length
+        f[0] = g[0] = h[0] = tmp = 1
+        for i in range(1, max_length): f[i] = tmp = tmp * i % mod
+        g[-1] = tmp = pow(f[-1], mod - 2, mod)
+        h[-1] = tmp * f[-2] % mod
+        for i in range(max_length - 2, 0, -1):
+            g[i] = tmp = tmp * (i + 1) % mod
+            h[i] = tmp * f[i - 1] % mod
 
     def fac(self, i: int) -> int:
-        if i < 0: return 0
-        while i >= len(self.f): self.extend()
-        return self.f[i]
+        return 0 if i < 0 else self.f[i]
 
     def finv(self, i: int) -> int:
-        if i < 0: return 0
-        while i >= len(self.g): self.extend()
-        return self.g[i]
+        return 0 if i < 0 else self.g[i]
 
     def inv(self, i: int) -> int:
         if i < 0:
             tmp = pow(-i, self.mod - 2, self.mod)
             if tmp: return self.mod - tmp
             else: return 0
-        while i > len(self.h): self.extend()
         return self.h[i]
 
     def __call__(self, n: int, r: int) -> int:
