@@ -2,7 +2,6 @@
 from tree.euler_tour import *
 from data_structure.sparse_table import *
 # my module
-
 class LCA:
     def __init__(self, root, G):
         _, etv, self.in_, _, depth = euler_tour(root, G)

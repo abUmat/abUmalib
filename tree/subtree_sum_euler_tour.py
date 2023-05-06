@@ -2,7 +2,6 @@
 from data_structure.bit import *
 from tree.euler_tour import *
 # my module
-
 class SubtreeSum:
     def __init__(self, G, A, root=0):
         N = len(G)

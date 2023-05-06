@@ -3,7 +3,6 @@ from data_structure.bit import *
 from data_structure.sparse_table import *
 from tree.euler_tour import *
 # my module
-
 class PathSum:
     def __init__(self, G, A, root=0):
         N = len(G)
