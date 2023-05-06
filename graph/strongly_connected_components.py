@@ -1,5 +1,4 @@
 import sys
-
 # https://qiita.com/AkariLuminous/items/a2c789cebdd098dcb503
 def csr(n, E):
     start = [0] * (n + 1)
