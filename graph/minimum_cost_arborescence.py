@@ -21,7 +21,7 @@ def minimum_cost_arborescence(N: int, root: int, es: List[int]) -> List[int]:
     stem = [-1] * N
     idxs = []
     for i, e in enumerate(es):
-        come[e & mask] = Heap.append(come[e & mask], e >> 40, i)
+        come[e & mask] = Heap.push(come[e & mask], e >> 40, i)
 
     costs = 0
     for start in range(N):
