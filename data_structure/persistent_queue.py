@@ -14,7 +14,7 @@ class PersistentQueue:
         self.start = [self.root]
         self.end = [self.root]
 
-    def push(self, val: int, id_: int=-1) -> int:
+    def append(self, val: int, id_: int=-1) -> int:
         s = self.start[id_]; e = self.end[id_]
         ne = _PersistentQueueNode(e.d + 1, val, [e])
         self.start.append(s); self.end.append(ne)
@@ -24,7 +24,7 @@ class PersistentQueue:
             ne.par.append(e)
         return len(self.start) - 1
 
-    def pop(self, id_: int=-1) -> Tuple[int, int]:
+    def popleft(self, id_: int=-1) -> Tuple[int, int]:
         s = self.start[id_]; e = self.end[id_]
         ns = e
         x = e.d - s.d - 1
