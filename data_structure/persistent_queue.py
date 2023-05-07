@@ -10,9 +10,9 @@ class _PersistentQueueNode:
 
 class PersistentQueue:
     def __init__(self, e: int) -> None:
-        self.root = _PersistentQueueNode(0, e, [])
-        self.start = [self.root]
-        self.end = [self.root]
+        root = _PersistentQueueNode(0, e, [])
+        self.start = [root]
+        self.end = [root]
 
     def append(self, val: int, id_: int=-1) -> int:
         s = self.start[id_]; e = self.end[id_]
