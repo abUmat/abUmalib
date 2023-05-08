@@ -1,4 +1,5 @@
-def prime_pi(n: int):
+# https://judge.yosupo.jp/submission/126093
+def prime_counting(n: int):
     'O(N**0.75 / logN)'
     if n <= 3:
         if n <= 1: return 0
