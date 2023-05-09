@@ -15,7 +15,7 @@ class BITRangeTree:
             res = 0
             while k:
                 res += self.data[k]
-                k ^= k & -k
+                k &= k - 1
             return res
 
         def sum(self, l: int, r: int) -> int:
@@ -23,10 +23,10 @@ class BITRangeTree:
             while l != r:
                 if l < r:
                     res += self.data[r]
-                    r ^= r & -r
+                    r &= r - 1
                 else:
                     res -= self.data[l]
-                    l ^= l & -l
+                    l &= l - 1
             return res
 
     ps = []
@@ -67,7 +67,7 @@ class BITRangeTree:
         bit = self.bit; ys = self.ys
         while a:
             res += bit[a].pref(lower_bound(ys[a], y))
-            a ^= a & -a
+            a &= a - 1
         return res
 
     def sum(self, xl: int, yl: int, xr: int, yr: int) -> int:
@@ -78,8 +78,8 @@ class BITRangeTree:
         while a != b:
             if a < b:
                 res += bit[b].sum(lower_bound(ys[b], yl), lower_bound(ys[b], yr))
-                b ^= b & -b
+                b &= b - 1
             else:
                 res -= bit[a].sum(lower_bound(ys[a], yl), lower_bound(ys[a], yr))
-                a ^= a & -a
+                a &= a - 1
         return res

@@ -28,7 +28,7 @@ class BIT:
         res = 0
         while k > 0:
             res += self.data[k]
-            k ^= k & -k
+            k &= k - 1
         return res
 
     def suff(self, k: int) -> int:
