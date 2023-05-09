@@ -1,3 +1,4 @@
 # abUmalib
-* Python3 library for atcoder
-* https://atcoder.jp/users/abUma
+* PyPy3用のライブラリです
+* https://nyaannyaan.github.io/library/ のPython移植多数
+* AtCoderアカウント https://atcoder.jp/users/abUma
