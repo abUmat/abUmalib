@@ -11,7 +11,7 @@ def prime_counting(n: int):
     s = v + 1 >> 1
     roughs = [i << 1 | 1 for i in range(s)]
     larges = [int(n / (i << 1 | 1) + 1) >> 1 for i in range(s)]
-    skip = [0] * (v + 1)
+    skip = bytearray([0] * (v + 1))
     pc = 0
     for p in range(3, v + 1, 2):
         if skip[p]: continue
