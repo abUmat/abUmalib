@@ -35,23 +35,23 @@ class RollingHash:
         return res
 
     def __init__(self, s):
-        self.n = len(s)
-        self.hash = [0] * (self.n+1)
-        self.power = [0] * (self.n+1)
-        self.power[0] = 1
-        for i in range(self.n):
-            self.hash[i+1] = self._calc_mod(self._mul(self.hash[i], self._BASE) + ord(s[i]))
-            self.power[i+1] = self._mul(self.power[i], self._BASE)
+        self._n = len(s)
+        self._hash = [0] * (self._n+1)
+        self._power = [0] * (self._n+1)
+        self._power[0] = 1
+        for i in range(self._n):
+            self._hash[i+1] = self._calc_mod(self._mul(self._hash[i], self._BASE) + ord(s[i]))
+            self._power[i+1] = self._mul(self._power[i], self._BASE)
 
     def get(self, l: int, r: int) -> int:
         'get hash of s[l, r)'
-        res = self.hash[r] - self._mul(self.hash[l], self.power[r-l])
+        res = self._hash[r] - self._mul(self._hash[l], self._power[r-l])
         if res < 0: res += self._MOD
         return res
 
     def connect(self, h1: int, h2: int, h2len: int) -> int:
         'connect S(hash = h1) and T(hash = h2, length = h2len)'
-        res = self._calc_mod(self._mul(h1, self.power[h2len]) + h2)
+        res = self._calc_mod(self._mul(h1, self._power[h2len]) + h2)
         return res
 
     def lcp(self, rh, l1: int, r1: int, l2: int, r2: int) -> int:
