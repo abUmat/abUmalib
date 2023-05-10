@@ -9,29 +9,29 @@ def _get_base(R: int=37) -> int:
     return rh_base
 
 class RollingHash:
-    MOD = 0x1fffffffffffffff # (1<<61)-1
-    MASK30 = 0x3fffffff # (1<<30)-1
-    MASK31 = 0x7fffffff # (1<<31)-1
-    MASK61 = MOD
-    BASE = _get_base()
+    _MOD = 0x1fffffffffffffff # (1<<61)-1
+    _MASK30 = 0x3fffffff # (1<<30)-1
+    _MASK31 = 0x7fffffff # (1<<31)-1
+    _MASK61 = _MOD
+    _BASE = _get_base()
 
     @classmethod
-    def mul(cls, a: int, b: int) -> int:
+    def _mul(cls, a: int, b: int) -> int:
         au = a >> 31
-        ad = a & cls.MASK31
+        ad = a & cls._MASK31
         bu = b >> 31
-        bd = b & cls.MASK31
+        bd = b & cls._MASK31
         mid = ad * bu + au * bd
         midu = mid >> 30
-        midd = mid & cls.MASK30
-        return cls.calc_mod(au*bu*2 + midu + (midd << 31) + ad * bd)
+        midd = mid & cls._MASK30
+        return cls._calc_mod(au*bu*2 + midu + (midd << 31) + ad * bd)
 
     @classmethod
-    def calc_mod(cls, x: int) -> int:
+    def _calc_mod(cls, x: int) -> int:
         xu = x >> 61
-        xd = x & cls.MASK61
+        xd = x & cls._MASK61
         res = xu + xd
-        if res >= cls.MOD: res -= cls.MOD
+        if res >= cls._MOD: res -= cls._MOD
         return res
 
     def __init__(self, s):
@@ -40,18 +40,18 @@ class RollingHash:
         self.power = [0] * (self.n+1)
         self.power[0] = 1
         for i in range(self.n):
-            self.hash[i+1] = self.calc_mod(self.mul(self.hash[i], self.BASE) + ord(s[i]))
-            self.power[i+1] = self.mul(self.power[i], self.BASE)
+            self.hash[i+1] = self._calc_mod(self._mul(self.hash[i], self._BASE) + ord(s[i]))
+            self.power[i+1] = self._mul(self.power[i], self._BASE)
 
     def get(self, l: int, r: int) -> int:
         'get hash of s[l, r)'
-        res = self.hash[r] - self.mul(self.hash[l], self.power[r-l])
-        if res < 0: res += self.MOD
+        res = self.hash[r] - self._mul(self.hash[l], self.power[r-l])
+        if res < 0: res += self._MOD
         return res
 
     def connect(self, h1: int, h2: int, h2len: int) -> int:
         'connect S(hash = h1) and T(hash = h2, length = h2len)'
-        res = self.calc_mod(self.mul(h1, self.power[h2len]) + h2)
+        res = self._calc_mod(self._mul(h1, self.power[h2len]) + h2)
         return res
 
     def lcp(self, rh, l1: int, r1: int, l2: int, r2: int) -> int:
