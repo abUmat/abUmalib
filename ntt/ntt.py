@@ -141,7 +141,7 @@ class NTT:
             s = [0] * l
             for i, x in enumerate(a):
                 for j, y in enumerate(b):
-                    s[i + j] += x * y % mod
+                    s[i + j] += x * y % mod #mod取らなくていい説
             for i in range(l): s[i] %= mod
             return s
         k = 2; M = 4
@@ -153,6 +153,27 @@ class NTT:
         self._fft4(s, k)
         self._fft4(t, k)
         for i, x in enumerate(t): s[i] = s[i] * x % mod
+        self._ifft(s, k)
+        s = s[:l]
+        invm = pow(M, mod - 2, mod)
+        return [x * invm % mod for x in s]
+
+    def pow2(self, a: List[int]) -> List[int]:
+        mod = self.MOD
+        l = (len(a) << 1) - 1
+        if len(a) <= 40:
+            s = [0] * l
+            for i, x in enumerate(a):
+                for j, y in enumerate(a):
+                    s[i + j] += x * y
+            return [x % mod for x in s]
+        k = 2; M = 4
+        while M < l: M <<= 1; k += 1
+        self._setwy(k)
+        s = [0] * M
+        s[:len(a)] = a[::]
+        self._fft4(s, k)
+        for i, x in enumerate(s): s[i] = x * x % mod
         self._ifft(s, k)
         s = s[:l]
         invm = pow(M, mod - 2, mod)
