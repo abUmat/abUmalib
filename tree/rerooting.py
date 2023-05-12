@@ -3,8 +3,8 @@ class Rerooting:
     def __init__(self, g: List[List[int]], f1: Callable[[int, int], int], f2: Callable[[int, int, int], int], e: int, arr: List[int]=[]) -> None:
         '''
         g: Graph
-        f1(c1, c2): merge value of child node
-        f2(memo[i], chd, par): value from child node to parent node
+        f1: f1(c1, c2) merge value of child node
+        f2: f2(memo[i], chd, par) value from child node to parent node
         e: identity_element of f1 and f2
         arr: List of node values
         '''
