@@ -25,7 +25,7 @@ class FrequencyTableOfTreeDistance(CentroidDecomposition):
         pow2 = ArbitraryNTT.pow2_u128
         get_centroid, get_size = self.get_centroid, self.get_size
         Q: deque[int] = deque()
-        root = get_centroid(start, -1, get_size(start, -1) >> 1)
+        root = get_centroid(start, get_size(start) >> 1)
         Q.append(root)
         ans: List[int] = [0] * (len(self.g) + 1)
         while Q:
@@ -35,7 +35,7 @@ class FrequencyTableOfTreeDistance(CentroidDecomposition):
             for c in self.g[r]:
                 if self.v[c]: continue
                 self_ = []
-                Q.append(get_centroid(c, -1, get_size(c, -1) >> 1))
+                Q.append(get_centroid(c, get_size(c) >> 1))
                 self._dfs_depth(c, r, 1, count, self_)
                 self2 = pow2(self_)
                 for i, x in enumerate(self2): ans[i] -= x
