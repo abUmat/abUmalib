@@ -22,7 +22,7 @@ class FrequencyTableOfTreeDistance(CentroidDecomposition):
                 q.append(dst << 40 | cur << 20 | (d + 1))
 
     def get(self, start: int=0) -> List[int]:
-        pow2 = ArbitraryNTT.pow2_u128
+        pow2 = ArbitraryNTT.pow2
         get_centroid, get_size = self.get_centroid, self.get_size
         Q: deque[int] = deque()
         root = get_centroid(start, get_size(start) >> 1)

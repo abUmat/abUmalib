@@ -20,6 +20,12 @@ class ArbitraryNTT: # namespace
         for i in range(len(b)): t[i] = b[i] % mod
         return ntt.multiply(s, t)
 
+    @staticmethod
+    def square(a: List[int], mod: int=0) -> List[int]:
+        ntt = NTT(mod)
+        s = [x % mod for x in a]
+        return ntt.pow2(s)
+
     @classmethod
     def _multiply(cls, s: List[int], t: List[int], mod: int=0) -> List[int]:
         d0 = cls.mul(s, t, cls.__m0)
@@ -38,13 +44,9 @@ class ArbitraryNTT: # namespace
 
     @classmethod
     def _pow2(cls, s: List[int], mod: int=0) -> List[int]:
-        def mul(a: List[int], mod: int) -> List[int]:
-            ntt = NTT(mod)
-            s = [x % mod for x in a]
-            return ntt.pow2(s)
-        d0 = mul(s, cls.__m0)
-        d1 = mul(s, cls.__m1)
-        d2 = mul(s, cls.__m2)
+        d0 = cls.square(s, cls.__m0)
+        d1 = cls.square(s, cls.__m1)
+        d2 = cls.square(s, cls.__m2)
         n = len(d0)
         ret = [0] * n
         if mod: W1, W2 = cls.__w1 % mod, cls.__w2 % mod
@@ -69,23 +71,12 @@ class ArbitraryNTT: # namespace
         return cls._multiply(a, b, mod)
 
     @classmethod
-    def multiply_u128(cls, s: List[int], t: List[int]) -> List[int]:
-        if not s and not t: return []
-        if min(len(s), len(t)) < 128:
-            ret = [0] * (len(s) + len(t) - 1)
-            for i, x in enumerate(s):
-                for j, y in enumerate(t):
-                    ret[i + j] += x * y
-            return ret
-        return cls._multiply(s, t)
-
-    @classmethod
-    def pow2_u128(cls, s: List[int]) -> List[int]:
+    def pow2(cls, s: List[int], mod: int=0) -> List[int]:
         if not s: return []
         if len(s) < 128:
             ret = [0] * ((len(s) << 1) - 1)
             for i, x in enumerate(s):
                 for j, y in enumerate(s):
                     ret[i + j] += x * y
-            return ret
-        return cls._pow2(s)
+            return [x % mod for x in ret] if mod else ret
+        return cls._pow2(s, mod)
