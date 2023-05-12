@@ -42,7 +42,7 @@ class CentroidDecomposition:
     def build_dfs(self, cur: int) -> int:
         centroid = self.get_centroid(cur, -1, self.get_size(cur, -1) >> 1)
         self.v[centroid] = 1
-        for dst in self.g[cur]:
+        for dst in self.g[centroid]:
             if not self.v[dst]:
                 nxt = self.build_dfs(dst)
                 if centroid != nxt: self.tree[centroid].append(nxt)
