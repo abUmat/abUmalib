@@ -5,7 +5,7 @@ def dijkstra(g, s):
     mask = (1 << 30) - 1
     n = len(g)
     INF = (1 << 60) - 1
-    dist = [INF] * (n + 1)
+    dist = [INF] * n
     heap = RadixHeap()
     heap.push(0, s)
     dist[s] = 0
