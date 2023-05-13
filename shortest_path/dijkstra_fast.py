@@ -8,7 +8,7 @@ def dijkstra(g, s: int) -> list:
     heap = RadixHeap()
     heap.push(0, s)
     dist[s] = 0
-    while heap:
+    while heap.s:
         d, v = heap.pop()
         if d > dist[v]: continue
         for tmp in g[v]:
@@ -25,7 +25,7 @@ def dijkstra_point(g, start: int, goal: int) -> int:
     heap = RadixHeap()
     dist[start] = 0
     heap.push(0, start)
-    while heap:
+    while heap.s:
         d, v = heap.pop()
         if v == goal: return dist[v]
         if d > dist[v]: continue
@@ -43,7 +43,7 @@ def dijkstra_restore(g, start: int=0):
     heap = RadixHeap()
     dist[start] = 0, -1
     heap.push(0, start)
-    while heap:
+    while heap.s:
         d, v = heap.pop()
         if d > dist[v][0]: continue
         for tmp in g[v]:
