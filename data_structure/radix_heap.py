@@ -1,7 +1,8 @@
 class RadixHeap:
     s = 0
     last = 0
-    vs = [[] for _ in range(33)]
+    MAX_BIT = 64
+    vs = [[] for _ in range(MAX_BIT + 1)]
     def __bool__(self) -> bool:
         return self.s != 0
 
