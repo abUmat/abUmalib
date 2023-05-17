@@ -1,13 +1,10 @@
 # my module
 from ntt.arbitrary_ntt import *
-from fps.formal_power_series import *
 # my module
-def chirp_z(f: FormalPowerSeries, W: int, N: int=-1, A: int=1) -> FormalPowerSeries:
+def chirp_z(f: list, W: int, N: int=-1, A: int=1) -> list:
     mod = f.mod
     if N == -1: N = len(f)
-    if not f or N == 0:
-        res = FormalPowerSeries([]); res.mod = mod
-        return res
+    if not f or N == 0: return []
     M = len(f)
     if A != -1:
         x = 1
@@ -16,9 +13,7 @@ def chirp_z(f: FormalPowerSeries, W: int, N: int=-1, A: int=1) -> FormalPowerSer
             x = x * A % mod
     if W == 0:
         F = [f[0]] * N
-        for i in range(1, M): F[0] += f[i]
-        F[0] %= mod
-        F = FormalPowerSeries(F); F.mod = mod
+        F[0] = sum(f) % mod
         return F
     wc = [0] * (N + M)
     iwc = [0] * max(N, M)
@@ -36,6 +31,8 @@ def chirp_z(f: FormalPowerSeries, W: int, N: int=-1, A: int=1) -> FormalPowerSer
     f.reverse()
     ntt = NTT(mod)
     g = ntt.multiply(f, wc)
-    F = [x * y % mod for x, y in zip(g[M - 1: M + N - 1], iwc)]
-    F = FormalPowerSeries(F); F.mod = mod
+    F = [0] * N
+    for i, x in enumerate(iwc):
+        if i == N: break
+        F[i] = g[M - 1 + i] * x % mod
     return F
