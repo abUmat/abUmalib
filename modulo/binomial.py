@@ -1,4 +1,3 @@
-from typing import List
 class Binomial:
     def __init__(self, mod: int) -> None:
         max_length = min(mod, 10000000)
@@ -30,7 +29,7 @@ class Binomial:
     def __call__(self, n: int, r: int) -> int:
         return self.C(n, r)
 
-    def multinominal(self, r: List[int]) -> int:
+    def multinominal(self, r: list) -> int:
         n = 0
         for x in r:
             if x < 0: return 0
