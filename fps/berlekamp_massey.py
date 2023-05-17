@@ -12,7 +12,7 @@ def berlekamp_massey(s, mod):
         b.append(0)
         m += 1
         if x == 0: continue
-        freq = x * pow(y, mod - 2, mod)
+        freq = x * pow(y, mod - 2, mod) % mod
         if l < m:
             tmp = c[:]
             c[:0] = [0] * (m - l)
