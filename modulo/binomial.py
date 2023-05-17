@@ -1,6 +1,6 @@
 class Binomial:
-    def __init__(self, mod: int) -> None:
-        max_length = min(mod, 10000000)
+    def __init__(self, mod: int, max_length=10_000_000) -> None:
+        if max_length < 2: max_length = 2
         self.mod = mod
         self.f = f = [0] * max_length
         self.g = g = [0] * max_length
