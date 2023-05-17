@@ -1,5 +1,5 @@
 class Binomial:
-    def __init__(self, mod: int, max_length=10_000_000) -> None:
+    def __init__(self, mod: int, max_length=10_001_000) -> None:
         if max_length < 2: max_length = 2
         self.mod = mod
         self.f = f = [0] * max_length
@@ -13,18 +13,40 @@ class Binomial:
             g[i] = tmp = tmp * (i + 1) % mod
             h[i] = tmp * f[i - 1] % mod
 
+    def extend(self) -> None:
+        mod = self.mod
+        f, g, h = self.f, self.g, self.h
+        n = len(f)
+        tmpf = f[-1]
+        m = n << 1
+        f[n:] = [0] * n
+        g[n:] = [0] * n
+        h[n:] = [0] * n
+        for i in range(n, m): f[i] = tmpf = tmpf * i % mod
+        g[-1] = tmpg = pow(tmpf, mod - 2, mod)
+        h[-1] = tmpg * f[-2] % mod
+        for i in range(m - 2, n - 1, -1):
+            g[i] = tmpg = tmpg * (i + 1) % mod
+            h[i] = tmpg * f[i - 1] % mod
+
     def fac(self, i: int) -> int:
-        return 0 if i < 0 else self.f[i]
+        if i < 0: return 0
+        while i >= len(self.f): self.extend()
+        return self.f[i]
 
     def finv(self, i: int) -> int:
-        return 0 if i < 0 else self.g[i]
+        if i < 0: return 0
+        while i >= len(self.g): self.extend()
+        return self.g[i]
 
     def inv(self, i: int) -> int:
         if i < 0:
             tmp = pow(-i, self.mod - 2, self.mod)
             if tmp: return self.mod - tmp
             else: return 0
+        while i > len(self.h): self.extend()
         return self.h[i]
+
 
     def __call__(self, n: int, r: int) -> int:
         return self.C(n, r)
