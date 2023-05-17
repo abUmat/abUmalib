@@ -7,7 +7,7 @@ def berlekamp_massey(s, mod):
         l = len(c)
         m = len(b)
         x = 0
-        for i in range(l): x += c[i] * s[ed - l + i] % mod
+        for i, a in enumerate(c): x += a * s[ed - l + i]
         x %= mod
         b.append(0)
         m += 1
