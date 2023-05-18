@@ -13,21 +13,21 @@ class ArbitraryNTT: # namespace
     __w2 = __m0 * __m1
 
     @staticmethod
-    def mul(a: List[int], b: List[int], mod: int) -> List[int]:
+    def mul(a: list, b: list, mod: int) -> list:
         ntt = NTT(mod)
         s, t = [0] * len(a), [0] * len(b)
-        for i in range(len(a)): s[i] = a[i] % mod
-        for i in range(len(b)): t[i] = b[i] % mod
+        for i, x in enumerate(a): s[i] = x % mod
+        for i, x in enumerate(b): t[i] = x % mod
         return ntt.multiply(s, t)
 
     @staticmethod
-    def square(a: List[int], mod: int=0) -> List[int]:
+    def square(a: list, mod: int=0) -> list:
         ntt = NTT(mod)
         s = [x % mod for x in a]
         return ntt.pow2(s)
 
     @classmethod
-    def _multiply(cls, s: List[int], t: List[int], mod: int=0) -> List[int]:
+    def _multiply(cls, s: list, t: list, mod: int=0) -> list:
         d0 = cls.mul(s, t, cls.__m0)
         d1 = cls.mul(s, t, cls.__m1)
         d2 = cls.mul(s, t, cls.__m2)
@@ -43,7 +43,7 @@ class ArbitraryNTT: # namespace
         return [x % mod for x in ret] if mod else ret
 
     @classmethod
-    def _pow2(cls, s: List[int], mod: int=0) -> List[int]:
+    def _pow2(cls, s: list, mod: int=0) -> list:
         d0 = cls.square(s, cls.__m0)
         d1 = cls.square(s, cls.__m1)
         d2 = cls.square(s, cls.__m2)
@@ -60,7 +60,7 @@ class ArbitraryNTT: # namespace
 
 
     @classmethod
-    def multiply(cls, a: List[int], b: List[int], mod: int=0) -> List[int]:
+    def multiply(cls, a: list, b: list, mod: int=0) -> list:
         if not a and not b: return []
         if min(len(a), len(b)) < 128:
             ret = [0] * (len(a) + len(b) - 1)
@@ -71,7 +71,7 @@ class ArbitraryNTT: # namespace
         return cls._multiply(a, b, mod)
 
     @classmethod
-    def pow2(cls, s: List[int], mod: int=0) -> List[int]:
+    def pow2(cls, s: list, mod: int=0) -> list:
         if not s: return []
         if len(s) < 128:
             ret = [0] * ((len(s) << 1) - 1)
