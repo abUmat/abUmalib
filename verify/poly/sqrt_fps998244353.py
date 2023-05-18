@@ -1,7 +1,8 @@
 # my module
+from misc.fastio import *
 from fps.fps998244353 import *
 # my module
-N = int(input())
-A = list(map(int,input().split()))
+N = rd()
+A = rdl(N)
 ans = sqrt(A)
-print(*ans) if ans else print(-1)
+wtnl(ans) if ans else wtn(-1)

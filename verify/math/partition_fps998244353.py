@@ -1,4 +1,5 @@
 # my module
+from misc.fastio import *
 from fps.fps998244353 import *
 # my module
-print(*partition(int(input())))
+wtnl(partition(rd()))

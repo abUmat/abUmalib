@@ -1,10 +1,11 @@
 # my module
+from misc.fastio import *
 from fps.fps998244353 import *
 # my module
-N, M = map(int,input().split())
-A = list(map(int,input().split()))
-B = list(map(int,input().split()))
+N, M = rd(), rd()
+A = rdl(N)
+B = rdl(M)
 q, r = div_mod(A, B)
-print(len(q), len(r))
-print(*q)
-print(*r)
+wt(len(q)); wt(' '); wtn(len(r))
+wtnl(q)
+wtnl(r)

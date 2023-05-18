@@ -1,6 +1,7 @@
 # my module
+from misc.fastio import *
 from fps.fps998244353 import *
 # my module
-N, M = map(int,input().split())
-A = list(map(int,input().split()))
-print(*power(A, M))
+N, M = rd(), rd()
+A = rdl(N)
+wtnl(power(A, M))

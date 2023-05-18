@@ -1,6 +1,7 @@
 # my module
+from misc.fastio import *
 from fps.fps998244353 import *
 # my module
-N, c = map(int,input().split())
-A = list(map(int,input().split()))
-print(*taylor_shift(A, c, Binomial(MOD, N)))
+N, c = rd(), rd()
+A = rdl(N)
+wtnl(taylor_shift(A, c, Binomial(MOD, N)))
