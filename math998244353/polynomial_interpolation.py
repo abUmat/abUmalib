@@ -1,6 +1,7 @@
 # my module
 from math998244353.multieval import *
 # my module
+# https://nyaannyaan.github.io/library/fps/polynomial-interpolation.hpp
 def polynomial_interpolation(xs: list, ys: list) -> list:
     assert(len(xs) == len(ys))
     ptree = ProductTree(xs)

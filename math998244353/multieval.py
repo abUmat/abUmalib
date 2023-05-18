@@ -1,6 +1,7 @@
 # my module
 from math998244353.fps import *
 # my module
+# https://nyaannyaan.github.io/library/fps/multipoint-evaluation.hpp
 class ProductTree:
     def __init__(self, xs: list) -> None:
         self.xs = xs
