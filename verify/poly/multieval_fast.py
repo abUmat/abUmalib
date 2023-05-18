@@ -1,9 +1,9 @@
 # https://judge.yosupo.jp/problem/multipoint_evaluation
 # my module
 from misc.fastio import *
-from fps.fps998244353 import *
+from math998244353.multieval_fast import *
 # my module
 N, M = rd(), rd()
 C = rdl(N)
 P = rdl(M)
-wtnl(multipoint_evaluation(C, P))
+wtnl(multipoint_evaluation_fast(C, P))

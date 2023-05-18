@@ -1,7 +1,7 @@
 # https://judge.yosupo.jp/problem/bernoulli_number
 # my module
 from misc.fastio import *
-from fps.fps998244353 import *
+from math998244353.fps_famous_series import *
 # my module
 N = rd()
 C = Binomial(MOD, N + 10)

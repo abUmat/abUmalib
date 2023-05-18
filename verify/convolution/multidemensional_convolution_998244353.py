@@ -1,7 +1,7 @@
 # https://judge.yosupo.jp/problem/multivariate_convolution
 # my module
 from misc.fastio import *
-from fps.fps998244353 import *
+from math998244353.multivariate_multiplication import *
 # my module
 K = rd()
 base = rdl(K)
