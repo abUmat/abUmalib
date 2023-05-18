@@ -197,9 +197,11 @@ class NTT:
     def ntt_doubling(self, a: list) -> None:
         mod = self.MOD
         M = len(a)
-        self.intt(a)
+        b = a[:]
+        self.intt(b)
         r = 1; zeta = pow(self.pr, (mod - 1) // (M << 1), mod)
-        for i, x in enumerate(a):
-            a[i] = x * r % mod
+        for i, x in enumerate(b):
+            b[i] = x * r % mod
             r = r * zeta % mod
-        self.ntt(a)
+        self.ntt(b)
+        a += b

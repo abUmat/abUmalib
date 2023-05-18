@@ -118,10 +118,12 @@ def pow2(a: list) -> list:
 
 def ntt_doubling(a: list) -> None:
     M = len(a)
-    intt(a)
+    b = a[:]
+    intt(b)
     r = 1
     zeta = pow(3, (MOD - 1) // (M << 1), MOD)
-    for i, x in enumerate(a):
-        a[i] = x * r % MOD
+    for i, x in enumerate(b):
+        b[i] = x * r % MOD
         r = r * zeta % MOD
-    ntt(a)
+    ntt(b)
+    a += b
