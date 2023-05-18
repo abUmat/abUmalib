@@ -98,23 +98,23 @@ def multiply(s: list, t: list) -> list:
     iz = pow(z, MOD - 2, MOD)
     return [x * iz % MOD for x in a]
 
-def pow2(a: list) -> list:
-        l = (len(a) << 1) - 1
-        if len(a) <= 60:
-            s = [0] * l
-            for i, x in enumerate(a):
-                for j, y in enumerate(a):
-                    s[i + j] += x * y
-            return [x % MOD for x in s]
-        k = 2; M = 4
-        while M < l: M <<= 1; k += 1
-        s = a + [0] * (M - len(a))
-        _fft(s, k)
-        s = [x * x % MOD for x in s]
-        _ifft(s, k)
-        s[l:] = []
-        invm = pow(M, MOD - 2, MOD)
-        return [x * invm % MOD for x in s]
+def pow2(s: list) -> list:
+    n = len(s)
+    l = (n << 1) - 1
+    if n <= 60:
+        a = [0] * l
+        for i, x in enumerate(s):
+            for j, y in enumerate(s):
+                a[i + j] += x * y
+        return [x % MOD for x in a]
+    z = 1 << (l - 1).bit_length()
+    a = s + [0] * (z - n)
+    _fft(a)
+    for i, x in enumerate(a): a[i] = x * x % MOD
+    _ifft(a)
+    a[l:] = []
+    iz = pow(z, MOD - 2, MOD)
+    return [x * iz % MOD for x in a]
 
 def ntt_doubling(a: list) -> None:
     M = len(a)

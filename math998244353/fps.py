@@ -1,10 +1,10 @@
+from math import log2
 # my module
-from ntt.ntt998244353 import *
+from math998244353.ntt import *
 from modulo.mod_sqrt import *
-from modulo.binomial import *
 # my module
 # https://nyaannyaan.github.io/library/fps/formal-power-series.hpp
-def add(a: list, b: list) -> list:
+def fps_add(a: list, b: list) -> list:
     if len(a) < len(b):
         res = b[::]
         for i, x in enumerate(a): res[i] += x
@@ -13,38 +13,46 @@ def add(a: list, b: list) -> list:
         for i, x in enumerate(b): res[i] += x
     return [x % MOD for x in res]
 
-def sub(a: list, b: list) -> list:
+def fps_add_scalar(a: list, k: int) -> list:
+    res = a[:]
+    res[0] = (res[0] + k) % MOD
+    return res
+
+def fps_sub(a: list, b: list) -> list:
     if len(a) < len(b):
         res = b[::]
         for i, x in enumerate(a): res[i] -= x
-        res = neg(res)
+        res = fps_neg(res)
     else:
         res = a[::]
         for i, x in enumerate(b): res[i] -= x
     return [x % MOD for x in res]
 
-def neg(a: list) -> list:
+def fps_sub_scalar(a: list, k: int) -> list:
+    return fps_add_scalar(a, -k)
+
+def fps_neg(a: list) -> list:
     return [MOD - x if x else 0 for x in a]
 
-def scalar(a: list, k: int) -> list:
+def fps_mul_scalar(a: list, k: int) -> list:
     return [x * k % MOD for x in a]
 
-def matmul(a: list, b: list) -> list:
+def fps_matmul(a: list, b: list) -> list:
     'not verified'
     return [x * b[i] % MOD for i, x in enumerate(a)]
 
-def div(a: list, b: list) -> list:
+def fps_div(a: list, b: list) -> list:
     if len(a) < len(b): return []
     n = len(a) - len(b) + 1
     cnt = 0
     if len(b) > 64:
-        return multiply(a[::-1][:n], inv(b[::-1], n))[:n][::-1]
+        return multiply(a[::-1][:n], fps_inv(b[::-1], n))[:n][::-1]
     f, g = a[::], b[::]
     while g and not g[-1]:
         g.pop()
         cnt += 1
     coef = pow(g[-1], MOD - 2, MOD)
-    g = scalar(g, coef)
+    g = fps_mul_scalar(g, coef)
     deg = len(f) - len(g) + 1
     gs = len(g)
     quo = [0] * deg
@@ -52,20 +60,27 @@ def div(a: list, b: list) -> list:
         quo[i] = x = f[i + gs - 1] % MOD
         for j, y in enumerate(g):
             f[i + j] -= x * y
-    return scalar(quo, coef) + [0] * cnt
+    return fps_mul_scalar(quo, coef) + [0] * cnt
 
-def modulo(a: list, b: list) -> list:
-    res = sub(a, multiply(div(a, b),  b))
+def fps_mod(a: list, b: list) -> list:
+    res = fps_sub(a, multiply(fps_div(a, b),  b))
     while res and not res[-1]: res.pop()
     return res
 
-def div_mod(a: list, b: list):
-    q = div(a, b)
-    r = sub(a, multiply(q, b))
+def fps_divmod(a: list, b: list):
+    q = fps_div(a, b)
+    r = fps_sub(a, multiply(q, b))
     while r and not r[-1]: r.pop()
     return q, r
 
-def inv(a: list, deg: int=-1) -> list:
+def fps_eval(a: list, x: int) -> int:
+    r = 0; w = 1
+    for v in a:
+        r += w * v % MOD
+        w = w * x % MOD
+    return r % MOD
+
+def fps_inv(a: list, deg: int=-1) -> list:
     # assert(self[0] != 0)
     if deg == -1: deg = len(a)
     res = [0] * deg
@@ -91,7 +106,7 @@ def inv(a: list, deg: int=-1) -> list:
         d <<= 1
     return res
 
-def power(a: list, k: int, deg=-1) -> list:
+def fps_pow(a: list, k: int, deg=-1) -> list:
     n = len(a)
     if deg == -1: deg = n
     if k == 0:
@@ -102,7 +117,7 @@ def power(a: list, k: int, deg=-1) -> list:
     for i, x in enumerate(a):
         if x:
             rev = pow(x, MOD - 2, MOD)
-            ret = scalar(exp(scalar(log(scalar(a, rev)[i:], deg),  k), deg), pow(x, k, MOD))
+            ret = fps_mul_scalar(fps_exp(fps_mul_scalar(fps_log(fps_mul_scalar(a, rev)[i:], deg),  k), deg), pow(x, k, MOD))
             ret[:0] = [0] * (i * k)
             if len(ret) < deg:
                 ret[len(ret):] = [0] * (deg - len(ret))
@@ -111,31 +126,7 @@ def power(a: list, k: int, deg=-1) -> list:
         if (i + 1) * k >= deg: break
     return [0] * deg
 
-def sqrt(a: list, deg=-1) -> list:
-    if deg == -1: deg = len(a)
-    if len(a) == 0: return [0] * deg
-    if a[0] == 0:
-        for i in range(1, len(a)):
-            if a[i] != 0:
-                if i & 1: return []
-                if deg - i // 2 <= 0: break
-                ret = sqrt(a[i:], deg - i // 2)
-                if not ret: return []
-                ret[:0] = [0] * (i >> 1)
-                if len(ret) < deg: ret[len(ret):] = [0] * (deg - len(ret))
-                return ret
-        return [0] * deg
-    sqr = mod_sqrt(a[0], MOD)
-    if sqr == -1: return []
-    ret = [sqr]
-    inv2 = 499122177
-    i = 1
-    while i < deg:
-        i <<= 1
-        ret = scalar(add(ret, multiply(a[:i], inv(ret, i))), inv2)
-    return ret[:deg]
-
-def exp(a: list, deg=-1) -> list:
+def fps_exp(a: list, deg=-1) -> list:
     # assert(not self or self[0] == 0)
     if deg == -1: deg = len(a)
     inv = [0, 1]
@@ -194,12 +185,12 @@ def exp(a: list, deg=-1) -> list:
         m <<= 1
     return b[:deg]
 
-def log(a: list, deg=-1) -> list:
+def fps_log(a: list, deg=-1) -> list:
     # assert(a[0] == 1)
     if deg == -1: deg = len(a)
-    return integral(multiply(diff(a), inv(a, deg))[:deg - 1])
+    return fps_integral(multiply(fps_diff(a), fps_inv(a, deg))[:deg - 1])
 
-def integral(a: list) -> list:
+def fps_integral(a: list) -> list:
     n = len(a)
     res = [0] * (n + 1)
     if n: res[1] = 1
@@ -209,177 +200,5 @@ def integral(a: list) -> list:
     for i, x in enumerate(a): res[i + 1] = res[i + 1] * x % MOD
     return res
 
-def diff(a: list) -> list:
+def fps_diff(a: list) -> list:
     return [i * x % MOD for i, x in enumerate(a) if i]
-
-# https://nyaannyaan.github.io/library/fps/taylor-shift.hpp
-def taylor_shift(f: list, a: int, C: Binomial):
-    n = len(f)
-    res = [x * C.fac(i) % MOD for i, x in enumerate(f)]
-    res.reverse()
-    g = [0] * n
-    g[0] = tmp = 1
-    for i in range(1, n): g[i] = tmp = (tmp * a % MOD) * C.inv(i) % MOD
-    res = multiply(res, g)[:n]
-    res.reverse()
-    return [x * C.finv(i) % MOD for i, x in enumerate(res)]
-
-# https://nyaannyaan.github.io/library/fps/fps-famous-series.hpp
-def stirling1(N: int, C: Binomial) -> list:
-    if N <= 0: return [1]
-    lg = N.bit_length() - 1
-    res = [0, 1]
-    for i in range(lg)[::-1]:
-        n = N >> i
-        res = multiply(res, taylor_shift(res, (n >> 1) % MOD, C))
-        if n & 1: res = add([0] + res, scalar(res, n - 1))
-    return res
-
-def stirling2(N: int, C: Binomial) -> list:
-    f = [pow(i, N, MOD) * C.finv(i) % MOD for i in range(N + 1)]
-    g = [-C.finv(i) if i & 1 else C.finv(i) for i in range(N + 1)]
-    return multiply(f, g)[:N + 1]
-
-def bernoulli(N: int, C: Binomial) -> list:
-    res = [C.finv(i + 1) for i in range(N + 1)]
-    res = inv(res, N + 1)
-    return [x * C.fac(i) % MOD for i, x in enumerate(res)]
-
-def partition(N: int) -> list:
-    res = [0] * (N + 1)
-    res[0] = 1
-    for k in range(1, N + 1):
-        k1 = k * (3 * k + 1) >> 1
-        k2 = k * (3 * k - 1) >> 1
-        if k2 > N: break
-        if k1 <= N: res[k1] += (-1 if k & 1 else 1)
-        if k2 <= N: res[k2] += (-1 if k & 1 else 1)
-    return inv(res)
-
-def montmort(N: int, mod: int) -> list:
-    if N <= 1: return [0]
-    if N == 2: return [0, 1]
-    f = [0] * N
-    f[0] = 0; f[1] = tmp = 1
-    for i in range(2, N): f[i] = tmp = (tmp + f[i - 2]) * i % mod
-    return f
-
-# https://nyaannyaan.github.io/library/ntt/chirp-z.hpp
-def chirp_z(f: list, W: int, N: int=-1, A: int=1) -> list:
-    if N == -1: N = len(f)
-    if not f or N == 0: return []
-    M = len(f)
-    if A != -1:
-        x = 1
-        for i in range(M):
-            f[i] = f[i] * x % MOD
-            x = x * A % MOD
-    if W == 0:
-        F = [f[0]] * N
-        F[0] = sum(f) % MOD
-        return F
-    wc = [0] * (N + M)
-    iwc = [0] * max(N, M)
-    ws = 1; iW = pow(W, MOD - 2, MOD); iws = 1
-    wc[0] = iwc[0] = 1
-    tmp = 1
-    for i in range(1, N + M):
-        wc[i] = tmp = ws * tmp % MOD
-        ws = ws * W % MOD
-    tmp = 1
-    for i in range(1, max(N, M)):
-        iwc[i] = tmp = iws * tmp % MOD
-        iws = iws * iW % MOD
-    for i, x in enumerate(f): f[i] = x * iwc[i] % MOD
-    f.reverse()
-    g = multiply(f, wc)
-    F = [0] * N
-    for i, x in enumerate(iwc):
-        if i == N: break
-        F[i] = g[M - 1 + i] * x % MOD
-    return F
-
-# https://nyaannyaan.github.io/library/ntt/multivariate-multiplication.hpp
-def multivariate_multiplication(f: list, g: list, base: list) -> list:
-    n = len(f); s = len(base); W = 1
-    if s == 0: return [f[0] * g[0] % MOD]
-    while W < n << 1: W <<= 1
-    chi = [0] * n
-    for i in range(n):
-        x = i
-        for j in range(s - 1):
-            x //= base[j]
-            chi[i] += x
-        chi[i] %= s
-    F = [[0] * W for _ in range(s)]
-    G = [[0] * W for _ in range(s)]
-    for i, j in enumerate(chi):
-        F[j][i] = f[i]
-        G[j][i] = g[i]
-    for i in range(s): ntt(F[i]); ntt(G[i])
-    for k in range(W):
-        a = [0] * s
-        for i, f in enumerate(F):
-            tmp = f[k]
-            for j, g in enumerate(G):
-                a[i + j - (s if i + j >= s else 0)] += tmp * g[k] % MOD
-        for i, f in enumerate(F):
-            f[k] = a[i] % MOD
-    for f in F: intt(f)
-    return [F[j][i] for i, j in enumerate(chi)]
-
-# https://nyaannyaan.github.io/library/fps/fast-multieval.hpp
-def multipoint_evaluation(f: list, xs: list) -> list:
-    s = len(xs)
-    N = 1 << (s - 1).bit_length() if s != 1 else 2
-    if not f or not xs: return [0] * s
-    buf = [[] for _ in range(N << 1)]
-    for i in range(N):
-        n = -xs[i] if i < s else 0
-        buf[i + N] = [n + 1, n - 1]
-    for i in range(N - 1, 0, -1):
-        g = buf[i << 1 | 0]
-        h = buf[i << 1 | 1]
-        n = len(g)
-        m = n << 1
-        buf[i][n:] = []
-        buf[i][len(buf[i]):] = [0] * (n - len(buf[i]))
-        for j in range(n):
-            buf[i][j] = g[j] * h[j] % MOD - 1
-        if i != 1:
-            ntt_doubling(buf[i])
-            buf[i][len(buf[i]):] = [0] * (m - len(buf[i]))
-            for j in range(m):
-                buf[i][j] += 1 if j < n else -1
-    fs = len(f)
-    root = buf[1]
-    intt(root)
-    root.append(1)
-    root.reverse()
-    tmp = inv(root, fs)
-    tmp.reverse()
-    root = multiply(tmp, f)
-    root[:fs - 1] = []
-    root[N:] = []
-    root[len(root):] = [0] * (N - len(root))
-
-    ans = [0] * s
-
-    def calc(i: int, l: int, r: int, g: list) -> None:
-        if i >= N:
-            ans[i - N] = g[0]
-            return
-        length = len(g)
-        m = l + r >> 1
-        ntt(g)
-        tmp = buf[i << 1 | 1]
-        for j in range(length): tmp[j] = tmp[j] * g[j] % MOD
-        intt(tmp)
-        calc(i << 1, l, m, tmp[length >> 1:])
-        if m >= s: return
-        tmp = buf[i << 1 | 0]
-        for j in range(length): tmp[j] = tmp[j] * g[j] % MOD
-        intt(tmp)
-        calc(i << 1 | 1, m, r, tmp[length >> 1:])
-    calc(1, 0, N, root)
-    return ans
