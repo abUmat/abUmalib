@@ -3,6 +3,7 @@ from ntt.ntt998244353 import *
 from modulo.mod_sqrt import *
 from modulo.binomial import *
 # my module
+# https://nyaannyaan.github.io/library/fps/formal-power-series.hpp
 def add(a: list, b: list) -> list:
     if len(a) < len(b):
         res = b[::]
@@ -211,6 +212,7 @@ def integral(a: list) -> list:
 def diff(a: list) -> list:
     return [i * x % MOD for i, x in enumerate(a) if i]
 
+# https://nyaannyaan.github.io/library/fps/taylor-shift.hpp
 def taylor_shift(f: list, a: int, C: Binomial):
     n = len(f)
     res = [x * C.fac(i) % MOD for i, x in enumerate(f)]
@@ -222,6 +224,7 @@ def taylor_shift(f: list, a: int, C: Binomial):
     res.reverse()
     return [x * C.finv(i) % MOD for i, x in enumerate(res)]
 
+# https://nyaannyaan.github.io/library/fps/fps-famous-series.hpp
 def stirling1(N: int, C: Binomial) -> list:
     if N <= 0: return [1]
     lg = N.bit_length() - 1
@@ -260,3 +263,123 @@ def montmort(N: int, mod: int) -> list:
     f[0] = 0; f[1] = tmp = 1
     for i in range(2, N): f[i] = tmp = (tmp + f[i - 2]) * i % mod
     return f
+
+# https://nyaannyaan.github.io/library/ntt/chirp-z.hpp
+def chirp_z(f: list, W: int, N: int=-1, A: int=1) -> list:
+    if N == -1: N = len(f)
+    if not f or N == 0: return []
+    M = len(f)
+    if A != -1:
+        x = 1
+        for i in range(M):
+            f[i] = f[i] * x % MOD
+            x = x * A % MOD
+    if W == 0:
+        F = [f[0]] * N
+        F[0] = sum(f) % MOD
+        return F
+    wc = [0] * (N + M)
+    iwc = [0] * max(N, M)
+    ws = 1; iW = pow(W, MOD - 2, MOD); iws = 1
+    wc[0] = iwc[0] = 1
+    tmp = 1
+    for i in range(1, N + M):
+        wc[i] = tmp = ws * tmp % MOD
+        ws = ws * W % MOD
+    tmp = 1
+    for i in range(1, max(N, M)):
+        iwc[i] = tmp = iws * tmp % MOD
+        iws = iws * iW % MOD
+    for i, x in enumerate(f): f[i] = x * iwc[i] % MOD
+    f.reverse()
+    g = multiply(f, wc)
+    F = [0] * N
+    for i, x in enumerate(iwc):
+        if i == N: break
+        F[i] = g[M - 1 + i] * x % MOD
+    return F
+
+# https://nyaannyaan.github.io/library/ntt/multivariate-multiplication.hpp
+def multivariate_multiplication(f: list, g: list, base: list) -> list:
+    n = len(f); s = len(base); W = 1
+    if s == 0: return [f[0] * g[0] % MOD]
+    while W < n << 1: W <<= 1
+    chi = [0] * n
+    for i in range(n):
+        x = i
+        for j in range(s - 1):
+            x //= base[j]
+            chi[i] += x
+        chi[i] %= s
+    F = [[0] * W for _ in range(s)]
+    G = [[0] * W for _ in range(s)]
+    for i, j in enumerate(chi):
+        F[j][i] = f[i]
+        G[j][i] = g[i]
+    for i in range(s): ntt(F[i]); ntt(G[i])
+    for k in range(W):
+        a = [0] * s
+        for i, f in enumerate(F):
+            tmp = f[k]
+            for j, g in enumerate(G):
+                a[i + j - (s if i + j >= s else 0)] += tmp * g[k] % MOD
+        for i, f in enumerate(F):
+            f[k] = a[i] % MOD
+    for f in F: intt(f)
+    return [F[j][i] for i, j in enumerate(chi)]
+
+# https://nyaannyaan.github.io/library/fps/fast-multieval.hpp
+def multipoint_evaluation(f: list, xs: list) -> list:
+    s = len(xs)
+    N = 1 << (s - 1).bit_length() if s != 1 else 2
+    if not f or not xs: return [0] * s
+    buf = [[] for _ in range(N << 1)]
+    for i in range(N):
+        n = -xs[i] if i < s else 0
+        buf[i + N] = [n + 1, n - 1]
+    for i in range(N - 1, 0, -1):
+        g = buf[i << 1 | 0]
+        h = buf[i << 1 | 1]
+        n = len(g)
+        m = n << 1
+        buf[i][n:] = []
+        buf[i][len(buf[i]):] = [0] * (n - len(buf[i]))
+        for j in range(n):
+            buf[i][j] = g[j] * h[j] % MOD - 1
+        if i != 1:
+            ntt_doubling(buf[i])
+            buf[i][len(buf[i]):] = [0] * (m - len(buf[i]))
+            for j in range(m):
+                buf[i][j] += 1 if j < n else -1
+    fs = len(f)
+    root = buf[1]
+    intt(root)
+    root.append(1)
+    root.reverse()
+    tmp = inv(root, fs)
+    tmp.reverse()
+    root = multiply(tmp, f)
+    root[:fs - 1] = []
+    root[N:] = []
+    root[len(root):] = [0] * (N - len(root))
+
+    ans = [0] * s
+
+    def calc(i: int, l: int, r: int, g: list) -> None:
+        if i >= N:
+            ans[i - N] = g[0]
+            return
+        length = len(g)
+        m = l + r >> 1
+        ntt(g)
+        tmp = buf[i << 1 | 1]
+        for j in range(length): tmp[j] = tmp[j] * g[j] % MOD
+        intt(tmp)
+        calc(i << 1, l, m, tmp[length >> 1:])
+        if m >= s: return
+        tmp = buf[i << 1 | 0]
+        for j in range(length): tmp[j] = tmp[j] * g[j] % MOD
+        intt(tmp)
+        calc(i << 1 | 1, m, r, tmp[length >> 1:])
+    calc(1, 0, N, root)
+    return ans
