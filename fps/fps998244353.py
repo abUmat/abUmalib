@@ -29,6 +29,7 @@ def scalar(a: list, k: int) -> list:
     return [x * k % MOD for x in a]
 
 def matmul(a: list, b: list) -> list:
+    'not verified'
     return [x * b[i] % MOD for i, x in enumerate(a)]
 
 def div(a: list, b: list) -> list:
@@ -47,7 +48,7 @@ def div(a: list, b: list) -> list:
     gs = len(g)
     quo = [0] * deg
     for i in range(deg)[::-1]:
-        quo[i] = x = f[i + gs - 1]
+        quo[i] = x = f[i + gs - 1] % MOD
         for j, y in enumerate(g):
             f[i + j] -= x * y
     return scalar(quo, coef) + [0] * cnt
@@ -93,8 +94,9 @@ def power(a: list, k: int, deg=-1) -> list:
     n = len(a)
     if deg == -1: deg = n
     if k == 0:
+        if not deg: return []
         ret = [0] * deg
-        if deg: ret[0] = 1
+        ret[0] = 1
         return ret
     for i, x in enumerate(a):
         if x:
@@ -216,8 +218,7 @@ def taylor_shift(f: list, a: int, C: Binomial):
     g = [0] * n
     g[0] = tmp = 1
     for i in range(1, n): g[i] = tmp = (tmp * a % MOD) * C.inv(i) % MOD
-    res = multiply(res, g)
-    res[n:] = []
+    res = multiply(res, g)[:n]
     res.reverse()
     return [x * C.finv(i) % MOD for i, x in enumerate(res)]
 
@@ -259,4 +260,3 @@ def montmort(N: int, mod: int) -> list:
     f[0] = 0; f[1] = tmp = 1
     for i in range(2, N): f[i] = tmp = (tmp + f[i - 2]) * i % mod
     return f
-
