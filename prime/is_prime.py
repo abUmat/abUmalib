@@ -12,7 +12,7 @@ def is_prime(n):
         t = d
         y = pow(a, t, n)
         while t != n-1 and y != 1 and y != n-1:
-            y = pow(y, 2, n)
+            y = y * y % n
             t <<= 1
         if y != n-1 and not t&1: return 0
     return 1
