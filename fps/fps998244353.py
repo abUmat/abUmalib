@@ -29,7 +29,7 @@ def scalar(a: list, k: int) -> list:
     return [x * k % MOD for x in a]
 
 def matmul(a: list, b: list) -> list:
-    return [x * y % MOD for x, y in zip(a, b)]
+    return [x * b[i] % MOD for i, x in enumerate(a)]
 
 def div(a: list, b: list) -> list:
     if len(a) < len(b): return []
@@ -71,17 +71,17 @@ def inv(a: list, deg: int=-1) -> list:
     d = 1
     while d < deg:
         f = [0] * (d << 1)
-        g = [0] * (d << 1)
         tmp = min(len(a), d << 1)
         f[:tmp] = a[:tmp]
+        g = [0] * (d << 1)
         g[:d] = res[:d]
         ntt(f)
         ntt(g)
-        f = [x * y % MOD for x, y in zip(f, g)]
+        for i, x in enumerate(g): f[i] = f[i] * x % MOD
         intt(f)
         f[:d] = [0] * d
         ntt(f)
-        f = [x * y % MOD for x, y in zip(f, g)]
+        for i, x in enumerate(g): f[i] = f[i] * x % MOD
         intt(f)
         for j in range(d, min(d << 1, deg)):
             if f[j]: res[j] = MOD - f[j]
@@ -102,7 +102,7 @@ def power(a: list, k: int, deg=-1) -> list:
             ret = scalar(exp(scalar(log(scalar(a, rev)[i:], deg),  k), deg), pow(x, k, MOD))
             ret[:0] = [0] * (i * k)
             if len(ret) < deg:
-                ret[len(ret):deg] = [0] * (deg - len(ret))
+                ret[len(ret):] = [0] * (deg - len(ret))
                 return ret
             return ret[:deg]
         if (i + 1) * k >= deg: break
@@ -156,11 +156,11 @@ def exp(a: list, deg=-1) -> list:
         y = b + [0] * m
         ntt(y)
         z1 = z2
-        z = [p * q for p, q in zip(y, z1)]
+        z = [y[i] * p % MOD for i, p in enumerate(z1)]
         intt(z)
         z[:m >> 1] = [0] * (m >> 1)
         ntt(z)
-        z = [-(p * q) % MOD for p, q in zip(z, z1)]
+        for i, p in enumerate(z1): z[i] = z[i] * (-p) % MOD
         intt(z)
         c[m >> 1:] = z[m >> 1:]
         z2 = c + [0] * m
@@ -170,7 +170,7 @@ def exp(a: list, deg=-1) -> list:
         x = inplace_diff(x)
         x.append(0)
         ntt(x)
-        x = [p * q % MOD for p, q in zip(x, y)]
+        for i, p in enumerate(x): x[i] = y[i] * p % MOD
         intt(x)
         for i, p in enumerate(b):
             if not i: continue
@@ -178,17 +178,14 @@ def exp(a: list, deg=-1) -> list:
         x += [0] * m
         for i in range(m - 1): x[m + i], x[i] = x[i], 0
         ntt(x)
-        x = [p * q % MOD for p, q in zip(x, z2)]
+        for i, p in enumerate(z2): x[i] = x[i] * p % MOD
         intt(x)
         x.pop()
         x = inplace_integral(x)
-        for i in range(min(len(a), m << 1)):
-            if i < m: x[i] = 0
-            else:
-                x[i] += a[i]
-                if x[i] >= MOD: x[i] -= MOD
+        x[:m] = [0] * m
+        for i in range(m, min(len(a), m << 1)): x[i] += a[i]
         ntt(x)
-        x = [p * q % MOD for p, q in zip(x, y)]
+        for i, p in enumerate(y): x[i] = x[i] * p % MOD
         intt(x)
         b[m:] = x[m:]
         m <<= 1
@@ -219,7 +216,8 @@ def taylor_shift(f: list, a: int, C: Binomial):
     g = [0] * n
     g[0] = tmp = 1
     for i in range(1, n): g[i] = tmp = (tmp * a % MOD) * C.inv(i) % MOD
-    res = multiply(res, g)[:n]
+    res = multiply(res, g)
+    res[n:] = []
     res.reverse()
     return [x * C.finv(i) % MOD for i, x in enumerate(res)]
 
