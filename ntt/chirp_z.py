@@ -1,8 +1,7 @@
 # my module
 from ntt.arbitrary_ntt import *
 # my module
-def chirp_z(f: list, W: int, N: int=-1, A: int=1) -> list:
-    mod = f.mod
+def chirp_z(mod: int, f: list, W: int, N: int=-1, A: int=1) -> list:
     if N == -1: N = len(f)
     if not f or N == 0: return []
     M = len(f)
@@ -27,10 +26,9 @@ def chirp_z(f: list, W: int, N: int=-1, A: int=1) -> list:
     for i in range(1, max(N, M)):
         iwc[i] = tmp = iws * tmp % mod
         iws = iws * iW % mod
-    f = [x * y % mod for x, y in zip(f, iwc)]
+    for i, x in enumerate(f): f[i] = x * iwc[i] % mod
     f.reverse()
-    ntt = NTT(mod)
-    g = ntt.multiply(f, wc)
+    g = ArbitraryNTT.multiply(f, wc, mod)
     F = [0] * N
     for i, x in enumerate(iwc):
         if i == N: break
