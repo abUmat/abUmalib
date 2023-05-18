@@ -1,3 +1,4 @@
+# https://nyaannyaan.github.io/library/set-function/walsh-hadamard-transform.hpp
 def walsh_hadamard_transform(f, inverse=0, invn=0):
     'destructive'
     n = len(f)
