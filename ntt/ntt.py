@@ -1,4 +1,3 @@
-from typing import List
 # my module
 from gcc_builtins import *
 # my module
@@ -8,8 +7,8 @@ class NTT:
         self.pr = self._get_pr()
         cnt = ctz(MOD - 1)
         self.level = cnt
-        self.dw = [None] * cnt
-        self.dy = [None] * cnt
+        self.dw = [0] * cnt
+        self.dy = [0] * cnt
         self._setwy(cnt)
 
     def _get_pr(self) -> int:
@@ -26,7 +25,6 @@ class NTT:
         if m != 1:
             ds[idx] = m
             idx += 1
-
         pr = 2
         while 1:
             flag = 1
@@ -46,17 +44,17 @@ class NTT:
     def _setwy(self, k: int) -> None:
         mod = self.MOD
         w, y = [None] * self.level, [None] * self.level
-        w[k - 1] = pow(self.pr, (mod - 1) // (1 << k), mod)
-        y[k - 1] = pow(w[k - 1], mod - 2, mod)
+        w[k - 1] = tmpw = pow(self.pr, (mod - 1) // (1 << k), mod)
+        y[k - 1] = tmpy = pow(w[k - 1], mod - 2, mod)
         for i in range(k - 1)[::-1]:
-            w[i] = w[i + 1] * w[i + 1] % mod
-            y[i] = y[i + 1] * y[i + 1] % mod
-        self.dw[1] = w[1]; self.dy[1] = y[1]; self.dw[2] = w[2]; self.dy[2] = y[2]
+            w[i] = tmpw = tmpw * tmpw % mod
+            y[i] = tmpy = tmpy * tmpy % mod
+        self.dw[1] = w[1]; self.dy[1] = y[1]; self.dw[2] = tmpdw = w[2]; self.dy[2] = tmpdy = y[2]
         for i in range(3, k):
-            self.dw[i] = self.dw[i - 1] * y[i - 2] * w[i] % mod
-            self.dy[i] = self.dy[i - 1] * w[i - 2] * y[i] % mod
+            self.dw[i] = tmpdw = (tmpdw * y[i - 2] % mod) * w[i] % mod
+            self.dy[i] = tmpdy = (tmpdy * w[i - 2] % mod) * y[i] % mod
 
-    def _fft4(self, a: List[int], k: int) -> None:
+    def _fft(self, a: list, k: int) -> None:
         mod = self.MOD
         if len(a) <= 1: return
         if k == 1:
@@ -71,94 +69,112 @@ class NTT:
         imag = self.dw[1]
         while v:
             for j0 in range(0, v):
-                j1 = j0 + v; j2 = j1 + v; j3 = j2 + v
-                t0, t1 = a[j0], a[j1]; t2, t3 = a[j2], a[j3]
-                t0p2, t1p3 = t0 + t2, t1 + t3; t0m2, t1m3 = t0 - t2, (t1 - t3) * imag % mod
-                a[j0], a[j1] = t0p2 + t1p3, t0p2 - t1p3; a[j2], a[j3] = t0m2 + t1m3, t0m2 - t1m3
+                t0 = a[j0]
+                t1 = a[j0 + v]
+                t2 = a[j0 + v * 2]
+                t3 = a[j0 + v * 3]
+                t1m3 = (t1 - t3) * imag % mod
+                a[j0] = t0 + t1 + t2 + t3
+                a[j0 + v] = t0 - t1 + t2 - t3
+                a[j0 + v * 2] = t0 - t2 + t1m3
+                a[j0 + v * 3] = t0 - t2 - t1m3
             ww = 1; xx = self.dw[2]; wx = 1
             for jh in range(4, u, 4):
                 ww = xx * xx % mod; wx = ww * xx % mod
-                je = jh * v + v
-                for j0 in range(jh * v, je):
-                    j2 = j0 + v + v
-                    t0, t1 = a[j0], a[j0 + v] * xx % mod; t2, t3 = a[j2] * ww % mod, a[j2 + v] * wx % mod
-                    t0p2, t1p3 = t0 + t2, t1 + t3; t0m2, t1m3 = t0 - t2, (t1 - t3) * imag % mod
-                    a[j0], a[j0 + v] = t0p2 + t1p3, t0p2 - t1p3; a[j2], a[j2 + v] = t0m2 + t1m3, t0m2 - t1m3
+                for j0 in range(jh * v, jh * v + v):
+                    t0 = a[j0]
+                    t1 = a[j0 + v] * xx % mod
+                    t2 = a[j0 + v * 2] * ww % mod
+                    t3 = a[j0 + v * 3] * wx % mod
+                    t1m3 = (t1 - t3) * imag % mod
+                    a[j0] = t0 + t1 + t2 + t3
+                    a[j0 + v] = t0 - t1 + t2 - t3
+                    a[j0 + v * 2] = t0 - t2 + t1m3
+                    a[j0 + v * 3] = t0 - t2 - t1m3
                 xx = xx * self.dw[ctz(jh + 4)] % mod
             u <<= 2
             v >>= 2
-        for i in range(len(a)): a[i] %= mod
+        for i, x in enumerate(a): a[i] = x % mod
 
-    def _ifft(self, a: List[int], k: int) -> None:
+    def _ifft(self, a: list, k: int) -> None:
         mod = self.MOD
         if len(a) <= 1: return
         if k == 1:
-            a[0], a[1] = a[0] + a[1], a[0] - a[1]
-            a[0] %= mod; a[1] %= mod
+            a[0], a[1] = (a[0] + a[1]) % mod, (a[0] - a[1]) % mod
             return
         u = 1 << (k - 2)
         v = 1
         imag = self.dy[1]
         while u:
             for j0 in range(v):
-                j1 = j0 + v; j2 = j1 + v; j3 = j2 + v
-                t0, t1 = a[j0], a[j1]; t2, t3 = a[j2], a[j3]
-                t0p1, t2p3 = t0 + t1, t2 + t3; t0m1, t2m3= t0 - t1, (t2 - t3) * imag % mod
-                a[j0], a[j1] = t0p1 + t2p3, t0m1 + t2m3; a[j2], a[j3] = t0p1 - t2p3, t0m1 - t2m3
+                t0 = a[j0]
+                t1 = a[j0 + v]
+                t2 = a[j0 + v * 2]
+                t3 = a[j0 + v * 3]
+                t2m3 = (t2 - t3) * imag % mod
+                a[j0] = t0 + t1 + t2 + t3
+                a[j0 + v] = t0 - t1 + t2m3
+                a[j0 + v * 2] = t0 + t1 - t2 - t3
+                a[j0 + v * 3] = t0 - t1 - t2m3
             ww = 1; xx = self.dy[2]; yy = 1
             u <<= 2
             for jh in range(4, u, 4):
                 ww = xx * xx % mod; yy = xx * imag % mod
-                je = jh * v + v
-                for j0 in range(jh * v, je):
-                    j2 = j0 + v + v
-                    t0, t1 = a[j0], a[j0 + v]; t2, t3 = a[j2], a[j2 + v]
-                    t0p1, t2p3 = t0 + t1, t2 + t3; t0m1, t2m3 = (t0 - t1) * xx % mod, (t2 - t3) * yy % mod
-                    a[j0], a[j0 + v] = t0p1 + t2p3, t0m1 + t2m3; a[j2], a[j2 + v] = (t0p1 - t2p3) * ww % mod, (t0m1 - t2m3) * ww % mod
+                for j0 in range(jh * v, jh * v + v):
+                    t0 = a[j0]
+                    t1 = a[j0 + v]
+                    t2 = a[j0 + v * 2]
+                    t3 = a[j0 + v * 3]
+                    t0m1 = (t0 - t1) * xx % mod
+                    t2m3 = (t2 - t3) * yy % mod
+                    a[j0] = t0 + t1 + t2 + t3
+                    a[j0 + v] = t0m1 + t2m3
+                    a[j0 + v * 2] = (t0 + t1 - t2 - t3) * ww % mod
+                    a[j0 + v * 3] = (t0m1 - t2m3) * ww % mod
                 xx = xx * self.dy[ctz(jh + 4)] % mod
             u >>= 4
             v <<= 2
         if k & 1:
             u = 1 << (k - 1)
-            for j in range(u): a[j], a[j + u] = a[j] + a[j + u], a[j] - a[j + u]
-        for i in range(len(a)): a[i] %= mod
+            for j in range(u):
+                l, r = a[j], a[j + u]
+                a[j], a[j + u] = l + r, l - r
+        for i, x in enumerate(a): a[i] = x % mod
 
-    def ntt(self, a: List[int]) -> None:
+    def ntt(self, a: list) -> None:
         if len(a) <= 1: return
-        self._fft4(a, ctz(len(a)))
+        self._fft(a, ctz(len(a)))
 
-    def intt(self, a: List[int]) -> None:
+    def intt(self, a: list) -> None:
         if len(a) <= 1: return
         self._ifft(a, ctz(len(a)))
         mod = self.MOD
         iv = pow(len(a), mod - 2, mod)
-        for i in range(len(a)): a[i] = a[i] * iv % mod
+        for i, x in enumerate(a): a[i] = x * iv % mod
 
-    def multiply(self, a: List[int], b: List[int]) -> List[int]:
+    def multiply(self, a: list, b: list) -> list:
         mod = self.MOD
         l = len(a) + len(b) - 1
-        if min(len(a), len(b)) <= 40:
+        if min(len(a), len(b)) <= 60:
             s = [0] * l
             for i, x in enumerate(a):
                 for j, y in enumerate(b):
-                    s[i + j] += x * y % mod #mod取らなくていい説
-            for i in range(l): s[i] %= mod
-            return s
+                    s[i + j] += x * y
+            return [x % mod for x in s]
         k = 2; M = 4
         while M < l: M <<= 1; k += 1
         self._setwy(k)
-        s, t = [0] * M, [0] * M
-        s[:len(a)] = a[::]
-        t[:len(b)] = b[::]
-        self._fft4(s, k)
-        self._fft4(t, k)
+        s = a + [0] * (M - len(a))
+        t = b + [0] * (M - len(b))
+        self._fft(s, k)
+        self._fft(t, k)
         for i, x in enumerate(t): s[i] = s[i] * x % mod
         self._ifft(s, k)
-        s = s[:l]
+        s[l:] = []
         invm = pow(M, mod - 2, mod)
         return [x * invm % mod for x in s]
 
-    def pow2(self, a: List[int]) -> List[int]:
+    def pow2(self, a: list) -> list:
         mod = self.MOD
         l = (len(a) << 1) - 1
         if len(a) <= 40:
@@ -170,16 +186,15 @@ class NTT:
         k = 2; M = 4
         while M < l: M <<= 1; k += 1
         self._setwy(k)
-        s = [0] * M
-        s[:len(a)] = a[::]
-        self._fft4(s, k)
+        s = a + [0] * (M - len(a))
+        self._fft(s, k)
         for i, x in enumerate(s): s[i] = x * x % mod
         self._ifft(s, k)
-        s = s[:l]
+        s[l:] = []
         invm = pow(M, mod - 2, mod)
         return [x * invm % mod for x in s]
 
-    def ntt_doubling(self, a: List[int]) -> None:
+    def ntt_doubling(self, a: list) -> None:
         mod = self.MOD
         M = len(a)
         self.intt(a)
