@@ -7,24 +7,10 @@ _rate3 = (0, 372528824, 337190230, 454590761, 816400692, 578227951, 180142363, 8
 _irate3 = (0, 509520358, 929031873, 170256584, 839780419, 282974284, 395914482, 444904435, 72135471, 638914820, 66769500, 771127074, 985925487, 262319669, 262341272, 625870173, 768022760, 859816005, 914661783, 430819711, 272774365, 530924681, 0)
 
 def _fft(a):
-  n = len(a)
-  h = (n - 1).bit_length()
-  le = 0
-  while le < h:
-    if h - le == 1:
-        p = 1 << (h - le - 1)
-        rot = 1
-        for s in range(1 << le):
-            offset = s << (h - le)
-            for i in range(p):
-                l = a[i + offset]
-                r = a[i + offset + p] * rot
-                a[i + offset] = (l + r) % MOD
-                a[i + offset + p] = (l - r) % MOD
-            rot *= _rate2[(~s & -~s).bit_length()]
-            rot %= MOD
-        le += 1
-    else:
+    n = len(a)
+    h = (n - 1).bit_length()
+    le = 0
+    for le in range(0, h - 1, 2):
         p = 1 << (h - le - 2)
         rot = 1
         for s in range(1 << le):
@@ -41,48 +27,46 @@ def _fft(a):
                 a[i + offset + p] = (a0 + a2 - a1 - a3) % MOD
                 a[i + offset + p * 2] = (a0 - a2 + a1na3imag) % MOD
                 a[i + offset + p * 3] = (a0 - a2 - a1na3imag) % MOD
-            rot *= _rate3[(~s & -~s).bit_length()]
-            rot %= MOD
-        le += 2
+            rot = rot * _rate3[(~s & -~s).bit_length()] % MOD
+    if h - le & 1:
+        rot = 1
+        for s in range(1 << (h - 1)):
+            offset = s << 1
+            l = a[offset]
+            r = a[offset + 1] * rot
+            a[offset] = (l + r) % MOD
+            a[offset + 1] = (l - r) % MOD
+            rot = rot * _rate2[(~s & -~s).bit_length()] % MOD
 
 def _ifft(a):
     n = len(a)
     h = (n - 1).bit_length()
     le = h
-    while le:
-        if le == 1:
-            p = 1 << (h - le)
-            irot = 1
-            for s in range(1 << (le - 1)):
-                offset = s << (h - le + 1)
-                for i in range(p):
-                    l = a[i + offset]
-                    r = a[i + offset + p]
-                    a[i + offset] = (l + r) % MOD
-                    a[i + offset + p] = (l - r) * irot % MOD
-                irot *= _irate2[(~s & -~s).bit_length()]
-                irot %= MOD
-            le -= 1
-        else:
-            p = 1 << (h - le)
-            irot = 1
-            for s in range(1 << (le - 2)):
-                irot2 = irot * irot % MOD
-                irot3 = irot2 * irot % MOD
-                offset = s << (h - le + 2)
-                for i in range(p):
-                    a0 = a[i + offset]
-                    a1 = a[i + offset + p]
-                    a2 = a[i + offset + p * 2]
-                    a3 = a[i + offset + p * 3]
-                    a2na3iimag = (a2 - a3) * _IIMAG % MOD
-                    a[i + offset] = (a0 + a1 + a2 + a3) % MOD
-                    a[i + offset + p] = (a0 - a1 + a2na3iimag) * irot % MOD
-                    a[i + offset + p * 2] = (a0 + a1 - a2 - a3) * irot2 % MOD
-                    a[i + offset + p * 3] = (a0 - a1 - a2na3iimag) * irot3 % MOD
-                irot *= _irate3[(~s & -~s).bit_length()]
-                irot %= MOD
-            le -= 2
+    for le in range(h, 1, -2):
+        p = 1 << (h - le)
+        irot = 1
+        for s in range(1 << (le - 2)):
+            irot2 = irot * irot % MOD
+            irot3 = irot2 * irot % MOD
+            offset = s << (h - le + 2)
+            for i in range(p):
+                a0 = a[i + offset]
+                a1 = a[i + offset + p]
+                a2 = a[i + offset + p * 2]
+                a3 = a[i + offset + p * 3]
+                a2na3iimag = (a2 - a3) * _IIMAG % MOD
+                a[i + offset] = (a0 + a1 + a2 + a3) % MOD
+                a[i + offset + p] = (a0 - a1 + a2na3iimag) * irot % MOD
+                a[i + offset + p * 2] = (a0 + a1 - a2 - a3) * irot2 % MOD
+                a[i + offset + p * 3] = (a0 - a1 - a2na3iimag) * irot3 % MOD
+            irot = irot * _irate3[(~s & -~s).bit_length()] % MOD
+    if le & 1:
+        p = 1 << (h - 1)
+        for i in range(p):
+            l = a[i]
+            r = a[i + p]
+            a[i] = l + r if l + r < MOD else l + r - MOD
+            a[i + p] = l - r if l - r >= 0 else l - r + MOD
 
 def ntt(a) -> None:
     if len(a) <= 1: return
@@ -96,23 +80,48 @@ def intt(a) -> None:
 
 def multiply(s: list, t: list) -> list:
     n, m = len(s), len(t)
-    l = len(s) + len(t) - 1
-    if min(len(s), len(t)) <= 60:
-        a = [0] * (n + m - 1)
+    l = n + m - 1
+    if min(n, m) <= 60:
+        a = [0] * l
         for i, x in enumerate(s):
             for j, y in enumerate(t):
                 a[i + j] += x * y
-        for i in range(l): a[i] %= MOD
-        return a
-    a = s[::]
-    b = t[::]
-    z = 1 << (n + m - 2).bit_length()
-    a += [0] * (z - n)
-    b += [0] * (z - m)
+        return [x % MOD for x in a]
+    z = 1 << (l - 1).bit_length()
+    a = s + [0] * (z - n)
+    b = t + [0] * (z - m)
     _fft(a)
     _fft(b)
-    a = [x * y % MOD for x, y in zip(a, b)]
+    for i, x in enumerate(b): a[i] = a[i] * x % MOD
     _ifft(a)
-    a[n + m - 1:] = []
+    a[l:] = []
     iz = pow(z, MOD - 2, MOD)
     return [x * iz % MOD for x in a]
+
+def pow2(a: list) -> list:
+        l = (len(a) << 1) - 1
+        if len(a) <= 60:
+            s = [0] * l
+            for i, x in enumerate(a):
+                for j, y in enumerate(a):
+                    s[i + j] += x * y
+            return [x % MOD for x in s]
+        k = 2; M = 4
+        while M < l: M <<= 1; k += 1
+        s = a + [0] * (M - len(a))
+        _fft(s, k)
+        s = [x * x % MOD for x in s]
+        _ifft(s, k)
+        s[l:] = []
+        invm = pow(M, MOD - 2, MOD)
+        return [x * invm % MOD for x in s]
+
+def ntt_doubling(a: list) -> None:
+    M = len(a)
+    intt(a)
+    r = 1
+    zeta = pow(3, (MOD - 1) // (M << 1), MOD)
+    for i, x in enumerate(a):
+        a[i] = x * r % MOD
+        r = r * zeta % MOD
+    ntt(a)
