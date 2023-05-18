@@ -2,9 +2,9 @@ from collections import deque, defaultdict
 import sys
 
 if __name__ == '__main__':
-    q = deque(['main.py'])
+    q = deque([sys.argv[1] + '.py'])
     G = defaultdict(set)
-    G['main.py'] = set()
+    G[sys.argv[1] + '.py'] = set()
     deg = defaultdict(int)
     while q:
         file = q.popleft()
@@ -42,6 +42,6 @@ if __name__ == '__main__':
                 q.append(ff)
         res.append('\n')
 
-    output_file = sys.argv[1] + '.py'
+    output_file = sys.argv[2] + '.py'
     with open(output_file, mode='w') as f:
         f.writelines(res)
