@@ -80,14 +80,14 @@ def exp(self: FormalPowerSeries, deg=-1) -> FormalPowerSeries:
     ntt = NTT(mod)
     inv = [0, 1]
 
-    def inplace_integral(F: List[int]) -> List[int]:
+    def inplace_integral(F: list) -> list:
         n = len(F)
         while len(inv) <= n:
             j, k = divmod(mod, len(inv))
             inv.append((-inv[k] * j) % mod)
         return [0] + [x * inv[i + 1] % mod for i, x in enumerate(F)]
 
-    def inplace_diff(F: List[int]) -> List[int]:
+    def inplace_diff(F: list) -> list:
         return [x * i % mod for i, x in enumerate(F) if i]
 
     b = [1, (self[1] if 1 < len(self) else 0)]

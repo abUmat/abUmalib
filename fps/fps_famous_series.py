@@ -42,7 +42,7 @@ def partition(N: int, C: Binomial) -> FormalPowerSeries:
     res = FormalPowerSeries(res); res.mod = mod
     return res.inv()
 
-def montmort(N: int, mod: int) -> List[int]:
+def montmort(N: int, mod: int) -> list:
     if N <= 1: return [0]
     if N == 2: return [0, 1]
     f = [0] * N
