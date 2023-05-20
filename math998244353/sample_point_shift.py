@@ -1,5 +1,4 @@
 # my module
-from modulo.binomial import *
 from math998244353.ntt import *
 # my module
 # https://nyaannyaan.github.io/library/fps/sample-point-shift.hpp
