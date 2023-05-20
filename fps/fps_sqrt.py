@@ -1,37 +1,28 @@
 # my module
-from fps.formal_power_series import *
+from fps.fps import *
 from modulo.mod_sqrt import *
 # my module
-def sqrt(f: FormalPowerSeries, deg: int=-1) -> FormalPowerSeries:
-    mod = f.mod
-    if deg == -1: deg = len(f)
-    if len(f) == 0:
-        ret = FormalPowerSeries([0] * deg); ret.mod = mod
-        return ret
-    if f[0] == 0:
-        for i in range(1, len(f)):
-            if f[i] != 0:
-                if i & 1:
-                    ret = FormalPowerSeries(); ret.mod = mod
-                    return ret
+def fps_sqrt(a: list, mod: int, deg: int=-1) -> list:
+    if deg == -1: deg = len(a)
+    if len(a) == 0: return [0] * deg
+    if a[0] == 0:
+        for i in range(1, len(a)):
+            if a[i] != 0:
+                if i & 1: return []
                 if deg - i // 2 <= 0: break
-                ret = sqrt(f[i:], deg - i // 2)
-                if not ret:
-                    ret = FormalPowerSeries(); ret.mod = mod
-                    return ret
-                ret <<= i // 2
-                if len(ret) < deg: ret = ret.resized(deg)
+                ret = fps_sqrt(a[i:], mod, deg - i // 2)
+                if not ret: return []
+                ret[:0] = [0] * (i >> 1)
+                FPS.resize(ret, deg)
                 return ret
-        ret = FormalPowerSeries([0] * deg); ret.mod = mod
-        return ret
-    sqr = mod_sqrt(f[0], mod)
-    if sqr == -1:
-        ret = FormalPowerSeries(); ret.mod = mod
-        return ret
-    ret = FormalPowerSeries([sqr]); ret.mod = mod
+        return [0] * deg
+    sqr = mod_sqrt(a[0], mod)
+    if sqr == -1: return []
+    ret = [sqr]
     inv2 = pow(2, mod - 2, mod)
     i = 1
+    fps = FPS(mod)
     while i < deg:
-        ret = (ret + f[:i << 1] * ret.inv(i << 1)) * inv2
         i <<= 1
+        ret = fps.mul(fps.add(ret, fps.mul(a[:i], fps.inv(ret, i))), inv2)
     return ret[:deg]
