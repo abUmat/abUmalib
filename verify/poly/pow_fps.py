@@ -5,4 +5,4 @@ from math998244353.fps import *
 # my module
 N, M = rd(), rd()
 A = rdl(N)
-wtnl(fps_pow(A, M))
+wtnl(FPS.pow(A, M))

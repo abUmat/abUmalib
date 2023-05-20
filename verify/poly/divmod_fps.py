@@ -6,7 +6,7 @@ from math998244353.fps import *
 N, M = rd(), rd()
 A = rdl(N)
 B = rdl(M)
-q, r = fps_divmod(A, B)
+q, r = FPS.divmod(A, B)
 wt(len(q)); wt(' '); wtn(len(r))
 wtnl(q)
 wtnl(r)

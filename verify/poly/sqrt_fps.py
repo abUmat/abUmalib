@@ -5,5 +5,5 @@ from math998244353.fps_sqrt import *
 # my module
 N = rd()
 A = rdl(N)
-ans = sqrt(A)
+ans = fps_sqrt(A)
 wtnl(ans) if ans else wtn(-1)

@@ -5,4 +5,4 @@ from math998244353.fps import *
 # my module
 N = rd()
 A = rdl(N)
-wtnl(fps_log(A))
+wtnl(FPS.log(A))

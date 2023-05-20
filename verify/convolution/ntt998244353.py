@@ -6,4 +6,4 @@ from math998244353.ntt import *
 N, M = rd(), rd()
 A = rdl(N)
 B = rdl(M)
-wtnl(multiply(A, B))
+wtnl(NTT.multiply(A, B))
