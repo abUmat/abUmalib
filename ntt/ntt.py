@@ -2,17 +2,17 @@
 from gcc_builtins import *
 # my module
 class NTT:
-    def __init__(self, MOD: int) -> None:
-        self.MOD = MOD
+    def __init__(self, mod: int) -> None:
+        self.mod = mod
         self.pr = self._get_pr()
-        cnt = ctz(MOD - 1)
+        cnt = ctz(mod - 1)
         self.level = cnt
         self.dw = [0] * cnt
         self.dy = [0] * cnt
         self._setwy(cnt)
 
     def _get_pr(self) -> int:
-        mod = self.MOD
+        mod = self.mod
         ds = [0] * 32
         idx = 0
         m = mod - 1
@@ -42,7 +42,7 @@ class NTT:
         return pr
 
     def _setwy(self, k: int) -> None:
-        mod = self.MOD
+        mod = self.mod
         w, y = [None] * self.level, [None] * self.level
         w[k - 1] = tmpw = pow(self.pr, (mod - 1) // (1 << k), mod)
         y[k - 1] = tmpy = pow(w[k - 1], mod - 2, mod)
@@ -55,7 +55,7 @@ class NTT:
             self.dy[i] = tmpdy = (tmpdy * w[i - 2] % mod) * y[i] % mod
 
     def _fft(self, a: list, k: int) -> None:
-        mod = self.MOD
+        mod = self.mod
         if len(a) <= 1: return
         if k == 1:
             a[0], a[1] = a[0] + a[1], a[0] - a[1]
@@ -97,7 +97,7 @@ class NTT:
         for i, x in enumerate(a): a[i] = x % mod
 
     def _ifft(self, a: list, k: int) -> None:
-        mod = self.MOD
+        mod = self.mod
         if len(a) <= 1: return
         if k == 1:
             a[0], a[1] = (a[0] + a[1]) % mod, (a[0] - a[1]) % mod
@@ -148,12 +148,12 @@ class NTT:
     def intt(self, a: list) -> None:
         if len(a) <= 1: return
         self._ifft(a, ctz(len(a)))
-        mod = self.MOD
+        mod = self.mod
         iv = pow(len(a), mod - 2, mod)
         for i, x in enumerate(a): a[i] = x * iv % mod
 
     def multiply(self, a: list, b: list) -> list:
-        mod = self.MOD
+        mod = self.mod
         l = len(a) + len(b) - 1
         if min(len(a), len(b)) <= 60:
             s = [0] * l
@@ -175,7 +175,7 @@ class NTT:
         return [x * invm % mod for x in s]
 
     def pow2(self, a: list) -> list:
-        mod = self.MOD
+        mod = self.mod
         l = (len(a) << 1) - 1
         if len(a) <= 40:
             s = [0] * l
@@ -195,7 +195,7 @@ class NTT:
         return [x * invm % mod for x in s]
 
     def ntt_doubling(self, a: list) -> None:
-        mod = self.MOD
+        mod = self.mod
         M = len(a)
         b = a[:]
         self.intt(b)
