@@ -2,6 +2,7 @@
 from math998244353.ntt import *
 # my module
 # https://nyaannyaan.github.io/library/fps/formal-power-series.hpp
+# https://nyaannyaan.github.io/library/fps/ntt-friendly-fps.hpp
 class FPS:
     @staticmethod
     def shrink(a: list) -> None:
@@ -41,7 +42,9 @@ class FPS:
     @staticmethod
     def mul(l: list, r) -> list:
         if type(r) is int: return [x * r % MOD for x in l]
-        if type(r) is list: return NTT.multiply(l, r)
+        if type(r) is list:
+            if not l or not r: return []
+            return NTT.multiply(l, r)
         raise TypeError()
 
     @staticmethod
@@ -73,7 +76,7 @@ class FPS:
 
     @classmethod
     def mod(cls, l: list, r: list) -> list:
-        res = cls.sub(l, NTT.multiply(cls.div(l, r),  r))
+        res = cls.sub(l, NTT.multiply(cls.div(l, r), r))
         cls.shrink(res)
         return res
 

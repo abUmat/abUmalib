@@ -1,6 +1,7 @@
 # my module
 from math998244353.fps import *
 # my module
+# https://nyaannyaan.github.io/library/fps/polynomial-gcd.hpp
 class Mat:
     def __init__(self, a00: list, a01: list, a10: list, a11: list) -> None:
         self.arr = [a00, a01, a10, a11]

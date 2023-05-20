@@ -1,6 +1,6 @@
 # my module
 from modulo.binomial import *
-from math998244353.fps import *
+from math998244353.ntt import *
 # my module
 # https://nyaannyaan.github.io/library/fps/sample-point-shift.hpp
 def sample_point_shift(y: list, t: int, m: int=-1) -> list:
