@@ -20,18 +20,18 @@ def multipoint_evaluation_fast(f: list, xs: list) -> list:
         for j in range(n):
             buf[i][j] = g[j] * h[j] % MOD - 1
         if i != 1:
-            ntt_doubling(buf[i])
+            NTT.ntt_doubling(buf[i])
             buf[i][len(buf[i]):] = [0] * (m - len(buf[i]))
             for j in range(m):
                 buf[i][j] += 1 if j < n else -1
     fs = len(f)
     root = buf[1]
-    intt(root)
+    NTT.intt(root)
     root.append(1)
     root.reverse()
-    tmp = fps_inv(root, fs)
+    tmp = FPS.inv(root, fs)
     tmp.reverse()
-    root = multiply(tmp, f)
+    root = NTT.multiply(tmp, f)
     root[:fs - 1] = []
     root[N:] = []
     root[len(root):] = [0] * (N - len(root))
@@ -44,15 +44,15 @@ def multipoint_evaluation_fast(f: list, xs: list) -> list:
             return
         length = len(g)
         m = l + r >> 1
-        ntt(g)
+        NTT.ntt(g)
         tmp = buf[i << 1 | 1]
         for j in range(length): tmp[j] = tmp[j] * g[j] % MOD
-        intt(tmp)
+        NTT.intt(tmp)
         calc(i << 1, l, m, tmp[length >> 1:])
         if m >= s: return
         tmp = buf[i << 1 | 0]
         for j in range(length): tmp[j] = tmp[j] * g[j] % MOD
-        intt(tmp)
+        NTT.intt(tmp)
         calc(i << 1 | 1, m, r, tmp[length >> 1:])
     calc(1, 0, N, root)
     return ans

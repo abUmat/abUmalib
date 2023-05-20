@@ -29,7 +29,7 @@ def chirp_z(f: list, W: int, N: int=-1, A: int=1) -> list:
         iws = iws * iW % MOD
     for i, x in enumerate(f): f[i] = x * iwc[i] % MOD
     f.reverse()
-    g = multiply(f, wc)
+    g = NTT.multiply(f, wc)
     F = [0] * N
     for i, x in enumerate(iwc):
         if i == N: break

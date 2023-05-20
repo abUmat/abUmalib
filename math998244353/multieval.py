@@ -27,28 +27,28 @@ class ProductTree:
                 continue
             if len(buf[i << 1 | 0]) == len(buf[i << 1 | 1]):
                 buf[i] = buf[i << 1 | 0][::]
-                ntt_doubling(buf[i])
+                NTT.ntt_doubling(buf[i])
                 f = buf[i << 1 | 1][::]
-                ntt_doubling(f)
+                NTT.ntt_doubling(f)
             else:
                 buf[i] = buf[i << 1 | 0][::]
-                ntt_doubling(buf[i])
+                NTT.ntt_doubling(buf[i])
                 f = buf[i << 1 | 1][::]
-                intt(f)
+                NTT.intt(f)
                 f[len(buf[i]):] = []; f[len(f):] = [0] * (len(buf[i]) - len(f))
-                ntt(f)
+                NTT.ntt(f)
             for j in range(len(buf[i])): buf[i][j] = buf[i][j] * f[j] % MOD
         for i in range(N << 1):
-            intt(buf[i])
-            while buf[i] and not buf[i][-1]: buf[i].pop()
+            NTT.intt(buf[i])
+            FPS.shrink(buf[i])
 
 def inner_multipoint_evaluation(f: list, xs: list, ptree: ProductTree):
     ret = []
     def rec(a: list, idx: int) -> None:
         if ptree.l[idx] == ptree.r[idx]: return
-        a = fps_mod(a, ptree.buf[idx])
+        a = FPS.mod(a, ptree.buf[idx])
         if len(a) <= 64:
-            for i in range(ptree.l[idx], ptree.r[idx]): ret.append(fps_eval(a, xs[i]))
+            for i in range(ptree.l[idx], ptree.r[idx]): ret.append(FPS.eval(a, xs[i]))
             return
         rec(a, idx << 1 | 0)
         rec(a, idx << 1 | 1)

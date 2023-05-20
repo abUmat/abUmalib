@@ -39,7 +39,7 @@ def sample_point_shift(y: list, t: int, m: int=-1) -> list:
     h = [0] * (m + k)
     for i in range(m + k): h[i] = pow(T - k + i, MOD - 2, MOD)
 
-    dh = multiply(d, h)
+    dh = NTT.multiply(d, h)
 
     ret = [0] * m
     cur = T

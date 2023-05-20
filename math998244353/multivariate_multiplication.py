@@ -18,7 +18,7 @@ def multivariate_multiplication(f: list, g: list, base: list) -> list:
     for i, j in enumerate(chi):
         F[j][i] = f[i]
         G[j][i] = g[i]
-    for i in range(s): ntt(F[i]); ntt(G[i])
+    for i in range(s): NTT.ntt(F[i]); NTT.ntt(G[i])
     for k in range(W):
         a = [0] * s
         for i, f in enumerate(F):
@@ -27,5 +27,5 @@ def multivariate_multiplication(f: list, g: list, base: list) -> list:
                 a[i + j - (s if i + j >= s else 0)] += tmp * g[k] % MOD
         for i, f in enumerate(F):
             f[k] = a[i] % MOD
-    for f in F: intt(f)
+    for f in F: NTT.intt(f)
     return [F[j][i] for i, j in enumerate(chi)]

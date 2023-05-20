@@ -10,6 +10,6 @@ def taylor_shift(f: list, a: int, C: Binomial):
     g = [0] * n
     g[0] = tmp = 1
     for i in range(1, n): g[i] = tmp = (tmp * a % MOD) * C.inv(i) % MOD
-    res = multiply(res, g)[:n]
+    res = NTT.multiply(res, g)[:n]
     res.reverse()
     return [x * C.finv(i) % MOD for i, x in enumerate(res)]

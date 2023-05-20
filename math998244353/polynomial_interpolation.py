@@ -5,7 +5,7 @@ from math998244353.multieval import *
 def polynomial_interpolation(xs: list, ys: list) -> list:
     assert(len(xs) == len(ys))
     ptree = ProductTree(xs)
-    w = fps_diff(ptree.buf[1])
+    w = FPS.diff(ptree.buf[1])
     vs = inner_multipoint_evaluation(w, xs, ptree)
     def rec(idx: int) -> list:
         if idx >= ptree.N:
@@ -15,5 +15,5 @@ def polynomial_interpolation(xs: list, ys: list) -> list:
                 return [1]
         if not ptree.buf[idx << 1 | 0]: return []
         if not ptree.buf[idx << 1 | 1]: return rec(idx << 1 | 0)
-        return fps_add(multiply(rec(idx << 1 | 0), ptree.buf[idx << 1 | 1]), multiply(rec(idx << 1 | 1), ptree.buf[idx << 1 | 0]))
+        return FPS.add(NTT.multiply(rec(idx << 1 | 0), ptree.buf[idx << 1 | 1]), NTT.multiply(rec(idx << 1 | 1), ptree.buf[idx << 1 | 0]))
     return rec(1)
