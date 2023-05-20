@@ -2,62 +2,50 @@
 from ntt.ntt import *
 # my module
 class ArbitraryNTT: # namespace
-    __m0 = 0xa000001 # 167772161
-    __m1 = 0x1c000001 # 469762049
-    __m2 = 0x2d000001 # 754974721
-    __r01 = pow(__m0, __m1 - 2, __m1)
-    __r02 = pow(__m0, __m2 - 2, __m2)
-    __r12 = pow(__m1, __m2 - 2, __m2)
-    __r02r12 = __r02 * __r12 % __m2
-    __w1 = __m0
-    __w2 = __m0 * __m1
-
-    @staticmethod
-    def mul(a: list, b: list, mod: int) -> list:
-        ntt = NTT(mod)
-        s, t = [0] * len(a), [0] * len(b)
-        for i, x in enumerate(a): s[i] = x % mod
-        for i, x in enumerate(b): t[i] = x % mod
-        return ntt.multiply(s, t)
-
-    @staticmethod
-    def square(a: list, mod: int=0) -> list:
-        ntt = NTT(mod)
-        s = [x % mod for x in a]
-        return ntt.pow2(s)
+    _m0 = 0xa000001 # 167772161
+    _m1 = 0x1c000001 # 469762049
+    _m2 = 0x2d000001 # 754974721
+    _r01 = pow(_m0, _m1 - 2, _m1)
+    _r02 = pow(_m0, _m2 - 2, _m2)
+    _r12 = pow(_m1, _m2 - 2, _m2)
+    _r02r12 = _r02 * _r12 % _m2
+    _w1 = _m0
+    _w2 = _m0 * _m1
+    _nttm0 = NTT(_m0)
+    _nttm1 = NTT(_m1)
+    _nttm2 = NTT(_m2)
 
     @classmethod
     def _multiply(cls, s: list, t: list, mod: int=0) -> list:
-        d0 = cls.mul(s, t, cls.__m0)
-        d1 = cls.mul(s, t, cls.__m1)
-        d2 = cls.mul(s, t, cls.__m2)
+        d0 = cls._nttm0.multiply(s, t)
+        d1 = cls._nttm1.multiply(s, t)
+        d2 = cls._nttm2.multiply(s, t)
         n = len(d0)
         ret = [0] * n
-        if mod: W1, W2 = cls.__w1 % mod, cls.__w2 % mod
-        else: W1, W2 = cls.__w1, cls.__w2
+        if mod: W1, W2 = cls._w1 % mod, cls._w2 % mod
+        else: W1, W2 = cls._w1, cls._w2
         for i in range(n):
             n1, n2, a = d1[i], d2[i], d0[i]
-            b = (n1 + cls.__m1 - a) * cls.__r01 % cls.__m1
-            c = ((n2 + cls.__m2 - a) * cls.__r02r12 + (cls.__m2 - b) * cls.__r12) % cls.__m2
-            ret[i] = a + b * W1 + c * W2
-        return [x % mod for x in ret] if mod else ret
+            b = (n1 - a) * cls._r01 % cls._m1
+            c = ((n2 - a) * cls._r02r12 - b * cls._r12) % cls._m2
+            ret[i] = (a + b * W1 + c * W2) % mod if mod else a + b * W1 + c * W2
+        return ret
 
     @classmethod
     def _pow2(cls, s: list, mod: int=0) -> list:
-        d0 = cls.square(s, cls.__m0)
-        d1 = cls.square(s, cls.__m1)
-        d2 = cls.square(s, cls.__m2)
+        d0 = cls._nttm0.pow2(s)
+        d1 = cls._nttm1.pow2(s)
+        d2 = cls._nttm2.pow2(s)
         n = len(d0)
         ret = [0] * n
-        if mod: W1, W2 = cls.__w1 % mod, cls.__w2 % mod
-        else: W1, W2 = cls.__w1, cls.__w2
+        if mod: W1, W2 = cls._w1 % mod, cls._w2 % mod
+        else: W1, W2 = cls._w1, cls._w2
         for i in range(n):
             n1, n2, a = d1[i], d2[i], d0[i]
-            b = (n1 + cls.__m1 - a) * cls.__r01 % cls.__m1
-            c = ((n2 + cls.__m2 - a) * cls.__r02r12 + (cls.__m2 - b) * cls.__r12) % cls.__m2
-            ret[i] = a + b * W1 + c * W2
-        return [x % mod for x in ret] if mod else ret
-
+            b = (n1 - a) * cls._r01 % cls._m1
+            c = ((n2 - a) * cls._r02r12 - b * cls._r12) % cls._m2
+            ret[i] = (a + b * W1 + c * W2) % mod if mod else a + b * W1 + c * W2
+        return ret
 
     @classmethod
     def multiply(cls, a: list, b: list, mod: int=0) -> list:
@@ -71,12 +59,12 @@ class ArbitraryNTT: # namespace
         return cls._multiply(a, b, mod)
 
     @classmethod
-    def pow2(cls, s: list, mod: int=0) -> list:
-        if not s: return []
-        if len(s) < 128:
-            ret = [0] * ((len(s) << 1) - 1)
-            for i, x in enumerate(s):
-                for j, y in enumerate(s):
+    def pow2(cls, a: list, mod: int=0) -> list:
+        if not a: return []
+        if len(a) < 128:
+            ret = [0] * ((len(a) << 1) - 1)
+            for i, x in enumerate(a):
+                for j, y in enumerate(a):
                     ret[i + j] += x * y
             return [x % mod for x in ret] if mod else ret
-        return cls._pow2(s, mod)
+        return cls._pow2(a, mod)
