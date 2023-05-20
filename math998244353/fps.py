@@ -53,10 +53,10 @@ class FPS:
     def div(cls, l: list, r: list) -> list:
         if len(l) < len(r): return []
         n = len(l) - len(r) + 1
-        cnt = 0
         if len(r) > 64:
             return NTT.multiply(l[::-1][:n], cls.inv(r[::-1], n))[:n][::-1]
         f, g = l[::], r[::]
+        cnt = 0
         while g and not g[-1]:
             g.pop()
             cnt += 1
