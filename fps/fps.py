@@ -128,6 +128,9 @@ class FPS:
     def mul(self, l: list, r) -> list:
         raise AttributeError("type object 'FPS' has no attribute 'mul'")
 
+    def mul2(self, l: list) -> list:
+        raise AttributeError("type object 'FPS' has no attribute 'mul2'")
+
     def inv(self, a: list, deg: int=-1) -> list:
         raise AttributeError("type object 'FPS' has no attribute 'inv'")
 
