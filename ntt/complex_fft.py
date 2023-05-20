@@ -3,8 +3,8 @@
 # maybe https://nyaannyaan.github.io/library/ntt/complex-fft.hpp
 from math import pi, sin, cos
 class CooleyTukey:
-    wr = [0] * (1 << 19)
-    wi = [0] * (1 << 19)
+    wr = [0] * (1 << 20)
+    wi = [0] * (1 << 20)
     baser = [0] * 20
     basei = [0] * 20
 
