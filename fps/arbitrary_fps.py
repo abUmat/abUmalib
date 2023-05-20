@@ -1,21 +1,22 @@
 # my module
-from ntt.arbitrary_ntt import *
+from ntt.complex_fft import *
 from fps.fps import *
 # my module
-# TLEするので高速化が必要です
+# arbitrary_nttだとTLEするのでCooleyTukeyを使う
+# 2倍くらい速いっぽい
 # https://nyaannyaan.github.io/library/fps/arbitrary-fps.hpp
 def mul(self: FPS, l: list, r) -> list:
     mod = self.mod
     if type(r) is int: return [x * r % mod for x in l]
     if type(r) is list:
         if not l or not r: return []
-        return ArbitraryNTT.multiply(l, r, mod)
+        return CooleyTukey().karatsuba(l, r, mod)
     raise TypeError()
 FPS.mul = mul
 
 def mul2(self: FPS, l: list) -> list:
     mod = self.mod
-    return ArbitraryNTT.pow2(l, mod)
+    return CooleyTukey().karatsuba_pow2(l, mod)
 FPS.mul2 = mul2
 
 def inv(self: FPS, a: list, deg: int=-1):

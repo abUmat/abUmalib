@@ -14,10 +14,11 @@ class ProductTree:
         self.l = [xsz] * (N << 1)
         self.r = [xsz] * (N << 1)
         ntt = FPS(mod).ntt
-        if not ntt: self.build()
+        if not ntt: self.build(mod)
         else: self.build_ntt(ntt)
 
-    def build(self) -> None:
+    def build(self, mod: int) -> None:
+        fps = FPS(mod)
         xsz, N = self.xsz, self.N
         xs, l, r, buf = self.xs, self.l, self.r, self.buf
         for i in range(xsz):
@@ -31,7 +32,7 @@ class ProductTree:
             if not buf[i << 1 | 1]:
                 buf[i] = buf[i << 1 | 0][::]
                 continue
-            buf[i] = buf[i << 1 | 0] * buf[i << 1 | 1]
+            buf[i] = fps.mul(buf[i << 1 | 0], buf[i << 1 | 1])
 
     def build_ntt(self, ntt) -> None:
         mod, xsz, N = self.mod, self.xsz, self.N
