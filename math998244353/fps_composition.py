@@ -14,8 +14,7 @@ def composition(P: list, Q: list, C: Binomial, deg: int=-1) -> list:
         return R
     if N == 1: return FPS.eval(Q, P[0])
 
-    P[N:] = []; P[len(P):] = [0] * (N - len(P))
-    Q[N:] = []; Q[len(Q):] = [0] * (N - len(Q))
+    FPS.resize(P, N); FPS.resize(Q, N)
     M = int(max(1, (N / log2(N)) ** 0.5))
     L = (N + M - 1) // M
     Pm = P[:M]
@@ -50,7 +49,7 @@ def composition(P: list, Q: list, C: Binomial, deg: int=-1) -> list:
         if d >= N: break
         pw_Pr = NTT.multiply(pw_Pr, Pr)[:N - d]
         if dPm:
-            idPm[N - d:] = []; idPm[len(idPm):] = [0] * (N - d - len(idPm))
+            idPm[N - d:] = []
             QPm = NTT.multiply(FPS.diff(QPm)[deg_dPm:], idPm)[:N - d]
             tmp = FPS.mul(NTT.multiply(QPm, pw_Pr)[:N - d], C.finv(l))
         else:
@@ -58,5 +57,5 @@ def composition(P: list, Q: list, C: Binomial, deg: int=-1) -> list:
         tmp[:0] = [0] * d
         R = FPS.add(R, tmp)
         d += M
-    R[N:] = []; R[len(R):] = [0] * (N - len(R))
+    FPS.resize(R, N)
     return R

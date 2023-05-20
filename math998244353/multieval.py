@@ -35,7 +35,7 @@ class ProductTree:
                 NTT.ntt_doubling(buf[i])
                 f = buf[i << 1 | 1][::]
                 NTT.intt(f)
-                f[len(buf[i]):] = []; f[len(f):] = [0] * (len(buf[i]) - len(f))
+                FPS.resize(f, len(buf[i]))
                 NTT.ntt(f)
             for j in range(len(buf[i])): buf[i][j] = buf[i][j] * f[j] % MOD
         for i in range(N << 1):

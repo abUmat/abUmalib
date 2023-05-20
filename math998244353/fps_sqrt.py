@@ -14,7 +14,7 @@ def fps_sqrt(a: list, deg=-1) -> list:
                 ret = fps_sqrt(a[i:], deg - i // 2)
                 if not ret: return []
                 ret[:0] = [0] * (i >> 1)
-                if len(ret) < deg: ret[len(ret):] = [0] * (deg - len(ret))
+                FPS.resize(ret, deg)
                 return ret
         return [0] * deg
     sqr = mod_sqrt(a[0], MOD)

@@ -8,10 +8,15 @@ class FPS:
         while a and not a[-1]: a.pop()
 
     @staticmethod
+    def resize(a: list, length: int, val: int=0) -> None:
+        a[length:] = []
+        a[len(a):] = [val] * (length - len(a))
+
+    @staticmethod
     def add(l: list, r) -> list:
         if type(r) is int:
             res = l[:]
-            res[0] = (res[0] + l) % MOD
+            res[0] = (res[0] + r) % MOD
             return res
         if type(r) is list:
             if len(l) < len(r):
@@ -69,7 +74,7 @@ class FPS:
     @classmethod
     def mod(cls, l: list, r: list) -> list:
         res = cls.sub(l, NTT.multiply(cls.div(l, r),  r))
-        while res and not res[-1]: res.pop()
+        cls.shrink(res)
         return res
 
     @classmethod
@@ -129,7 +134,7 @@ class FPS:
                 ret = cls.mul(cls.exp(cls.mul(cls.log(cls.mul(a, rev)[i:], deg),  k), deg), pow(x, k, MOD))
                 ret[:0] = [0] * (i * k)
                 if len(ret) < deg:
-                    ret[len(ret):] = [0] * (deg - len(ret))
+                    cls.resize(ret, deg)
                     return ret
                 return ret[:deg]
             if (i + 1) * k >= deg: break
