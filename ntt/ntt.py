@@ -1,6 +1,7 @@
 # my module
 from gcc_builtins import *
 # my module
+# https://nyaannyaan.github.io/library/ntt/ntt.hpp
 class NTT:
     def __init__(self, mod: int) -> None:
         self.mod = mod

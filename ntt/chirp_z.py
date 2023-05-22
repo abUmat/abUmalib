@@ -1,6 +1,7 @@
 # my module
 from ntt.arbitrary_ntt import *
 # my module
+# https://nyaannyaan.github.io/library/ntt/chirp-z.hpp
 def chirp_z(mod: int, f: list, W: int, N: int=-1, A: int=1) -> list:
     if N == -1: N = len(f)
     if not f or N == 0: return []

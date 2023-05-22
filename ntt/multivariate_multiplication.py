@@ -1,7 +1,7 @@
-# https://nyaannyaan.github.io/library/ntt/multivariate-multiplication.hpp
 # my module
 from ntt.ntt import *
 # my module
+# https://nyaannyaan.github.io/library/ntt/multivariate-multiplication.hpp
 def multivariate_multiplication(f: list, g: list, base: list, mod: int) -> list:
     '''ntt friendly only'''
     n = len(f); s = len(base); W = 1

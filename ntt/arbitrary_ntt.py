@@ -1,6 +1,7 @@
 # my module
 from ntt.ntt import *
 # my module
+# https://nyaannyaan.github.io/library/ntt/arbitrary-ntt.hpp
 class ArbitraryNTT: # namespace
     _m0 = 0xa000001 # 167772161
     _m1 = 0x1c000001 # 469762049
