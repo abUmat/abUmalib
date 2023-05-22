@@ -1,4 +1,3 @@
-from typing import List
 class UnionFind():
     def __init__(self, n: int) -> None:
         self.n = n
@@ -13,11 +12,11 @@ class UnionFind():
             y = x
         return x
 
-    def union(self, x: int, y: int) -> bool:
+    def union(self, x: int, y: int) -> int:
         'False if same(x, y), else True'
         x = self.leader(x)
         y = self.leader(y)
-        if x == y: return False
+        if x == y: return 0
         px = self.parents[x]
         py = self.parents[y]
         if px < py:
@@ -26,7 +25,7 @@ class UnionFind():
         else:
             self.parents[y] += px
             self.parents[x] = y
-        return True
+        return 1
 
     def size(self, x: int) -> int:
         'Size of the tree include x'
@@ -36,12 +35,12 @@ class UnionFind():
         'True if x and y belong to same tree, else False'
         return self.leader(x) == self.leader(y)
 
-    def members(self, x: int) -> List[int]:
+    def members(self, x: int) -> 'List[int]':
         'All nodes of the tree x belong to'
         leader = self.leader(x)
         return [i for i in range(self.n) if self.leader(i) == leader]
 
-    def leaders(self) -> List[int]:
+    def leaders(self) -> 'List[int]':
         'All roots of trees'
         return [i for i, x in enumerate(self.parents) if x < 0]
 
@@ -49,7 +48,7 @@ class UnionFind():
         'Count of trees'
         return len(self.leaders())
 
-    def groups(self) -> List[List[int]]:
+    def groups(self) -> 'List[List[int]]':
         'nodes grouped by tree'
         res = [[] for _ in range(self.n)]
         for v in range(self.n): res[self.leader(v)].append(v)

@@ -31,36 +31,34 @@ class RollingHash:
         xu = x >> 61
         xd = x & cls._MASK61
         res = xu + xd
-        if res >= cls._MOD: res -= cls._MOD
-        return res
+        return res if res < cls._MOD else res - cls._MOD
 
     def __init__(self, s):
         self._n = len(s)
-        self._hash = [0] * (self._n+1)
-        self._power = [0] * (self._n+1)
-        self._power[0] = 1
-        for i in range(self._n):
-            self._hash[i+1] = self._calc_mod(self._mul(self._hash[i], self._BASE) + ord(s[i]))
-            self._power[i+1] = self._mul(self._power[i], self._BASE)
+        self._hash = [0] * (self._n + 1)
+        self._power = [0] * (self._n + 1)
+        tmphash = 0
+        self._power[0] = tmppower = 1
+        for i, c in enumerate(s):
+            self._hash[i + 1] = tmphash = self._calc_mod(self._mul(tmphash, self._BASE) + ord(c))
+            self._power[i + 1] = tmppower = self._mul(tmppower, self._BASE)
 
     def get(self, l: int, r: int) -> int:
         'get hash of s[l, r)'
         res = self._hash[r] - self._mul(self._hash[l], self._power[r-l])
-        if res < 0: res += self._MOD
-        return res
+        return res + self._MOD if res < 0 else res
 
     def connect(self, h1: int, h2: int, h2len: int) -> int:
         'connect S(hash = h1) and T(hash = h2, length = h2len)'
-        res = self._calc_mod(self._mul(h1, self._power[h2len]) + h2)
-        return res
+        return self._calc_mod(self._mul(h1, self._power[h2len]) + h2)
 
     def lcp(self, rh, l1: int, r1: int, l2: int, r2: int) -> int:
         'longetst common prefix of self.s[l1, r1) and rh2.s[l2, r2) O(log(length))'
-        length = min(r1-l1, r2-l2)
-        low = -1
-        high = length + 1
-        while high - low > 1:
-            mid = (low+high) >> 1
-            if self.get(l1, l1+mid) == rh.get(l2, l2+mid): low = mid
-            else: high = mid
-        return low
+        length = min(r1 - l1, r2 - l2)
+        ok = 0
+        ng = length + 1
+        while ng - ok > 1:
+            mid = (ok+ng) >> 1
+            if self.get(l1, l1+mid) == rh.get(l2, l2+mid): ok = mid
+            else: ng = mid
+        return ok

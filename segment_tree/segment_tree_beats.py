@@ -1,10 +1,13 @@
-class SegmentTreeBeats():
+class SegmentTreeBeats:
+    '''
+    range_chmin, range_chmax, range_addが速い
+    '''
     pINF = 1<<60
     nINF = -1<<60
-    def __init__(self, n, arr=None):
+    def __init__(self, n: int, arr: list=[]) -> None:
         size = 1 << (n - 1).bit_length()
         self.size = size
-        size2 = size<<1
+        size2 = size << 1
         self.fmax = [self.nINF] * (size2)
         self.fmin = [self.pINF] * (size2)
         self.smax = [self.nINF] * (size2)
@@ -23,7 +26,7 @@ class SegmentTreeBeats():
             self.rt[size + i] = i + 1
         for i in range(size)[::-1]:
             self.lt[i] = self.lt[i << 1]
-            self.rt[i] = self.rt[i<<1|1]
+            self.rt[i] = self.rt[i << 1 | 1]
         if arr:
             for i, a in enumerate(arr):
                 self.fmax[size + i] = a
@@ -32,88 +35,90 @@ class SegmentTreeBeats():
                 self.minc[size + i] = 1
                 self.sum[size + i] = a
             for i in range(1, size)[::-1]: #self.merge(i)
-                self.sum[i] = self.sum[i<<1] + self.sum[i<<1|1]
-                a, b = self.fmax[i<<1], self.fmax[i<<1|1]
+                i2, i2p1 = i << 1, i << 1 | 1
+                self.sum[i] = self.sum[i2] + self.sum[i2p1]
+                a, b = self.fmax[i2], self.fmax[i2p1]
                 if a < b:
                     self.fmax[i] = b
-                    self.maxc[i] = self.maxc[i<<1|1]
-                    self.smax[i] = max(a, self.smax[i<<1|1])
+                    self.maxc[i] = self.maxc[i2p1]
+                    self.smax[i] = max(a, self.smax[i2p1])
                 elif a > b:
                     self.fmax[i] = a
-                    self.maxc[i] = self.maxc[i<<1]
-                    self.smax[i] = max(self.smax[i<<1], b)
+                    self.maxc[i] = self.maxc[i2]
+                    self.smax[i] = max(self.smax[i2], b)
                 else:
                     self.fmax[i] = a
-                    self.maxc[i] = self.maxc[i<<1] + self.maxc[i<<1|1]
-                    self.smax[i] = max(self.smax[i<<1], self.smax[i<<1|1])
+                    self.maxc[i] = self.maxc[i2] + self.maxc[i2p1]
+                    self.smax[i] = max(self.smax[i2], self.smax[i2p1])
 
-                a, b = self.fmin[i<<1], self.fmin[i<<1|1]
+                a, b = self.fmin[i2], self.fmin[i2p1]
                 if a > b:
                     self.fmin[i] = b
-                    self.minc[i] = self.minc[i<<1|1]
-                    self.smin[i] = min(a, self.smin[i<<1|1])
+                    self.minc[i] = self.minc[i2p1]
+                    self.smin[i] = min(a, self.smin[i2p1])
                 elif a < b:
                     self.fmin[i] = a
-                    self.minc[i] = self.minc[i<<1]
-                    self.smin[i] = min(self.smin[i<<1], b)
+                    self.minc[i] = self.minc[i2]
+                    self.smin[i] = min(self.smin[i2], b)
                 else:
                     self.fmin[i] = a
-                    self.minc[i] = self.minc[i<<1] + self.minc[i<<1|1]
-                    self.smin[i] = min(self.smin[i<<1], self.smin[i<<1|1])
+                    self.minc[i] = self.minc[i2] + self.minc[i2p1]
+                    self.smin[i] = min(self.smin[i2], self.smin[i2p1])
 
     def _up_merge(self):
         while self.up: #self.merge(self.up.pop())
             k = self.up.pop()
-            self.sum[k] = self.sum[k<<1] + self.sum[k<<1|1]
-            a, b = self.fmax[k<<1], self.fmax[k<<1|1]
+            k2, k2p1 = k << 1, k << 1 | 1
+            self.sum[k] = self.sum[k2] + self.sum[k2p1]
+            a, b = self.fmax[k2], self.fmax[k2p1]
             if a < b:
                 self.fmax[k] = b
-                self.maxc[k] = self.maxc[k<<1|1]
-                self.smax[k] = max(a, self.smax[k<<1|1])
+                self.maxc[k] = self.maxc[k2p1]
+                self.smax[k] = max(a, self.smax[k2p1])
             elif a > b:
                 self.fmax[k] = a
-                self.maxc[k] = self.maxc[k<<1]
-                self.smax[k] = max(self.smax[k<<1], b)
+                self.maxc[k] = self.maxc[k2]
+                self.smax[k] = max(self.smax[k2], b)
             else:
                 self.fmax[k] = a
-                self.maxc[k] = self.maxc[k<<1] + self.maxc[k<<1|1]
-                self.smax[k] = max(self.smax[k<<1], self.smax[k<<1|1])
+                self.maxc[k] = self.maxc[k2] + self.maxc[k2p1]
+                self.smax[k] = max(self.smax[k2], self.smax[k2p1])
 
-            a, b = self.fmin[k<<1], self.fmin[k<<1|1]
+            a, b = self.fmin[k2], self.fmin[k2p1]
             if a > b:
                 self.fmin[k] = b
-                self.minc[k] = self.minc[k<<1|1]
-                self.smin[k] = min(a, self.smin[k<<1|1])
+                self.minc[k] = self.minc[k2p1]
+                self.smin[k] = min(a, self.smin[k2p1])
             elif a < b:
                 self.fmin[k] = a
-                self.minc[k] = self.minc[k<<1]
-                self.smin[k] = min(self.smin[k<<1], b)
+                self.minc[k] = self.minc[k2]
+                self.smin[k] = min(self.smin[k2], b)
             else:
                 self.fmin[k] = a
-                self.minc[k] = self.minc[k<<1] + self.minc[k<<1|1]
-                self.smin[k] = min(self.smin[k<<1], self.smin[k<<1|1])
+                self.minc[k] = self.minc[k2] + self.minc[k2p1]
+                self.smin[k] = min(self.smin[k2], self.smin[k2p1])
 
     def _down_propagate(self, k):
         if self.size <= k: pass #?
         else:
             a = self.upd[k]
             if a != self.pINF:
-                self._update(k<<1, a)
-                self._update(k<<1|1, a)
+                self._update(k << 1, a)
+                self._update(k << 1 | 1, a)
                 self.upd[k] = self.pINF
             else:
                 a = self.add[k]
                 if a:
-                    self._add(k<<1, a)
-                    self._add(k<<1|1, a)
+                    self._add(k << 1, a)
+                    self._add(k << 1 | 1, a)
                     self.add[k] = 0
                 a, b = self.fmax[k], self.fmin[k]
-                if a < self.fmax[k<<1]: self._chmax(k<<1, a)
-                if self.fmin[k<<1] < b: self._chmin(k<<1, b)
-                if a < self.fmax[k<<1|1]: self._chmax(k<<1|1, a)
-                if self.fmin[k<<1|1] < b: self._chmin(k<<1|1, b)
-        self.down.append(k<<1)
-        self.down.append(k<<1|1)
+                if a < self.fmax[k << 1]: self._chmax(k << 1, a)
+                if self.fmin[k << 1] < b: self._chmin(k << 1, b)
+                if a < self.fmax[k << 1 | 1]: self._chmax(k << 1 | 1, a)
+                if self.fmin[k << 1 | 1] < b: self._chmin(k << 1 | 1, b)
+        self.down.append(k << 1)
+        self.down.append(k << 1 | 1)
 
     def _update(self, k, x):
         a, b = self.lt[k], self.rt[k]
