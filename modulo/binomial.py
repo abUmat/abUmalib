@@ -85,4 +85,3 @@ class Binomial:
         'nHr'
         if n < 0 or r < 0: return 0
         return self.C(n + r - 1, r) if r else 1
-
