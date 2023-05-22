@@ -1,61 +1,71 @@
-from math import log2
 # my module
-from modulo.binomial import *
 from math998244353.fps import *
 # my module
-# https://nyaannyaan.github.io/library/fps/fps-composition.hpp
-def composition(P: list, Q: list, C: Binomial, deg: int=-1) -> list:
-    N = min(len(P), len(Q)) if deg == -1 else deg
-    if not N: return []
-    FPS.shrink(P)
-    if not P:
-        R = [0] * N
-        R[0] = Q[0] if Q else 0
-        return R
-    if N == 1: return FPS.eval(Q, P[0])
+# https://judge.yosupo.jp/submission/83016
+def composition(P: list, Q: list, deg: int=-1) -> list:
+    if deg == -1: deg = min(len(P), len(Q))
+    k = int(deg ** .5+ 1)
+    d = (deg + k) // k
 
-    FPS.resize(P, N); FPS.resize(Q, N)
-    M = int(max(1, (N / log2(N)) ** 0.5))
-    L = (N + M - 1) // M
-    Pm = P[:M]
-    Pr = P[M:]
+    X = [[] for _ in range(k + 1)]
+    X[0] = [1]
+    for i, x in enumerate(X):
+        if i == k: break
+        X[i + 1] = NTT.multiply(x, Q)
+        X[i + 1][deg + 1:] = []
+    leny = len(X[-1])
+    X[d + 1:] = []
+    xd = X.pop()
+    lenp = len(P)
 
-    J = (N - 1).bit_length()
-    pms = [[] for _ in range(J)]
-    pms[0] = Pm
-    for i in range(1, J): pms[i] = NTT.pow2(pms[i - 1])[:N]
+    Z = [1]
+    F = [0] * (deg + 1)
+    for i in range(k):
+        y = [0] * leny
+        for j, x in enumerate(X):
+            if i * d + j >= lenp: break
+            for t, xx in enumerate(x):
+                y[t] += xx * P[i * d + j] % MOD
+        y = NTT.multiply(y, Z)
+        y[deg + 1:] = []
+        for j, yy in enumerate(y):
+            F[j] += yy
+        Z = NTT.multiply(Z, xd)
+        Z[deg + 1:] = []
+    F.pop()
+    return [x % MOD for x in F]
 
-    def comp(left: int, j: int) -> list:
-        if j == 1:
-            Q1 = Q[left + 0] if left + 0 < len(Q) else 0
-            Q2 = Q[left + 1] if left + 1 < len(Q) else 0
-            return FPS.add(FPS.mul(pms[0][:N], Q2), Q1)
-        if N <= left: return []
-        Q1 = comp(left, j - 1)
-        Q2 = comp(left + (1 << (j - 1)), j - 1)
-        return FPS.add(Q1, NTT.multiply(pms[j - 1][:N], Q2))[:N]
+def composition_multi(Ps: list, Q: list, deg: int) -> list:
+    k = int(deg ** .5+ 1)
+    d = (deg + k) // k
 
-    QPm = comp(0, J)
-    R = QPm[:]
-    pw_Pr = [1]
-    dPm = FPS.diff(Pm)
-    FPS.shrink(dPm)
-    deg_dPm = 0
-    while deg_dPm != len(dPm) and dPm[deg_dPm] == 0: deg_dPm += 1
-    idPm = FPS.inv(dPm[deg_dPm:], N) if dPm else []
+    X = [[] for _ in range(k + 1)]
+    X[0] = [1]
+    for i, x in enumerate(X):
+        if i == k: break
+        X[i + 1] = NTT.multiply(x, Q)
+        X[i + 1][deg + 1:] = []
+    leny = len(X[-1])
+    X[d + 1:] = []
+    xd = X.pop()
 
-    d = M
-    for l in range(1, L + 1):
-        if d >= N: break
-        pw_Pr = NTT.multiply(pw_Pr, Pr)[:N - d]
-        if dPm:
-            idPm[N - d:] = []
-            QPm = NTT.multiply(FPS.diff(QPm)[deg_dPm:], idPm)[:N - d]
-            tmp = FPS.mul(NTT.multiply(QPm, pw_Pr)[:N - d], C.finv(l))
-        else:
-            tmp = FPS.mul(pw_Pr, Q[l])
-        tmp[:0] = [0] * d
-        R = FPS.add(R, tmp)
-        d += M
-    FPS.resize(R, N)
-    return R
+    ress = []
+    for P in Ps:
+        lenp = len(P)
+        Z = [1]
+        F = [0] * (deg + 1)
+        for i in range(k):
+            y = [0] * leny
+            for j, x in enumerate(X):
+                if i * d + j >= lenp: break
+                for t, xx in enumerate(x):
+                    y[t] += xx * P[i * d + j] % MOD
+            y = NTT.multiply(y, Z)
+            y[deg + 1:] = []
+            for j, yy in enumerate(y):
+                F[j] += yy
+            Z = NTT.multiply(Z, xd)
+            Z[deg + 1:] = []
+        F.pop()
+        ress.append([x % MOD for x in F])
+    return ress
