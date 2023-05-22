@@ -105,4 +105,3 @@ def exp(self: FPS, a: list, deg=-1) -> list:
         m <<= 1
     return b[:deg]
 FPS.exp = exp
-
