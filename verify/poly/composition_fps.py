@@ -6,4 +6,4 @@ from math998244353.fps_composition import *
 N = rd()
 A = rdl(N)
 B = rdl(N)
-wtnl(composition(B, A, Binomial(MOD, N + 10)))
+wtnl(composition(A, B))

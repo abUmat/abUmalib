@@ -8,4 +8,4 @@ mod = 998244353
 N = rd()
 A = rdl(N)
 B = rdl(N)
-wtnl(composition(B, A, Binomial(mod, N + 10)))
+wtnl(composition(A, B, mod))
