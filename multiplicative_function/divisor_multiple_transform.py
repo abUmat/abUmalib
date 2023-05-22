@@ -1,6 +1,7 @@
 # my module
 from prime.prime_enumerate import *
 # my module
+# https://nyaannyaan.github.io/library/multiplicative-function/divisor-multiple-transform.hpp
 class DivisorTransform:
     @staticmethod
     def zeta_transform_list(a, mod=0):

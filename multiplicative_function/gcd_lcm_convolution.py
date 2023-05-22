@@ -1,6 +1,7 @@
 # my module
 from multiplicative_function.divisor_multiple_transform import *
 # my module
+# https://nyaannyaan.github.io/library/multiplicative-function/gcd-convolution.hpp
 def gcd_convolution(a: list, b: list, mod: int) -> list:
     s, t = a[::], b[::]
     MultipleTransform.zeta_transform_list(s, mod)

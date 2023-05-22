@@ -3,6 +3,7 @@ from random import randrange
 from prime.is_prime import *
 from mymath.gcd_lcm import *
 # my module
+# https://nyaannyaan.github.io/library/prime/fast-factorize.hpp
 def pollard_rho(n):
     b = n.bit_length()-1
     b = (b>>2)<<2

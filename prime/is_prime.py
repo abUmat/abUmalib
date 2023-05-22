@@ -1,3 +1,4 @@
+# https://nyaannyaan.github.io/library/prime/fast-factorize.hpp
 def is_prime(n):
     'O(logN) miller rabin algorithm'
     if n == 2: return 1

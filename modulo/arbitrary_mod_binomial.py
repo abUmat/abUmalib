@@ -1,3 +1,4 @@
+# https://nyaannyaan.github.io/library/modulo/arbitrary-mod-binomial.hpp
 class _PrimePowerBinomial:
     N_MAX = 20000000
     M_MAX = (1<<30)-1
@@ -53,7 +54,6 @@ class _PrimePowerBinomial:
         e0, eq, i = 0, 0, 0
         res = 1
         if p == 2:
-            # bit演算で定数倍高速化
             while n:
                 res = res * self.fac[n& self.mask] & self.mask
                 res = res * self.ifac[m& self.mask] & self.mask

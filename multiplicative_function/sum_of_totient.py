@@ -1,3 +1,4 @@
+# https://nyaannyaan.github.io/library/multiplicative-function/sum-of-totient.hpp
 def sum_of_totient(N: int, mod: int=0) -> int:
     if N < 2: return N
     ns = [0]; p = []
