@@ -2,21 +2,29 @@
 from ntt.complex_fft import *
 from fps.fps import *
 # my module
-# arbitrary_nttだとTLEするのでCooleyTukeyを使う
+# arbitrary_nttだとTLEするのでCooleyTukeyを使いたい
 # 2倍くらい速いっぽい
 # https://nyaannyaan.github.io/library/fps/arbitrary-fps.hpp
+FPS.ntt_ptr = None
+
+def set_fft(self: FPS) -> None:
+    self.ntt_ptr = CooleyTukey()
+FPS.set_fft = set_fft
+
 def mul(self: FPS, l: list, r) -> list:
     mod = self.mod
     if type(r) is int: return [x * r % mod for x in l]
     if type(r) is list:
         if not l or not r: return []
-        return CooleyTukey().karatsuba(l, r, mod)
+        if self.ntt_ptr is None: self.set_fft()
+        return self.ntt_ptr.karatsuba(l, r, mod)
     raise TypeError()
 FPS.mul = mul
 
 def mul2(self: FPS, l: list) -> list:
     mod = self.mod
-    return CooleyTukey().karatsuba_pow2(l, mod)
+    if self.ntt_ptr is None: self.set_fft()
+    return self.ntt_ptr.karatsuba_pow2(l, mod)
 FPS.mul2 = mul2
 
 def inv(self: FPS, a: list, deg: int=-1):

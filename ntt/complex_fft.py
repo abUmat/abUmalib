@@ -7,6 +7,10 @@ class CooleyTukey:
     wi = [0] * (1 << 20)
     baser = [0] * 20
     basei = [0] * 20
+    isbuilt = 0
+    def __init__(self, k: int=20) -> None:
+        self.setw(k)
+        self.isbuilt = 1
 
     @staticmethod
     def mul(xr: float, xi: float, yr: float, yi: float) -> tuple:
@@ -46,52 +50,34 @@ class CooleyTukey:
                 ai[j], ai[j + v] = ai[j] + ai[j + v], ai[j] - ai[j + v]
         u = 1 << (k & 1)
         v = 1 << (k - 2 - (k & 1))
+        wr1, wi1 = self.wr[1], self.wi[1]
         while v:
             for j0 in range(v):
-                j1 = j0 + v
-                j2 = j1 + v
-                j3 = j2 + v
                 t0r = ar[j0]; t0i = ai[j0]
-                t1r = ar[j1]; t1i = ai[j1]
-                t2r = ar[j2]; t2i = ai[j2]
-                t3r = ar[j3]; t3i = ai[j3]
-                t0p2r = t0r + t2r; t0p2i = t0i + t2i
-                t1p3r = t1r + t3r; t1p3i = t1i + t3i
-                t0m2r = t0r - t2r; t0m2i = t0i - t2i
-                t1m3r = t1r - t3r; t1m3i = t1i - t3i
-                t1m3r, t1m3i = self.mul(t1m3r, t1m3i, self.wr[1], self.wi[1])
-                ar[j0] = t0p2r + t1p3r; ai[j0] = t0p2i + t1p3i
-                ar[j1] = t0p2r - t1p3r; ai[j1] = t0p2i - t1p3i
-                ar[j2] = t0m2r + t1m3r; ai[j2] = t0m2i + t1m3i
-                ar[j3] = t0m2r - t1m3r; ai[j3] = t0m2i - t1m3i
+                t1r = ar[j0 + v]; t1i = ai[j0 + v]
+                t2r = ar[j0 + v * 2]; t2i = ai[j0 + v * 2]
+                t3r = ar[j0 + v * 3]; t3i = ai[j0 + v * 3]
+                t1m3r, t1m3i = self.mul(t1r - t3r, t1i - t3i, wr1, wi1)
+                ar[j0] = (t0r + t2r) + (t1r + t3r); ai[j0] = (t0i + t2i) + (t1i + t3i)
+                ar[j0 + v] = (t0r + t2r) - (t1r + t3r); ai[j0 + v] = (t0i + t2i) - (t1i + t3i)
+                ar[j0 + v * 2] = (t0r - t2r) + t1m3r; ai[j0 + v * 2] = (t0i - t2i) + t1m3i
+                ar[j0 + v * 3] = (t0r - t2r) - t1m3r; ai[j0 + v * 3] = (t0i - t2i) - t1m3i
 
             for jh in range(1, u):
                 p = jh * v * 4
                 Wr = self.wr[jh]; Wi = self.wi[jh]
                 Xr = self.wr[jh << 1]; Xi = self.wi[jh << 1]
-                WXr = Wr; WXi = Wi
-                WXr, WXi = self.mul(WXr, WXi, Xr, Xi)
+                WXr, WXi = self.mul(Wr, Wi, Xr, Xi)
                 for offset in range(v):
-                    j0 = p + offset
-                    j1 = j0 + v
-                    j2 = j1 + v
-                    j3 = j2 + v
-                    t0r = ar[j0]; t0i = ai[j0]
-                    t1r = ar[j1]; t1i = ai[j1]
-                    t2r = ar[j2]; t2i = ai[j2]
-                    t3r = ar[j3]; t3i = ai[j3]
-                    t1r, t1i = self.mul(t1r, t1i, Xr, Xi)
-                    t2r, t2i = self.mul(t2r, t2i, Wr, Wi)
-                    t3r, t3i = self.mul(t3r, t3i, WXr, WXi)
-                    t0p2r = t0r + t2r; t0p2i = t0i + t2i
-                    t1p3r = t1r + t3r; t1p3i = t1i + t3i
-                    t0m2r = t0r - t2r; t0m2i = t0i - t2i
-                    t1m3r = t1r - t3r; t1m3i = t1i - t3i
-                    t1m3r, t1m3i = self.mul(t1m3r, t1m3i, self.wr[1], self.wi[1])
-                    ar[j0] = t0p2r + t1p3r; ai[j0] = t0p2i + t1p3i
-                    ar[j1] = t0p2r - t1p3r; ai[j1] = t0p2i - t1p3i
-                    ar[j2] = t0m2r + t1m3r; ai[j2] = t0m2i + t1m3i
-                    ar[j3] = t0m2r - t1m3r; ai[j3] = t0m2i - t1m3i
+                    t0r = ar[p + offset]; t0i = ai[p + offset]
+                    t1r, t1i = self.mul(ar[p + offset + v], ai[p + offset + v], Xr, Xi)
+                    t2r, t2i = self.mul(ar[p + offset + v * 2], ai[p + offset + v * 2], Wr, Wi)
+                    t3r, t3i = self.mul(ar[p + offset + v * 3], ai[p + offset + v * 3], WXr, WXi)
+                    t1m3r, t1m3i = self.mul(t1r - t3r, t1i - t3i, wr1, wi1)
+                    ar[p + offset] = (t0r + t2r) + (t1r + t3r); ai[p + offset] = (t0i + t2i) + (t1i + t3i)
+                    ar[p + offset + v] = (t0r + t2r) - (t1r + t3r); ai[p + offset + v] = (t0i + t2i) - (t1i + t3i)
+                    ar[p + offset + v * 2] = (t0r - t2r) + t1m3r; ai[p + offset + v * 2] = (t0i - t2i) + t1m3i
+                    ar[p + offset + v * 3] = (t0r - t2r) - t1m3r; ai[p + offset + v * 3] = (t0i - t2i) - t1m3i
             u <<= 2
             v >>= 2
 
@@ -103,55 +89,34 @@ class CooleyTukey:
             return
         u = 1 << (k - 2)
         v = 1
+        wr1, mwi1 = self.wr[1], -self.wi[1]
         while u:
             for j0 in range(v):
-                j1 = j0 + v
-                j2 = j1 + v
-                j3 = j2 + v
                 t0r = ar[j0]; t0i = ai[j0]
-                t1r = ar[j1]; t1i = ai[j1]
-                t2r = ar[j2]; t2i = ai[j2]
-                t3r = ar[j3]; t3i = ai[j3]
-                t0p1r = t0r + t1r; t0p1i = t0i + t1i
-                t2p3r = t2r + t3r; t2p3i = t2i + t3i
-                t0m1r = t0r - t1r; t0m1i = t0i - t1i
-                t2m3r = t2r - t3r; t2m3i = t2i - t3i
-                t2m3r, t2m3i = self.mul(t2m3r, t2m3i, self.wr[1], -self.wi[1])
-                ar[j0] = t0p1r + t2p3r; ai[j0] = t0p1i + t2p3i
-                ar[j2] = t0p1r - t2p3r; ai[j2] = t0p1i - t2p3i
-                ar[j1] = t0m1r + t2m3r; ai[j1] = t0m1i + t2m3i
-                ar[j3] = t0m1r - t2m3r; ai[j3] = t0m1i - t2m3i
+                t1r = ar[j0 + v]; t1i = ai[j0 + v]
+                t2r = ar[j0 + v * 2]; t2i = ai[j0 + v * 2]
+                t3r = ar[j0 + v * 3]; t3i = ai[j0 + v * 3]
+                t2m3r, t2m3i = self.mul(t2r - t3r, t2i - t3i, wr1, mwi1)
+                ar[j0] = (t0r + t1r) + (t2r + t3r); ai[j0] = (t0i + t1i) + (t2i + t3i)
+                ar[j0 + v * 2] = (t0r + t1r) - (t2r + t3r); ai[j0 + v * 2] = (t0i + t1i) - (t2i + t3i)
+                ar[j0 + v] = (t0r - t1r) + t2m3r; ai[j0 + v] = (t0i - t1i) + t2m3i
+                ar[j0 + v * 3] = (t0r - t1r) - t2m3r; ai[j0 + v * 3] = (t0i - t1i) - t2m3i
             for jh in range(1, u):
                 p = jh * v * 4
-                j0 = jh * v * 4
-                j1 = j0 + v
-                j2 = j1 + v
-                j3 = j2 + v
-                je = j1
                 Wr = self.wr[jh]; Wi = -self.wi[jh]
                 Xr = self.wr[(jh << 1) + 0]; Xi = -self.wi[(jh << 1) + 0]
                 Yr = self.wr[(jh << 1) + 1]; Yi = -self.wi[(jh << 1) + 1]
                 for offset in range(v):
-                    j0 = p + offset
-                    j1 = j0 + v
-                    j2 = j1 + v
-                    j3 = j2 + v
-                    t0r = ar[j0]; t0i = ai[j0]
-                    t1r = ar[j1]; t1i = ai[j1]
-                    t2r = ar[j2]; t2i = ai[j2]
-                    t3r = ar[j3]; t3i = ai[j3]
-                    t0p1r = t0r + t1r; t0p1i = t0i + t1i
-                    t2p3r = t2r + t3r; t2p3i = t2i + t3i
-                    t0m1r = t0r - t1r; t0m1i = t0i - t1i
-                    t2m3r = t2r - t3r; t2m3i = t2i - t3i
-                    t0m1r, t0m1i = self.mul(t0m1r, t0m1i, Xr, Xi)
-                    t2m3r, t2m3i = self.mul(t2m3r, t2m3i, Yr, Yi)
-                    ar[j0] = t0p1r + t2p3r; ai[j0] = t0p1i + t2p3i
-                    ar[j2] = t0p1r - t2p3r; ai[j2] = t0p1i - t2p3i
-                    ar[j1] = t0m1r + t2m3r; ai[j1] = t0m1i + t2m3i
-                    ar[j3] = t0m1r - t2m3r; ai[j3] = t0m1i - t2m3i
-                    ar[j2], ai[j2] = self.mul(ar[j2], ai[j2], Wr, Wi)
-                    ar[j3], ai[j3] = self.mul(ar[j3], ai[j3], Wr, Wi)
+                    t0r = ar[p + offset]; t0i = ai[p + offset]
+                    t1r = ar[p + offset + v]; t1i = ai[p + offset + v]
+                    t2r = ar[p + offset + v * 2]; t2i = ai[p + offset + v * 2]
+                    t3r = ar[p + offset + v * 3]; t3i = ai[p + offset + v * 3]
+                    t0m1r, t0m1i = self.mul(t0r - t1r, t0i - t1i, Xr, Xi)
+                    t2m3r, t2m3i = self.mul(t2r - t3r, t2i - t3i, Yr, Yi)
+                    ar[p + offset] = (t0r + t1r) + (t2r + t3r); ai[p + offset] = (t0i + t1i) + (t2i + t3i)
+                    ar[p + offset + v] = t0m1r + t2m3r; ai[p + offset + v] = t0m1i + t2m3i
+                    ar[p + offset + v * 2], ai[p + offset + v * 2] = self.mul((t0r + t1r) - (t2r + t3r), (t0i + t1i) - (t2i + t3i), Wr, Wi)
+                    ar[p + offset + v * 3], ai[p + offset + v * 3] = self.mul(t0m1r - t2m3r, t0m1i - t2m3i, Wr, Wi)
             u >>= 2
             v <<= 2
         if k & 1:
@@ -179,12 +144,14 @@ class CooleyTukey:
 
     def karatsuba(self, a: list, b: list, mod: int) -> list:
         B = 32000
+        bbmod = B * B % mod
         l = len(a) + len(b) - 1
         k = 2; M = 4
         while M < l:
             M <<= 1
             k += 1
-        self.setw(k)
+        if not self.isbuilt:
+            self.setw(k)
         alr = [float()] * M
         ali = [float()] * M
         ahr = [float()] * M
@@ -204,14 +171,12 @@ class CooleyTukey:
         self.fft_real(blr, bli, bhr, bhi, k)
 
         for i in range(M):
-            tmp1r = alr[i]; tmp1i = ali[i]
-            tmp2r = -ahi[i]; tmp2i = ahr[i]
-            tmp3r = tmp1r; tmp3i = tmp1i
-            tmp4r = tmp2r; tmp4i = tmp2i
-            tmp1r, tmp1i = self.mul(tmp1r, tmp1i, blr[i], bli[i])
-            tmp2r, tmp2i = self.mul(tmp2r, tmp2i, bhr[i], bhi[i])
-            tmp3r, tmp3i = self.mul(tmp3r, tmp3i, bhr[i], bhi[i])
-            tmp4r, tmp4i = self.mul(tmp4r, tmp4i, blr[i], bli[i])
+            alri = alr[i]; alii = ali[i]
+            mahii = -ahi[i]; ahri = ahr[i]
+            tmp1r, tmp1i = self.mul(alri, alii, blr[i], bli[i])
+            tmp2r, tmp2i = self.mul(mahii, ahri, bhr[i], bhi[i])
+            tmp3r, tmp3i = self.mul(alri, alii, bhr[i], bhi[i])
+            tmp4r, tmp4i = self.mul(mahii, ahri, blr[i], bli[i])
             blr[i] = tmp1r + tmp2r; bli[i] = tmp1i + tmp2i
             bhr[i] = tmp3r + tmp4r; bhi[i] = tmp3i + tmp4i
 
@@ -221,16 +186,13 @@ class CooleyTukey:
         u = [0] * l
         im = float(1 / (4 * M))
         for i in range(l):
-            blr[i] *= im; bli[i] *= im
-            bhr[i] *= im; bhi[i] *= im
-            x1 = round(blr[i]) % mod
-            x2 = (round(bhr[i]) + round(bhi[i])) % mod * B % mod
-            x3 = round(bli[i]) % mod * (B * B % mod) % mod
-            x1 += x2
-            if x1 >= mod: x1 -= mod
-            x1 += x3
-            if x1 >= mod: x1 -= mod
-            u[i] = x1
+            x1 = round(blr[i] * im) % mod
+            x2 = (round(bhr[i] * im) + round(bhi[i] * im)) % mod * B % mod
+            x3 = round(bli[i] * im) % mod * bbmod % mod
+            x = x1 + x2 + x3
+            if x >= mod: x -= mod
+            if x >= mod: x -= mod
+            u[i] = x
         return u
 
     def karatsuba_pow2(self, a: list, mod: int) -> list:
