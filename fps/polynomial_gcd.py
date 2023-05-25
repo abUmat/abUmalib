@@ -73,7 +73,7 @@ def poly_gcd(a: list, b: list, mod: int) -> list:
     m = inner_poly_gcd(a, b, mod)
     p = Mat.mul(m, p, fps)
     if p[0]:
-        coef = pow(p[0][-1], mod - 2, mod)
+        coef = modinv(p[0][-1], mod)
         p[0] = fps.mul(p[0], coef)
     return p[0]
 
@@ -84,4 +84,4 @@ def poly_inv(f: list, g: list, mod: int) -> list:
     gcd = Mat.mul(m, p, fps)[0]
     if len(gcd) != 1: return [0, []]
     x = [[1], g]
-    return [1, fps.mul(fps.modulo(Mat.mul(m, x, fps)[0], g), pow(gcd[0], mod - 2, mod))]
+    return [1, fps.mul(fps.modulo(Mat.mul(m, x, fps)[0], g), modinv(gcd[0], mod))]

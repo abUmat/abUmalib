@@ -17,7 +17,7 @@ def chirp_z(f: list, W: int, N: int=-1, A: int=1) -> list:
         return F
     wc = [0] * (N + M)
     iwc = [0] * max(N, M)
-    ws = 1; iW = pow(W, MOD - 2, MOD); iws = 1
+    ws = 1; iW = modinv(W, MOD); iws = 1
     wc[0] = iwc[0] = 1
     tmp = 1
     for i in range(1, N + M):

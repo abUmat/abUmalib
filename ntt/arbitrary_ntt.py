@@ -6,9 +6,9 @@ class ArbitraryNTT: # namespace
     _m0 = 0xa000001 # 167772161
     _m1 = 0x1c000001 # 469762049
     _m2 = 0x2d000001 # 754974721
-    _r01 = pow(_m0, _m1 - 2, _m1)
-    _r02 = pow(_m0, _m2 - 2, _m2)
-    _r12 = pow(_m1, _m2 - 2, _m2)
+    _r01 = modinv(_m0, _m1)
+    _r02 = modinv(_m0, _m2)
+    _r12 = modinv(_m1, _m2)
     _r02r12 = _r02 * _r12 % _m2
     _w1 = _m0
     _w2 = _m0 * _m1

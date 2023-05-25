@@ -1,3 +1,6 @@
+# my module
+from mymath.modinv import *
+# my module
 # https://nyaannyaan.github.io/library/fps/formal-power-series.hpp
 class FPS:
     ntt = None
@@ -54,7 +57,7 @@ class FPS:
         while g and not g[-1]:
             g.pop()
             cnt += 1
-        coef = pow(g[-1], mod - 2, mod)
+        coef = modinv(g[-1], mod)
         g = self.mul(g, coef)
         deg = len(f) - len(g) + 1
         gs = len(g)
@@ -95,7 +98,7 @@ class FPS:
         mod = self.mod
         for i, x in enumerate(a):
             if x:
-                rev = pow(x, mod - 2, mod)
+                rev = modinv(x, mod)
                 ret = self.mul(self.exp(self.mul(self.log(self.mul(a, rev)[i:], deg), k), deg), pow(x, k, mod))
                 ret[:0] = [0] * (i * k)
                 if len(ret) < deg:

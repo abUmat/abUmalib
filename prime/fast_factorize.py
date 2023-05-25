@@ -10,7 +10,7 @@ def pollard_rho(n):
     m = int(2**(b/8))<<1
     while True:
         c = randrange(1, n)
-        f = lambda a: (pow(a,2,n)+c)%n
+        f = lambda a: (a * a + c) % n
         y = 0
         g = q = r = 1
         while g == 1:

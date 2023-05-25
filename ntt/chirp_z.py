@@ -2,7 +2,7 @@
 from ntt.arbitrary_ntt import *
 # my module
 # https://nyaannyaan.github.io/library/ntt/chirp-z.hpp
-def chirp_z(mod: int, f: list, W: int, N: int=-1, A: int=1) -> list:
+def chirp_z(f: list, W: int, N: int=-1, A: int=1, mod: int=998244353) -> list:
     if N == -1: N = len(f)
     if not f or N == 0: return []
     M = len(f)
@@ -17,7 +17,7 @@ def chirp_z(mod: int, f: list, W: int, N: int=-1, A: int=1) -> list:
         return F
     wc = [0] * (N + M)
     iwc = [0] * max(N, M)
-    ws = 1; iW = pow(W, mod - 2, mod); iws = 1
+    ws = 1; iW = modinv(W, mod); iws = 1
     wc[0] = iwc[0] = 1
     tmp = 1
     for i in range(1, N + M):

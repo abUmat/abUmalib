@@ -51,15 +51,15 @@ def exp(self: FPS, a: list, deg=-1) -> list:
     if deg == -1: deg = len(a)
     inv = [0, 1]
 
-    def inplace_integral(F: list) -> list:
-        n = len(F)
+    def integral(f: list) -> list:
+        n = len(f)
         while len(inv) <= n:
             j, k = divmod(mod, len(inv))
             inv.append((-inv[k] * j) % mod)
-        return [0] + [x * inv[i + 1] % mod for i, x in enumerate(F)]
+        return [0] + [x * inv[i + 1] % mod for i, x in enumerate(f)]
 
-    def inplace_diff(F: list) -> list:
-        return [x * i % mod for i, x in enumerate(F) if i]
+    def diff(f: list) -> list:
+        return [x * i % mod for i, x in enumerate(f) if i]
 
     b = [1, (a[1] if 1 < len(a) else 0)]
     c = [1]
@@ -81,7 +81,7 @@ def exp(self: FPS, a: list, deg=-1) -> list:
         self.ntt.ntt(z2)
         tmp = min(len(a), m)
         x = a[:tmp] + [0] * (m - tmp)
-        x = inplace_diff(x)
+        x = diff(x)
         x.append(0)
         self.ntt.ntt(x)
         for i, p in enumerate(x): x[i] = y[i] * p % mod
@@ -95,7 +95,7 @@ def exp(self: FPS, a: list, deg=-1) -> list:
         for i, p in enumerate(z2): x[i] = x[i] * p % mod
         self.ntt.intt(x)
         x.pop()
-        x = inplace_integral(x)
+        x = integral(x)
         x[:m] = [0] * m
         for i in range(m, min(len(a), m << 1)): x[i] += a[i]
         self.ntt.ntt(x)

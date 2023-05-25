@@ -29,14 +29,14 @@ def sample_point_shift(y: list, t: int, m: int=-1) -> list:
     d = [0] * (k + 1)
     tmp = 1
     for i in range(2, k + 1): tmp = tmp * i % MOD
-    finv[-1] = tmp = pow(tmp, MOD - 2, MOD)
+    finv[-1] = tmp = modinv(tmp, MOD)
     for i in range(k)[::-1]: finv[i] = tmp = tmp * (i + 1) % MOD
     for i, x in enumerate(y):
         d[i] = (finv[i] * finv[k - i] % MOD) * x % MOD
         if (k - i) & 1: d[i] = -d[i]
 
     h = [0] * (m + k)
-    for i in range(m + k): h[i] = pow(T - k + i, MOD - 2, MOD)
+    for i in range(m + k): h[i] = modinv(T - k + i, MOD)
 
     dh = NTT.multiply(d, h)
 

@@ -1,4 +1,5 @@
 # my module
+from mymath.modinv import *
 from fps.lagrange_interpolation_point import *
 # my module
 def exp_enumerate(p: int, n: int, mod: int) -> list:
@@ -43,10 +44,10 @@ def sum_of_exp(f: list, a: int, n: int, C: Binomial, mod: int) -> int:
     for i in range(m):
         c += (C.C(m, i) * buf % mod) * f[-i - 1] % mod
         buf = buf * b % mod
-    c = (c % mod) * pow(pow(mod - a + 1, m, mod), mod - 2, mod) % mod
+    c = (c % mod) * modinv(pow(mod - a + 1, m, mod), mod) % mod
 
     buf = 1
-    ia = pow(a, mod - 2, mod)
+    ia = modinv(a, mod)
     for i in range(m):
         f[i] = (f[i] - c) * buf % mod
         buf = buf * ia % mod
@@ -72,7 +73,7 @@ def sum_of_exp_limit(f: list, a: int, C: Binomial, mod: int) -> int:
     for i in range(m):
         c += (C.C(m, i) * buf % mod) * f[-i - 1] % mod
         buf = buf * b % mod
-    c = (c % mod) * pow(pow((-a + 1) % mod, m, mod), mod - 2, mod) % mod
+    c = (c % mod) * modinv(pow((-a + 1) % mod, m, mod), mod) % mod
     return c
 
 def sum_of_exp_limit2(d: int, r: int, C: Binomial, mod: int) -> int:

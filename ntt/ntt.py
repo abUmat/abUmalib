@@ -1,5 +1,6 @@
 # my module
 from gcc_builtins import *
+from mymath.modinv import *
 # my module
 # https://nyaannyaan.github.io/library/ntt/ntt.hpp
 class NTT:
@@ -46,7 +47,7 @@ class NTT:
         mod = self.mod
         w, y = [None] * self.level, [None] * self.level
         w[k - 1] = tmpw = pow(self.pr, (mod - 1) // (1 << k), mod)
-        y[k - 1] = tmpy = pow(w[k - 1], mod - 2, mod)
+        y[k - 1] = tmpy = modinv(w[k - 1], mod)
         for i in range(k - 1)[::-1]:
             w[i] = tmpw = tmpw * tmpw % mod
             y[i] = tmpy = tmpy * tmpy % mod
@@ -150,7 +151,7 @@ class NTT:
         if len(a) <= 1: return
         self._ifft(a, ctz(len(a)))
         mod = self.mod
-        iv = pow(len(a), mod - 2, mod)
+        iv = modinv(len(a), mod)
         for i, x in enumerate(a): a[i] = x * iv % mod
 
     def multiply(self, a: list, b: list) -> list:
@@ -172,7 +173,7 @@ class NTT:
         for i, x in enumerate(t): s[i] = s[i] * x % mod
         self._ifft(s, k)
         s[l:] = []
-        invm = pow(M, mod - 2, mod)
+        invm = modinv(M, mod)
         return [x * invm % mod for x in s]
 
     def pow2(self, a: list) -> list:
@@ -192,7 +193,7 @@ class NTT:
         for i, x in enumerate(s): s[i] = x * x % mod
         self._ifft(s, k)
         s[l:] = []
-        invm = pow(M, mod - 2, mod)
+        invm = modinv(M, mod)
         return [x * invm % mod for x in s]
 
     def ntt_doubling(self, a: list) -> None:

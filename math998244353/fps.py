@@ -63,7 +63,7 @@ class FPS:
         while g and not g[-1]:
             g.pop()
             cnt += 1
-        coef = pow(g[-1], MOD - 2, MOD)
+        coef = modinv(g[-1], MOD)
         g = cls.mul(g, coef)
         deg = len(f) - len(g) + 1
         gs = len(g)
@@ -100,7 +100,7 @@ class FPS:
         # assert(self[0] != 0)
         if deg == -1: deg = len(a)
         res = [0] * deg
-        res[0] = pow(a[0], MOD - 2, MOD)
+        res[0] = modinv(a[0], MOD)
         d = 1
         while d < deg:
             f = [0] * (d << 1)
@@ -133,7 +133,7 @@ class FPS:
             return ret
         for i, x in enumerate(a):
             if x:
-                rev = pow(x, MOD - 2, MOD)
+                rev = modinv(x, MOD)
                 ret = cls.mul(cls.exp(cls.mul(cls.log(cls.mul(a, rev)[i:], deg),  k), deg), pow(x, k, MOD))
                 ret[:0] = [0] * (i * k)
                 if len(ret) < deg:
@@ -149,15 +149,15 @@ class FPS:
         if deg == -1: deg = len(a)
         inv = [0, 1]
 
-        def inplace_integral(F: list) -> list:
-            n = len(F)
+        def integral(f: list) -> list:
+            n = len(f)
             while len(inv) <= n:
                 j, k = divmod(MOD, len(inv))
                 inv.append((-inv[k] * j) % MOD)
-            return [0] + [x * inv[i + 1] % MOD for i, x in enumerate(F)]
+            return [0] + [x * inv[i + 1] % MOD for i, x in enumerate(f)]
 
-        def inplace_diff(F: list) -> list:
-            return [x * i % MOD for i, x in enumerate(F) if i]
+        def diff(f: list) -> list:
+            return [x * i % MOD for i, x in enumerate(f) if i]
 
         b = [1, (a[1] if 1 < len(a) else 0)]
         c = [1]
@@ -179,7 +179,7 @@ class FPS:
             NTT.ntt(z2)
             tmp = min(len(a), m)
             x = a[:tmp] + [0] * (m - tmp)
-            x = inplace_diff(x)
+            x = diff(x)
             x.append(0)
             NTT.ntt(x)
             for i, p in enumerate(x): x[i] = y[i] * p % MOD
@@ -193,7 +193,7 @@ class FPS:
             for i, p in enumerate(z2): x[i] = x[i] * p % MOD
             NTT.intt(x)
             x.pop()
-            x = inplace_integral(x)
+            x = integral(x)
             x[:m] = [0] * m
             for i in range(m, min(len(a), m << 1)): x[i] += a[i]
             NTT.ntt(x)

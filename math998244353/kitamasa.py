@@ -24,10 +24,10 @@ def linear_recurrence(k: int, Q: list, P: list) -> int:
     for i in range(1 << logn):
         btr[i] = (btr[i >> 1] >> 1) + ((i & 1) << (logn - 1))
 
-    dw = pow(pow(3, MOD - 2, MOD), (MOD - 1) // (N << 1), MOD)
+    dw = pow(332748118, (MOD - 1) // (N << 1), MOD)
 
     while k:
-        inv2 = pow(2, MOD - 2, MOD)
+        inv2 = 499122177
         FPS.resize(T, N)
         for i in range(N):
             T[i] = Q[i << 1 | 0] * Q[i << 1 | 1] % MOD

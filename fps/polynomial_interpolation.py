@@ -12,7 +12,7 @@ def polynomial_interpolation(xs: list, ys: list, mod: int) -> list:
     def rec(idx: int) -> list:
         if idx >= ptree.N:
             if idx - ptree.N < len(xs):
-                return [ys[idx - ptree.N] * pow(vs[idx - ptree.N], mod - 2, mod) % mod]
+                return [ys[idx - ptree.N] * modinv(vs[idx - ptree.N], mod) % mod]
             else:
                 return [1]
         if not ptree.buf[idx << 1 | 0]: return []

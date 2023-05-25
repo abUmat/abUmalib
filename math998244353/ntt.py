@@ -1,3 +1,6 @@
+# my module
+from mymath.modinv import *
+# my module
 MOD = 998244353
 _IMAG = 911660635
 _IIMAG = 86583718
@@ -80,7 +83,7 @@ class NTT:
     def intt(cls, a) -> None:
         if len(a) <= 1: return
         cls._ifft(a)
-        iv = pow(len(a), MOD - 2, MOD)
+        iv = modinv(len(a), MOD)
         for i, x in enumerate(a): a[i] = x * iv % MOD
 
     @classmethod
@@ -101,7 +104,7 @@ class NTT:
         for i, x in enumerate(b): a[i] = a[i] * x % MOD
         cls._ifft(a)
         a[l:] = []
-        iz = pow(z, MOD - 2, MOD)
+        iz = modinv(z, MOD)
         return [x * iz % MOD for x in a]
 
     @classmethod
@@ -120,7 +123,7 @@ class NTT:
         for i, x in enumerate(a): a[i] = x * x % MOD
         cls._ifft(a)
         a[l:] = []
-        iz = pow(z, MOD - 2, MOD)
+        iz = modinv(z, MOD)
         return [x * iz % MOD for x in a]
 
     @classmethod
