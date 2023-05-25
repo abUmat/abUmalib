@@ -1,3 +1,6 @@
+# my module
+from mymath.modinv import *
+# my module
 class Binomial:
     def __init__(self, mod: int, max_length=10_001_000) -> None:
         if max_length < 2: max_length = 2
@@ -7,7 +10,7 @@ class Binomial:
         self.h = h = [0] * max_length
         f[0] = g[0] = h[0] = tmp = 1
         for i in range(1, max_length): f[i] = tmp = tmp * i % mod
-        g[-1] = tmp = pow(f[-1], mod - 2, mod)
+        g[-1] = tmp = modinv(f[-1], mod)
         h[-1] = tmp * f[-2] % mod
         for i in range(max_length - 2, 0, -1):
             g[i] = tmp = tmp * (i + 1) % mod
@@ -23,7 +26,7 @@ class Binomial:
         g[n:] = [0] * n
         h[n:] = [0] * n
         for i in range(n, m): f[i] = tmpf = tmpf * i % mod
-        g[-1] = tmpg = pow(tmpf, mod - 2, mod)
+        g[-1] = tmpg = modinv(tmpf, mod)
         h[-1] = tmpg * f[-2] % mod
         for i in range(m - 2, n - 1, -1):
             g[i] = tmpg = tmpg * (i + 1) % mod
@@ -41,7 +44,7 @@ class Binomial:
 
     def inv(self, i: int) -> int:
         if i < 0:
-            tmp = pow(-i, self.mod - 2, self.mod)
+            tmp = modinv(-i, self.mod)
             if tmp: return self.mod - tmp
             else: return 0
         while i > len(self.h): self.extend()
@@ -67,7 +70,7 @@ class Binomial:
         res = 1
         r = min(r, n - r)
         for i in range(1, r + 1):
-            res = (res * pow(i, mod - 2, mod)  % mod) * n % mod
+            res = (res * modinv(i, mod)  % mod) * n % mod
             n -= 1
         return res
 
