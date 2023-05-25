@@ -6,4 +6,4 @@ from ntt.chirp_z import *
 mod = 998244353
 N, M, a, r = rd(), rd(), rd(), rd()
 c = rdl(N)
-wtnl(chirp_z(mod, c, r, M, a))
+wtnl(chirp_z(c, r, M, a, mod))
