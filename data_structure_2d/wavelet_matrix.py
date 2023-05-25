@@ -1,13 +1,13 @@
 # my module
 from gcc_builtins import *
 # my module
-from typing import Iterable
+# https://nyaannyaan.github.io/library/data-structure-2d/wavelet-matrix.hpp
 class _BitVector:
     def get(self, i: int) -> int:
-        return self.block[i>>5]>>(i&31)&1
+        return self.block[i >> 5] >> (i & 31) & 1
 
     def set(self, i: int) -> int:
-        self.block[i>>5] |= 1<<(i&31)
+        self.block[i >> 5] |= 1 << (i & 31)
 
     def __init__(self, n: int) -> None:
         self.n = n
@@ -26,12 +26,20 @@ class _BitVector:
         return self.count[i >> 5] - popcount(self.block[i >> 5] & ((1 << (i & 31)) - 1))
 
 class WaveletMatrix:
-    def __init__(self, arr: Iterable[int]) -> None:
-        self.arr = arr
-        self.n = n = len(arr)
-        self.lg = lg = max(max(arr, default=0), 1).bit_length()
+    isbuilt = 0
+    def __init__(self, n: int, arr: list=[], build: bool=True) -> None:
+        self.n = n
+        if arr: self.arr = arr
+        else: self.arr = [0] * n
+        if arr and build: self.build()
+
+    def build(self) -> None:
+        if self.isbuilt: return
+        self.arr = self.arr
+        self.n = n = len(self.arr)
+        self.lg = lg = max(max(self.arr, default=0), 1).bit_length()
         self.bv = [_BitVector(n) for _ in range(lg)]
-        cur = arr[::]
+        cur = self.arr[::]
         nxt = [0] * n
         for h in range(lg)[::-1]:
             for i in range(n):
@@ -43,9 +51,11 @@ class WaveletMatrix:
                 nxt[it[tmp]] = a
                 it[tmp] += 1
             cur = nxt[::]
+        self.isbuilt = 1
 
     def set(self, i: int, x: int) -> None:
         'assign x to arr[i]'
+        assert(self.isbuilt == 0)
         self.arr[i] = x
 
     def access(self, k: int) -> int:
@@ -74,14 +84,14 @@ class WaveletMatrix:
 
     def kth_largest(self, l: int, r: int, k: int) -> int:
         'get kth largest number in [l, r)'
-        return self.kth_smallest(l, r, r-l-k-1)
+        return self.kth_smallest(l, r, r - l - k - 1)
 
     def pref_freq(self, l: int, r: int, upper: int) -> int:
         'get the number of x in [l, r) s.t. x < upper'
-        if upper >= 1<<self.lg: return r-l
+        if upper >= 1 << self.lg: return r-l
         res = 0
         for h in range(self.lg)[::-1]:
-            f = upper>>h&1
+            f = upper >> h & 1
             l0, r0 = self.bv[h].rank0(l), self.bv[h].rank0(r)
             if f:
                 res += r0-l0

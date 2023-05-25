@@ -146,28 +146,26 @@ class CooleyTukey:
         B = 32000
         bbmod = B * B % mod
         l = len(a) + len(b) - 1
-        k = 2; M = 4
-        while M < l:
-            M <<= 1
-            k += 1
-        if not self.isbuilt:
-            self.setw(k)
+        k = max(2, l.bit_length())
+        M = 1 << k
+        if not self.isbuilt: self.setw(k)
+
         alr = [float()] * M
         ali = [float()] * M
         ahr = [float()] * M
         ahi = [float()] * M
+        for i, x in enumerate(a):
+            quo, rem = divmod(x, B)
+            alr[i], ali[i] = float(rem), float(quo)
+        self.fft_real(alr, ali, ahr, ahi, k)
+
         blr = [float()] * M
         bli = [float()] * M
         bhi = [float()] * M
         bhr = [float()] * M
-        for i, x in enumerate(a):
-            quo, rem = divmod(x, B)
-            alr[i], ali[i] = float(rem), float(quo)
         for i, x in enumerate(b):
             quo, rem = divmod(x, B)
             blr[i], bli[i] = float(rem), float(quo)
-
-        self.fft_real(alr, ali, ahr, ahi, k)
         self.fft_real(blr, bli, bhr, bhi, k)
 
         for i in range(M):
