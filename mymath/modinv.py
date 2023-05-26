@@ -3,7 +3,7 @@ def modinv(a: int, m: int) -> int:
     b = m; u = 1; v = 0
     while b:
         t = a // b
-        a -= t * b; a, b = b, a
-        u -= t * v; u, v = v, u
+        a, b = b, a - t * b
+        u, v = v, u - t * v
     u %= m
     return u
