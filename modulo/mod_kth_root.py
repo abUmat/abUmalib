@@ -2,6 +2,7 @@ from collections import defaultdict
 # my module
 from prime.fast_factorize import *
 # my module
+# https://nyaannyaan.github.io/library/modulo/mod-kth-root.hpp
 class _Memo:
     def __init__(self, g: int, s: int, period: int, mod: int):
         self.lg = min(s, period).bit_length() - 1

@@ -1,6 +1,7 @@
 # my module
 from mymath.modinv import *
 # my module
+# https://nyaannyaan.github.io/library/modulo/binomial.hpp
 class Binomial:
     def __init__(self, mod: int, max_length=10_001_000) -> None:
         if max_length < 2: max_length = 2

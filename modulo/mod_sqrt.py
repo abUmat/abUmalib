@@ -1,4 +1,5 @@
-def mod_sqrt(a: int, p: int):
+# https://nyaannyaan.github.io/library/modulo/mod-sqrt.hpp
+def mod_sqrt(a: int, p: int) -> int:
     'x s.t. x**2 == a (mod p) if exist else -1'
     if a < 2: return a
     if pow(a, (p - 1) >> 1, p) != 1: return -1

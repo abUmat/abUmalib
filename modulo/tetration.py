@@ -1,6 +1,7 @@
 # my module
 from prime.prime_enumerate import *
 # my module
+# https://nyaannyaan.github.io/library/modulo/tetration.hpp
 __ps = prime_enumerate(int(1_000_000_000 ** 0.5) + 1)
 def tetration(a: int, b: int, m: int) -> int:
     def totient(n: int) -> int:
