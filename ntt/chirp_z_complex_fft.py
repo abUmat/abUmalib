@@ -1,5 +1,5 @@
 # my module
-from mymath.modinv import *
+from modulo.modinv import *
 from ntt.complex_fft import *
 # my module
 # https://nyaannyaan.github.io/library/ntt/chirp-z.hpp

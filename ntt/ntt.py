@@ -1,6 +1,6 @@
 # my module
 from gcc_builtins import *
-from mymath.modinv import *
+from modulo.modinv import *
 # my module
 # https://nyaannyaan.github.io/library/ntt/ntt.hpp
 class NTT:

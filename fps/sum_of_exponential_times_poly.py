@@ -1,5 +1,5 @@
 # my module
-from mymath.modinv import *
+from modulo.modinv import *
 from fps.lagrange_interpolation_point import *
 # my module
 # https://nyaannyaan.github.io/library/fps/sum-of-exponential-times-poly.hpp

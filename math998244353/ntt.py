@@ -1,5 +1,5 @@
 # my module
-from mymath.modinv import *
+from modulo.modinv import *
 # my module
 MOD = 998244353
 _IMAG = 911660635

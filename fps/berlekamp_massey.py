@@ -1,5 +1,5 @@
 # my module
-from mymath.modinv import *
+from modulo.modinv import *
 # my module
 # https://nyaannyaan.github.io/library/fps/berlekamp-massey.hpp
 def berlekamp_massey(s: list, mod: int) -> list:

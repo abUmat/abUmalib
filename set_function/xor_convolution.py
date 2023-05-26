@@ -1,6 +1,6 @@
 # https://nyaannyaan.github.io/library/set-function/xor-convolution.hpp
 # my module
-from mymath.modinv import *
+from modulo.modinv import *
 from set_function.walsh_hadamard_transform import *
 # my module
 def xor_convolution(a, b, mod=0):

@@ -1,5 +1,5 @@
 # my module
-from mymath.modinv import *
+from modulo.modinv import *
 # my module
 # https://nyaannyaan.github.io/library/fps/formal-power-series.hpp
 class FPS:

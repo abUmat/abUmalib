@@ -1,6 +1,6 @@
 # my module
 from mymath.gcd_lcm import *
-from mymath.modinv import *
+from modulo.modinv import *
 # my module
 # https://nyaannyaan.github.io/library/modulo/mod-log.hpp
 def mod_log(a: int, b: int, p: int) -> int:
