@@ -1,7 +1,9 @@
 # my module
 from modulo.binomial import *
 # my module
-def lagrange_interpolation(y: list, x: int, C: Binomial, mod: int) -> int:
+# https://nyaannyaan.github.io/library/fps/lagrange-interpolation-point.hpp
+def lagrange_interpolation(y: list, x: int, C: Binomial) -> int:
+    mod = C.mod
     N = len(y) - 1
     if x <= N: return y[x] % mod
     res = 0

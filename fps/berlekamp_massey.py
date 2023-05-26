@@ -1,4 +1,8 @@
-def berlekamp_massey(s, mod):
+# my module
+from mymath.modinv import *
+# my module
+# https://nyaannyaan.github.io/library/fps/berlekamp-massey.hpp
+def berlekamp_massey(s: list, mod: int) -> list:
     N = len(s)
     b = [1]
     c = [1]
@@ -12,7 +16,7 @@ def berlekamp_massey(s, mod):
         b.append(0)
         m += 1
         if x == 0: continue
-        freq = x * pow(y, mod - 2, mod) % mod
+        freq = x * modinv(y, mod) % mod
         if l < m:
             tmp = c[:]
             c[:0] = [0] * (m - l)
