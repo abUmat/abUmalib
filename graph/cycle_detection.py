@@ -1,9 +1,8 @@
-from typing import List, Tuple
-Graph = List[List[int]]
-def cycle_detection(g: Graph, directed: bool=True) -> List[Tuple[int, int]]:
+# https://nyaannyaan.github.io/library/graph/cycle-detection.hpp
+def cycle_detection(g, directed: bool=True) -> list:
     pidx = [-1] * len(g)
     vis = [0] * len(g)
-    cycle: List[Tuple[int, int]]= []
+    cycle = []
     finish = 0
     def dfs(cur: int, pval: int, par: int) -> int:
         nonlocal finish

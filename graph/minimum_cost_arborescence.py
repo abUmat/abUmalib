@@ -2,7 +2,8 @@
 from data_structure.skew_heap import *
 from data_structure.unionfind import *
 # my module
-def minimum_cost_arborescence(N: int, root: int, es: List[int]) -> List[int]:
+# https://nyaannyaan.github.io/library/graph/minimum-cost-arborescence.hpp
+def minimum_cost_arborescence(N: int, root: int, es: list) -> list:
     '''
     Directed MST
     N: number of Vertex
@@ -15,7 +16,7 @@ def minimum_cost_arborescence(N: int, root: int, es: List[int]) -> List[int]:
     used = [-1] * N
     frm = [0] * N
     from_cost = [0] * N
-    come: List[SkewHeapNode] = [None] * N
+    come = [None] * N
     used[root] = root
     par_e = [-1] * len(es)
     stem = [-1] * N

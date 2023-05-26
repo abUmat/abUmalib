@@ -2,6 +2,7 @@ from bisect import bisect_left as lower_bound
 # my module
 from segment_tree.segment_tree import *
 # my module
+# https://nyaannyaan.github.io/library/data-structure-2d/segment-tree-on-range-tree.hpp
 class RangeTree:
     """
     e: identity element of op

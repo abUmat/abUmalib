@@ -1,6 +1,7 @@
 # my module
 from gcc_builtins import *
 # my module
+# https://nyaannyaan.github.io/library/graph/chromatic-number.hpp
 def _calc(n: int, _hist, mod: int) -> int:
     hist = _hist[::]
     for c in range(1, n + 1):

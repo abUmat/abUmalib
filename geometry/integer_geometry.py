@@ -1,5 +1,5 @@
 from functools import cmp_to_key
-from typing import List
+# https://nyaannyaan.github.io/library/geometry/integer-geometry.hpp
 class Point:
     def __init__(self, x=0, y=0) -> None:
         self.x = x
@@ -59,7 +59,7 @@ def ccw(a: Point, b: Point, c: Point) -> int:
     if t == 0: return 0
     return 1
 
-def lower_hull(ps: List[Point]) -> List[Point]:
+def lower_hull(ps: list) -> list:
     N = len(ps)
     ps.sort()
     if N <= 2: return ps
@@ -71,7 +71,7 @@ def lower_hull(ps: List[Point]) -> List[Point]:
         k += 1
     return convex[:k]
 
-def upper_hull(ps: List[Point]) -> List[Point]:
+def upper_hull(ps: list) -> list:
     N = len(ps)
     ps.sort()
     if N <= 2: return ps
@@ -83,7 +83,7 @@ def upper_hull(ps: List[Point]) -> List[Point]:
         k += 1
     return convex[:k]
 
-def convex_hull(ps: List[Point]) -> List[Point]:
+def convex_hull(ps: list) -> list:
     N = len(ps)
     ps.sort()
     if N <= 2: return ps
@@ -100,7 +100,7 @@ def convex_hull(ps: List[Point]) -> List[Point]:
         k += 1
     return convex[:k-1]
 
-def argument_sort(v: List[Point]) -> None:
+def argument_sort(v: list) -> None:
     'sort v by argument -Pi to Pi'
     def compare(a, b):
         apos, bpos = a.pos(), b.pos()

@@ -1,9 +1,9 @@
-from typing import List, Tuple
 # my module
 from gcc_builtins import *
 # my module
+# https://nyaannyaan.github.io/library/data-structure/persistent-queue.hpp
 class _PersistentQueueNode:
-    def __init__(self, d: int, val: int, n: List) -> None:
+    def __init__(self, d: int, val: int, n: list) -> None:
         self.d = d
         self.val = val
         self.par = n
@@ -24,7 +24,7 @@ class PersistentQueue:
             ne.par.append(e)
         return len(self.start) - 1
 
-    def popleft(self, id_: int=-1) -> Tuple[int, int]:
+    def popleft(self, id_: int=-1) -> tuple:
         s = self.start[id_]; e = self.end[id_]
         ns = e
         x = e.d - s.d - 1

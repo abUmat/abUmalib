@@ -2,6 +2,7 @@
 from fps.fps import *
 from modulo.mod_sqrt import *
 # my module
+# https://nyaannyaan.github.io/library/fps/fps-sqrt.hpp
 def fps_sqrt(a: list, mod: int, deg: int=-1) -> list:
     if deg == -1: deg = len(a)
     if len(a) == 0: return [0] * deg

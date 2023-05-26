@@ -1,3 +1,4 @@
+# https://nyaannyaan.github.io/library/data-structure/rollback-union-find.hpp
 class RollbackUnionFind:
     def __init__(self, size: int) -> None:
         self.data = [-1] * size

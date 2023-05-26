@@ -1,11 +1,10 @@
 from bisect import bisect_left as lower_bound
-from typing import Callable, TypeVar
-T = TypeVar('T')
+# https://nyaannyaan.github.io/library/data-structure-2d/abstract-range-tree.hpp
 class RangeTree:
     '''
     init -> add_point -> build -> add -> sum
     '''
-    def __init__(self, nw: Callable[[int], T], ad: Callable[[T, int, int], None], sm: Callable[[T, int, int], int], mrg: Callable[[int, int], int], ti: int) -> None:
+    def __init__(self, nw: callable, ad: callable, sm: callable, mrg: callable, ti: int) -> None:
         """
         nw: return new data_structure
         ad: data_structre.add(i, a)

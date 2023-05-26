@@ -1,3 +1,4 @@
+# https://nyaannyaan.github.io/library/graph/lowlink.hpp
 class LowLink:
     def __init__(self, g) -> None:
         self.g = g

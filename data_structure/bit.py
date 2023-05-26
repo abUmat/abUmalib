@@ -1,3 +1,4 @@
+# https://nyaannyaan.github.io/library/data-structure/binary-indexed-tree.hpp
 class BIT:
     """
     n: size

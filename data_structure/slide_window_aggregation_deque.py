@@ -1,7 +1,7 @@
 from collections import deque
-from typing import Callable
+# https://nyaannyaan.github.io/library/data-structure/slide-window-aggregation.hpp
 class SlideWindowAggregationDeque:
-    def __init__(self, e: int, swagfunc: Callable[[int, int], int]) -> None:
+    def __init__(self, e: int, swagfunc: callable) -> None:
         self.e = self.f0 = self.f1 = e
         self.swagfunc = swagfunc
         self.a0 = deque()

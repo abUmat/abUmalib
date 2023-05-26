@@ -1,4 +1,5 @@
-class SparseTable():
+# https://nyaannyaan.github.io/library/data-structure/sparse-table.hpp
+class SparseTable:
     '''
     更新がないかつ冪等性が成り立つ場合
     '''

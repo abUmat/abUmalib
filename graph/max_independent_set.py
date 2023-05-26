@@ -1,7 +1,8 @@
 # my module
 from gcc_builtins import *
 # my module
-def max_independent_set(g):
+# https://nyaannyaan.github.io/library/graph/max-independent-set.hpp
+def max_independent_set(g) -> list:
     N = len(g)
     bs = [0] * N
     for i in range(N):

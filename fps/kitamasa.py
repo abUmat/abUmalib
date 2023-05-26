@@ -1,6 +1,7 @@
 # my module
 from fps.fps import *
 # my module
+# https://nyaannyaan.github.io/library/fps/kitamasa.hpp
 def linear_recurrence(k: int, Q: list, P: list, mod: int) -> int:
     'destructive'
     fps = FPS(mod)

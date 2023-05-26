@@ -1,6 +1,7 @@
 # my module
 from graph.lowlink import *
 # my module
+# https://nyaannyaan.github.io/library/graph/two-edge-connected-components.hpp
 class TwoEdgeConnectedComponents:
     def __init__(self, g) -> None:
         N = len(g)

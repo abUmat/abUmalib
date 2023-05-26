@@ -1,6 +1,6 @@
-from typing import List
+# https://nyaannyaan.github.io/library/graph/strongly-connected-components.hpp
 class StronglyConnectedComponents:
-    _order: List[int] = []
+    _order = []
     def __init__(self, G):
         self._g = G
         self._used = [0] * len(G)
@@ -9,7 +9,7 @@ class StronglyConnectedComponents:
     def __getitem__(self, k: int) -> int:
         return self._comp[k]
 
-    def belong(self, i: int) -> List[int]:
+    def belong(self, i: int) -> list:
         return self._blng[i]
 
     def _dfs(self, s: int) -> None:

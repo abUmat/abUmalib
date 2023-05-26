@@ -1,4 +1,5 @@
 from bisect import bisect_left as lower_bound
+# https://nyaannyaan.github.io/library/data-structure-2d/fenwick-tree-on-range-tree.hpp
 class BITRangeTree:
     class BIT:
         def __init__(self, size: int) -> None:
