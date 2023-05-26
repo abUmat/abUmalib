@@ -1,4 +1,4 @@
-def number_of_subsequence(s: "Iterable", empty: bool=False, mod: int=0) -> int:
+def number_of_subsequences(s: "Iterable", empty: bool=False, mod: int=0) -> int:
     '''
     s: iterable
     empty: if True, include empty string
