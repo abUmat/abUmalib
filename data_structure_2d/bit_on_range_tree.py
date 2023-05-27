@@ -30,7 +30,8 @@ class BITRangeTree:
                     l &= l - 1
             return res
 
-    ps = []
+    def __init__(self) -> None:
+        self.ps = []
 
     def add_point(self, x: int, y: int) -> None:
         'add point (x, y) for initialize'

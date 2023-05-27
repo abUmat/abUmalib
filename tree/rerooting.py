@@ -1,6 +1,6 @@
 from typing import List, Callable
 class Rerooting:
-    def __init__(self, g: List[List[int]], f1: Callable[[int, int], int], f2: Callable[[int, int, int], int], e: int, arr: List[int]=[]) -> None:
+    def __init__(self, g: List[List[int]], f1: Callable[[int, int], int], f2: Callable[[int, int, int], int], e: int, arr: List[int]=None) -> None:
         '''
         g: Graph
         f1: f1(c1, c2) merge value of child node

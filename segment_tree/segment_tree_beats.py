@@ -4,7 +4,7 @@ class SegmentTreeBeats:
     '''
     pINF = 1<<60
     nINF = -1<<60
-    def __init__(self, n: int, arr: list=[]) -> None:
+    def __init__(self, n: int, arr: list=None) -> None:
         size = 1 << (n - 1).bit_length()
         self.size = size
         size2 = size << 1

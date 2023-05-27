@@ -27,7 +27,7 @@ class _BitVector:
 
 class WaveletMatrix:
     isbuilt = 0
-    def __init__(self, n: int, arr: list=[], build: bool=True) -> None:
+    def __init__(self, n: int, arr: list=None, build: bool=True) -> None:
         self.n = n
         if arr: self.arr = arr
         else: self.arr = [0] * n

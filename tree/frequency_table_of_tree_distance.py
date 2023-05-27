@@ -7,7 +7,7 @@ class FrequencyTableOfTreeDistance(CentroidDecomposition):
     def __init__(self, g) -> None:
         super().__init__(g, 0)
 
-    def _dfs_depth(self, cur: int, par: int, d: int, count: List[int], self_: List[int]) -> None:
+    def _dfs_depth(self, cur: int, par: int, d: int, count: list, self_: list) -> None:
         mask = (1 << 20) - 1
         q = [cur << 40 | par << 20 | d]
         while q:
@@ -21,13 +21,13 @@ class FrequencyTableOfTreeDistance(CentroidDecomposition):
                 if par == dst or self.v[dst]: continue
                 q.append(dst << 40 | cur << 20 | (d + 1))
 
-    def get(self, start: int=0) -> List[int]:
+    def get(self, start: int=0) -> list:
         pow2 = ArbitraryNTT.pow2
         get_centroid, get_size = self.get_centroid, self.get_size
         Q: deque[int] = deque()
         root = get_centroid(start, get_size(start) >> 1)
         Q.append(root)
-        ans: List[int] = [0] * (len(self.g) + 1)
+        ans = [0] * (len(self.g) + 1)
         while Q:
             r = Q.popleft()
             count = []

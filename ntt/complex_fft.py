@@ -3,14 +3,14 @@
 # maybe https://nyaannyaan.github.io/library/ntt/complex-fft.hpp
 from math import pi, sin, cos
 class CooleyTukey:
-    wr = [0] * (1 << 20)
-    wi = [0] * (1 << 20)
-    baser = [0] * 20
-    basei = [0] * 20
     isbuilt = 0
     def __init__(self, k: int=20) -> None:
         self.setw(k)
         self.isbuilt = 1
+        self.wr = [0] * (1 << 20)
+        self.wi = [0] * (1 << 20)
+        self.baser = [0] * 20
+        self.basei = [0] * 20
 
     @staticmethod
     def mul(xr: float, xi: float, yr: float, yi: float) -> tuple:

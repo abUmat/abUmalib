@@ -5,7 +5,7 @@ class Multiset:
     compress: 座圧対象list-likeを指定(nは無効)
     multi: マルチセットか通常のOrderedSetか
     """
-    def __init__(self, n=0, *, compress=[], multi=1):
+    def __init__(self, n=0, *, compress=None, multi=1):
         self.multi = multi
         self.inv_compress = sorted(set(compress)) if compress else [i for i in range(n)]
         self.compress = {k: v for v, k in enumerate(self.inv_compress)}
