@@ -1,8 +1,9 @@
 # my module
 from gcc_builtins import *
+from misc.typing_template import *
 # my module
 # https://nyaannyaan.github.io/library/graph/max-independent-set.hpp
-def max_independent_set(g) -> list:
+def max_independent_set(g: Graph) -> List[int]:
     N = len(g)
     bs = [0] * N
     for i in range(N):

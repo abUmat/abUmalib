@@ -3,7 +3,8 @@ from modulo.modinv import *
 from fps.lagrange_interpolation_point import *
 # my module
 # https://nyaannyaan.github.io/library/fps/sum-of-exponential-times-poly.hpp
-def exp_enumerate(p: int, n: int, mod: int) -> list:
+def exp_enumerate(p: int, n: int, mod: int) -> Vector:
+    '''return: 0^p, 1^p, ..., n^p'''
     f = [0] * (n + 1)
     if not p:
         f[0] = 1
@@ -22,8 +23,12 @@ def exp_enumerate(p: int, n: int, mod: int) -> list:
             if i % x == 0: break
     return f
 
-def sum_of_exp(f: list, a: int, n: int, C: Binomial) -> int:
-    'destructive'
+def sum_of_exp(f: Vector, a: int, n: int, C: Binomial) -> int:
+    '''
+    destructive
+    f: f(0), f(1), ... f(k)
+    return: sum_{i=0...n-1} a^i f(i)
+    '''
     if n == 0: return 0
     if a == 0: return f[0]
     if a == 1:
@@ -58,11 +63,16 @@ def sum_of_exp(f: list, a: int, n: int, C: Binomial) -> int:
     return (tn * pow(a, n - 1, mod) + c) % mod
 
 def sum_of_exp2(d: int, r: int, n: int, C: Binomial) -> int:
+    '''return: sum_{i=0...n-1} r^i i^d'''
     f = exp_enumerate(d, d, C.mod)
     return sum_of_exp(f, r, n, C)
 
 def sum_of_exp_limit(f: list, a: int, C: Binomial) -> int:
-    'destructive'
+    '''
+    destructive
+    f: f(0), f(1), ... f(k)
+    return: sum_{i=0...INF} a^i f(i)
+    '''
     if a == 0: return f[0]
     mod = C.mod
     m = len(f)
@@ -83,5 +93,6 @@ def sum_of_exp_limit(f: list, a: int, C: Binomial) -> int:
     return c
 
 def sum_of_exp_limit2(d: int, r: int, C: Binomial) -> int:
+    '''return: sum_{i=0...INF} r^i i^d'''
     f = exp_enumerate(d, d, C.mod)
     return sum_of_exp_limit(f, r, C)

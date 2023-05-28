@@ -1,5 +1,6 @@
 from random import randrange
 # my module
+from misc.typing_template import *
 from prime.is_prime import *
 from mymath.gcd_lcm import *
 # my module
@@ -8,7 +9,7 @@ def pollard_rho(n: int) -> int:
     b = n.bit_length()-1
     b = (b >> 2) << 2
     m = int(2 ** (b / 8)) << 1
-    while True:
+    while 1:
         c = randrange(1, n)
         f = lambda a: (a * a + c) % n
         y = 0
@@ -36,8 +37,11 @@ def pollard_rho(n: int) -> int:
         elif is_prime(n // g): return n // g
         else: n = g
 
-def factorize(n):
-    'O(N**0.25) pollard rho algorithm'
+def factorize(n: int) -> Dict[int, int]:
+    '''
+    O(N**0.25) pollard rho algorithm
+    return: dict s.t. n == PI(key^val for key, val in dict.items())
+    '''
     res = {}
     for p in range(2,1000):
         if p * p > n: break

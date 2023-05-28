@@ -17,7 +17,7 @@ class ArbitraryNTT: # namespace
     _nttm2 = NTT(_m2)
 
     @classmethod
-    def _multiply(cls, s: list, t: list, mod: int=0) -> list:
+    def _multiply(cls, s: Vector, t: Vector, mod: int=0) -> Vector:
         d0 = cls._nttm0.multiply(s, t)
         d1 = cls._nttm1.multiply(s, t)
         d2 = cls._nttm2.multiply(s, t)
@@ -33,7 +33,7 @@ class ArbitraryNTT: # namespace
         return ret
 
     @classmethod
-    def _pow2(cls, s: list, mod: int=0) -> list:
+    def _pow2(cls, s: Vector, mod: int=0) -> Vector:
         d0 = cls._nttm0.pow2(s)
         d1 = cls._nttm1.pow2(s)
         d2 = cls._nttm2.pow2(s)
@@ -49,7 +49,7 @@ class ArbitraryNTT: # namespace
         return ret
 
     @classmethod
-    def multiply(cls, a: list, b: list, mod: int=0) -> list:
+    def multiply(cls, a: Vector, b: Vector, mod: int=0) -> Vector:
         if not a and not b: return []
         if min(len(a), len(b)) < 128:
             ret = [0] * (len(a) + len(b) - 1)
@@ -60,7 +60,7 @@ class ArbitraryNTT: # namespace
         return cls._multiply(a, b, mod)
 
     @classmethod
-    def pow2(cls, a: list, mod: int=0) -> list:
+    def pow2(cls, a: Vector, mod: int=0) -> Vector:
         if not a: return []
         if len(a) < 128:
             ret = [0] * ((len(a) << 1) - 1)

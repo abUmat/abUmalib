@@ -2,7 +2,7 @@
 from segment_tree.segment_tree import *
 # my module
 class LazySegmentTree(SegmentTree):
-    def __init__(self, n: int, e: int, id_: int, op: callable, mapping: callable, composition: callable, arr: list=None) -> None:
+    def __init__(self, n: int, e: int, id_: int, op: Func21, mapping: Func31, composition: Func21, arr: Vector=None) -> None:
         '''
         n: length
         e: identity_element of merge

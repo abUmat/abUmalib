@@ -1,5 +1,8 @@
-def prime_sieve(n):
-    'O(nloglogn) Sieve of Eratosthenes'
+# my module
+from misc.typing_template import *
+# my module
+def prime_sieve(n: int) -> List[bool]:
+    '''O(nloglogn) Sieve of Eratosthenes'''
     res = bytearray([1] * (n+1))
     res[0] = res[1] = 0
     for i in range(2,n):

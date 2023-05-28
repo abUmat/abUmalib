@@ -1,7 +1,10 @@
 # https://judge.yosupo.jp/submission/100731
 from bisect import bisect_right
 from math import log
-def prime_enumerate(n):
+# my module
+from misc.typing_template import *
+# my module
+def prime_enumerate(n: int) -> List[int]:
     K_MOD30 = [1, 7, 11, 13, 17, 19, 23, 29]
     C1 = [6, 4, 2, 4, 2, 4, 6, 2]
     C0 = [[0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 1, 0, 1, 1, 1, 1],
@@ -13,7 +16,7 @@ def prime_enumerate(n):
               [239, 127, 253, 251, 223, 191, 254, 247], [223, 247, 127, 253, 191, 254, 239, 251],
               [191, 251, 247, 127, 254, 239, 223, 253], [127, 191, 223, 239, 247, 251, 253, 254]]
 
-    def __sieve(n):
+    def __sieve(n: int):
         """素数列挙 O(N loglogN)"""
         A = [1, 7, 11, 13, 17, 19, 23, 29]
         bit_to_index = {1 << i: i for i in range(8)}

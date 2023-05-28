@@ -1,5 +1,8 @@
-def divisors(n: int):
-    'divisors of n (sorted)'
+# my module
+from misc.typing_template import *
+# my module
+def divisors(n: int) -> List[int]:
+    'return: divisors of n (sorted)'
     lower , upper = [], []
     for i in range(1, n+1):
         if i*i > n: break

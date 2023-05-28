@@ -3,8 +3,9 @@ from collections import deque
 from tree.centroid_decomposition import *
 from ntt.arbitrary_ntt import *
 # my module
+# https://nyaannyaan.github.io/library/tree/frequency-table-of-tree-distance.hpp
 class FrequencyTableOfTreeDistance(CentroidDecomposition):
-    def __init__(self, g) -> None:
+    def __init__(self, g: Graph) -> None:
         super().__init__(g, 0)
 
     def _dfs_depth(self, cur: int, par: int, d: int, count: list, self_: list) -> None:

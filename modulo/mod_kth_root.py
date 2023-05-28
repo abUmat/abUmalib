@@ -100,7 +100,7 @@ def _kth_root(a: int, k: int, p: int) -> int:
 
 def kth_root(a: int, k: int, p: int) -> int:
     """
-    X s.t. pow(X, k) == a (mod p)
+    return: X s.t. pow(X, k) == a (mod p)
     """
     return _kth_root(a, k, p)
 

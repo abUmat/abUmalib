@@ -1,5 +1,5 @@
 from atexit import register
-from os import read, write
+from os import read as os_read, write as os_write
 import sys
 from __pypy__ import builders
 class Fastio:
@@ -8,9 +8,9 @@ class Fastio:
     sb = builders.StringBuilder()
     def load(self):
         self.ibuf = self.ibuf[self.pil:]
-        self.ibuf += read(0, 131072)
+        self.ibuf += os_read(0, 131072)
         self.pil = 0; self.pir = len(self.ibuf)
-    def flush(self): write(1, self.sb.build().encode())
+    def flush(self): os_write(1, self.sb.build().encode())
     def fastin(self):
         if self.pir - self.pil < 64: self.load()
         minus = x = 0

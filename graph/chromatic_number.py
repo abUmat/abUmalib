@@ -1,5 +1,6 @@
 # my module
 from gcc_builtins import *
+from misc.typing_template import *
 # my module
 # https://nyaannyaan.github.io/library/graph/chromatic-number.hpp
 def _calc(n: int, _hist, mod: int) -> int:
@@ -13,7 +14,7 @@ def _calc(n: int, _hist, mod: int) -> int:
         if sm % mod: return c
     return n
 
-def chromatic_number(g):
+def chromatic_number(g: Graph) -> int:
     n = len(g)
     adj = [0] * n
     dp = [0] * (1 << n)

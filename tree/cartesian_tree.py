@@ -1,5 +1,8 @@
-from typing import List
-def cartesian_tree(a: List[int]) -> List[int]:
+# my module
+from misc.typing_template import *
+# my module
+# https://nyaannyaan.github.io/library/tree/cartesian-tree.hpp
+def cartesian_tree(a: Vector) -> Vector:
     N = len(a)
     p = [-1] * N
     st = [0] * N

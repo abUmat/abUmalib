@@ -4,7 +4,7 @@ from modulo.modinv import *
 # my module
 # https://nyaannyaan.github.io/library/modulo/mod-log.hpp
 def mod_log(a: int, b: int, p: int) -> int:
-    'return k s.t. a**k == y (mod p) if exist, else -1'
+    'return: k s.t. a**k == y (mod p) if exist, else -1'
     if a % p < 0: a = a % p + p
     if b % p < 0: b = b % p + p
     r = 1 % p

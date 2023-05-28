@@ -2,7 +2,7 @@
 from math998244353.ntt import *
 # my module
 # https://nyaannyaan.github.io/library/ntt/multivariate-multiplication.hpp
-def multivariate_multiplication(f: list, g: list, base: list) -> list:
+def multivariate_multiplication(f: List[int], g: List[int], base: List[int]) -> List[int]:
     n = len(f); s = len(base); W = 1
     if s == 0: return [f[0] * g[0] % MOD]
     while W < n << 1: W <<= 1

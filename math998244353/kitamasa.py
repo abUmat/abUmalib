@@ -1,7 +1,9 @@
 # my module
 from math998244353.fps import *
 # my module
-def linear_recurrence(k: int, Q: list, P: list) -> int:
+# https://nyaannyaan.github.io/library/fps/kitamasa.hpp
+def linear_recurrence(k: int, Q: Poly, P: Poly) -> int:
+    '''return: [x**k](P/Q)'''
     FPS.shrink(Q)
     ret = 0
     if len(P) >= len(Q):
@@ -24,10 +26,10 @@ def linear_recurrence(k: int, Q: list, P: list) -> int:
     for i in range(1 << logn):
         btr[i] = (btr[i >> 1] >> 1) + ((i & 1) << (logn - 1))
 
-    dw = pow(332748118, (MOD - 1) // (N << 1), MOD)
+    dw = pow(332748118, (MOD - 1) // (N << 1), MOD) # 332748118 * 3 == 1 (mod 998244353)
 
     while k:
-        inv2 = 499122177
+        inv2 = 499122177 # 499122177 * 2 == 1 (mod 998244353)
         FPS.resize(T, N)
         for i in range(N):
             T[i] = Q[i << 1 | 0] * Q[i << 1 | 1] % MOD
@@ -50,7 +52,7 @@ def linear_recurrence(k: int, Q: list, P: list) -> int:
     NTT.intt(Q)
     return ret + NTT.multiply(P, FPS.inv(Q))[k]
 
-def kitamasa(N: int, Q: list, a: list) -> int:
+def kitamasa(N: int, Q: Poly, a: Poly) -> int:
     if N < len(a): return a[N]
     P = NTT.multiply(a[:len(Q) - 1], Q)
     FPS.resize(P, len(Q) - 1)

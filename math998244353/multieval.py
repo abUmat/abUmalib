@@ -3,7 +3,7 @@ from math998244353.fps import *
 # my module
 # https://nyaannyaan.github.io/library/fps/multipoint-evaluation.hpp
 class ProductTree:
-    def __init__(self, xs: list) -> None:
+    def __init__(self, xs: Vector) -> None:
         self.xs = xs
         self.xsz = xsz = len(xs)
         N = 1
@@ -42,11 +42,11 @@ class ProductTree:
             NTT.intt(buf[i])
             FPS.shrink(buf[i])
 
-def inner_multipoint_evaluation(f: list, xs: list, ptree: ProductTree):
-    ret = []
+def inner_multipoint_evaluation(f: Poly, xs: Vector, ptree: ProductTree) -> Vector:
+    ret: Vector= []
     def rec(a: list, idx: int) -> None:
         if ptree.l[idx] == ptree.r[idx]: return
-        a = FPS.mod(a, ptree.buf[idx])
+        a = FPS.modulo(a, ptree.buf[idx])
         if len(a) <= 64:
             for i in range(ptree.l[idx], ptree.r[idx]): ret.append(FPS.eval(a, xs[i]))
             return
@@ -55,6 +55,7 @@ def inner_multipoint_evaluation(f: list, xs: list, ptree: ProductTree):
     rec(f, 1)
     return ret
 
-def multipoint_evaluation(f: list, xs: list) -> list:
+def multipoint_evaluation(f: Poly, xs: Vector) -> Vector:
+    '''return: f(x) for x in xs'''
     if not f or not xs: return [0] * len(xs)
     return inner_multipoint_evaluation(f, xs, ProductTree(xs))

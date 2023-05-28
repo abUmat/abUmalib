@@ -2,7 +2,8 @@
 from math998244353.ntt import *
 # my module
 # https://nyaannyaan.github.io/library/ntt/chirp-z.hpp
-def chirp_z(f: list, W: int, N: int=-1, A: int=1) -> list:
+# abst. https://yoneh.hatenadiary.org/entry/20080109/1199862684
+def chirp_z(f: Poly, W: int, N: int=-1, A: int=1) -> Poly:
     if N == -1: N = len(f)
     if not f or N == 0: return []
     M = len(f)

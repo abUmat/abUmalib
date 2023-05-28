@@ -2,7 +2,7 @@
 from ntt.ntt import *
 # my module
 # https://nyaannyaan.github.io/library/ntt/multivariate-multiplication.hpp
-def multivariate_multiplication(f: list, g: list, base: list, mod: int) -> list:
+def multivariate_multiplication(f: List[int], g: List[int], base: List[int], mod: int) -> List[int]:
     '''ntt friendly only'''
     n = len(f); s = len(base); W = 1
     if s == 0: return [f[0] * g[0] % mod]

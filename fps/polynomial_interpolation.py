@@ -2,7 +2,8 @@
 from fps.multieval import *
 # my module
 # https://nyaannyaan.github.io/library/fps/polynomial-interpolation.hpp
-def polynomial_interpolation(xs: list, ys: list, mod: int) -> list:
+def polynomial_interpolation(xs: Vector, ys: Vector, mod: int) -> Poly:
+    '''return: f s.t. f(x[i]) == y[i] for all i'''
     assert(len(xs) == len(ys))
     ptree = ProductTree(xs, mod)
     fps = FPS(mod)

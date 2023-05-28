@@ -2,7 +2,8 @@
 from math998244353.taylor_shift import *
 # my module
 # https://nyaannyaan.github.io/library/fps/fps-famous-series.hpp
-def stirling1(N: int, C: Binomial) -> list:
+def stirling1(N: int, C: Binomial) -> Poly:
+    # https://en.wikipedia.org/wiki/Stirling_number
     if N <= 0: return [1]
     lg = N.bit_length() - 1
     res = [0, 1]
@@ -12,17 +13,20 @@ def stirling1(N: int, C: Binomial) -> list:
         if n & 1: res = FPS.add([0] + res, FPS.mul(res, n - 1))
     return res
 
-def stirling2(N: int, C: Binomial) -> list:
+def stirling2(N: int, C: Binomial) -> Poly:
+    # https://en.wikipedia.org/wiki/Stirling_number
     f = [pow(i, N, MOD) * C.finv(i) % MOD for i in range(N + 1)]
     g = [-C.finv(i) if i & 1 else C.finv(i) for i in range(N + 1)]
     return NTT.multiply(f, g)[:N + 1]
 
-def bernoulli(N: int, C: Binomial) -> list:
+def bernoulli(N: int, C: Binomial) -> Poly:
+    # https://en.wikipedia.org/wiki/Bernoulli_number
     res = [C.finv(i + 1) for i in range(N + 1)]
     res = FPS.inv(res, N + 1)
     return [x * C.fac(i) % MOD for i, x in enumerate(res)]
 
-def partition(N: int) -> list:
+def partition(N: int) -> Vector:
+    # https://en.wikipedia.org/wiki/Partition_(number_theory)
     res = [0] * (N + 1)
     res[0] = 1
     for k in range(1, N + 1):
@@ -33,7 +37,8 @@ def partition(N: int) -> list:
         if k2 <= N: res[k2] += (-1 if k & 1 else 1)
     return FPS.inv(res)
 
-def montmort(N: int, mod: int) -> list:
+def montmort(N: int, mod: int) -> Vector:
+    # https://en.wikipedia.org/wiki/Derangement
     if N <= 1: return [0]
     if N == 2: return [0, 1]
     f = [0] * N

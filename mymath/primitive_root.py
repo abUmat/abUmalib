@@ -3,7 +3,7 @@ from random import randint
 from prime.fast_factorize import factorize
 # my module
 def primitive_root(P: int) -> int:
-    'primitive root of P'
+    'return: primitive root of P'
     if P == 2: return 1
     ps = factorize(P-1).keys()
     while 1:

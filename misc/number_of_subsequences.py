@@ -1,4 +1,7 @@
-def number_of_subsequences(s: "Iterable", empty: bool=False, mod: int=0) -> int:
+# my module
+from misc.typing_template import *
+# my module
+def number_of_subsequences(s: Sequence, empty: bool=False, mod: int=0) -> int:
     '''
     s: iterable
     empty: if True, include empty string

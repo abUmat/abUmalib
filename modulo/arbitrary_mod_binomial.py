@@ -1,8 +1,11 @@
+# my module
+from misc.typing_template import *
+# my module
 # https://nyaannyaan.github.io/library/modulo/arbitrary-mod-binomial.hpp
 class _PrimePowerBinomial:
     N_MAX = 20000000
     M_MAX = (1<<30)-1
-    def __init__(self, _p, _q):
+    def __init__(self, _p: int, _q: int) -> None:
         self.p, self.q = _p, _q
         m = 1
         for _ in range(_q): m *= self.p
@@ -36,7 +39,7 @@ class _PrimePowerBinomial:
                 i -= 1
             i -= 1
 
-    def C(self, n, m):
+    def C(self, n: int, m: int) -> int:
         if n < m or n < 0 or m < 0: return 0
         p = self.p
         # Lucasの定理
@@ -88,8 +91,8 @@ class _PrimePowerBinomial:
 
 class ArbitraryModBinomial:
     @staticmethod
-    def _crt(V):
-        def extgcd(a, b):
+    def _crt(V: List[Tuple[int, int]]) -> Tuple[int, int]:
+        def extgcd(a: int, b: int) -> Tuple[int, int]:
             if b:
                 d, y, x = extgcd(b, a % b)
                 y -= (a // b) * x
@@ -102,7 +105,7 @@ class ArbitraryModBinomial:
             x %= d
         return x, d
 
-    def __init__(self, mod):
+    def __init__(self, mod: int) -> None:
         self.mod = mod
         self.M = []
         self.cs = []
@@ -120,7 +123,8 @@ class ArbitraryModBinomial:
             self.M.append(mod)
             self.cs.append(_PrimePowerBinomial(mod, 1))
 
-    def __call__(self, n, m):
+    def __call__(self, n: int, m: int) -> int:
+        '''return: nCm'''
         if self.mod == 1: return 0
         V = []
         for i in range(len(self.cs)):

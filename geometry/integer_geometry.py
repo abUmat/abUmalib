@@ -1,7 +1,7 @@
 from functools import cmp_to_key
 # https://nyaannyaan.github.io/library/geometry/integer-geometry.hpp
 class Point:
-    def __init__(self, x=0, y=0) -> None:
+    def __init__(self, x: int=0, y: int=0) -> None:
         self.x = x
         self.y = y
 

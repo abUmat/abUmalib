@@ -1,5 +1,8 @@
-# https://nyaannyaan.github.io/library/graph/cycle-detection.hpp
-def cycle_detection(g, directed: bool=True) -> list:
+# my module
+from misc.typing_template import *
+# my module
+# # https://nyaannyaan.github.io/library/graph/cycle-detection.hpp
+def cycle_detection(g: Graph, directed: bool=True) -> List[Tuple[int, int]]:
     pidx = [-1] * len(g)
     vis = [0] * len(g)
     cycle = []

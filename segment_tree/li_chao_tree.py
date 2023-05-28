@@ -1,19 +1,21 @@
 from bisect import bisect_left as lower_bound, bisect_right as upper_bound
+# my module
+from misc.typing_template import *
+# my module
 # https://nyaannyaan.github.io/library/segment-tree/li-chao-tree.hpp
-def _get(line: tuple, x: int) -> int:
+def _get(line: Tuple[int, int], x: int) -> int:
     return line[0] *  x + line[1]
 
-def _over(l: tuple, r: tuple, x: int) -> bool:
+def _over(l: Tuple[int, int], r: Tuple[int, int], x: int) -> bool:
     return _get(l, x) < _get(r, x)
 
 class LiChaoTree:
-    def __init__(self, xset: list, INF: int=(1 << 60) - 1) -> None:
+    def __init__(self, xset: List[int], INF: int=(1 << 60) - 1) -> None:
         self.xset = sorted(set(xset))
-        size = 1 << len(self.xset).bit_length()
+        self.size = size = 1 << len(self.xset).bit_length()
         while len(self.xset) < size:
             self.xset.append(self.xset[-1] + 1)
         self.seg = [(0, INF) for _ in range(size << 1)]
-        self.size = size
 
     def _update(self, a: int, b: int, seg_idx: int, left: int=0, right: int=0) -> None:
         if not right:

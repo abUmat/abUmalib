@@ -3,10 +3,10 @@ from math998244353.fps import *
 # my module
 # https://nyaannyaan.github.io/library/fps/polynomial-gcd.hpp
 class Mat:
-    def __init__(self, a00: list, a01: list, a10: list, a11: list) -> None:
+    def __init__(self, a00: Poly, a01: Poly, a10: Poly, a11: Poly) -> None:
         self.arr = [a00, a01, a10, a11]
 
-    def __mul__(self, r):
+    def __mul__(self, r) -> List[Poly]:
         a00, a01, a10, a11 = self.arr
         if type(r) is Mat:
             ra00, ra01, ra10, ra11 = r.arr
@@ -25,7 +25,7 @@ class Mat:
     def I():
         return Mat([1], [], [], [1])
 
-def inner_naive_gcd(m: Mat, p: list) -> None:
+def inner_naive_gcd(m: Mat, p: List[Poly]) -> None:
     quo, rem = FPS.divmod(p[0], p[1])
     b10 = FPS.sub(m.arr[0], NTT.multiply(m.arr[2], quo))
     b11 = FPS.sub(m.arr[1], NTT.multiply(m.arr[3], quo))
@@ -33,7 +33,7 @@ def inner_naive_gcd(m: Mat, p: list) -> None:
     m.arr = [m.arr[2], m.arr[3], b10, b11]
     p[0], p[1] = p[1], rem
 
-def inner_half_gcd(p: list) -> Mat:
+def inner_half_gcd(p: List[Poly]) -> Mat:
     n = len(p[0]); m = len(p[1])
     k = n + 1 >> 1
     if m <= k: return Mat.I()
@@ -48,7 +48,7 @@ def inner_half_gcd(p: list) -> Mat:
     p[1] = p[1][j:]
     return inner_half_gcd(p) * m1
 
-def inner_poly_gcd(a: list, b: list) -> Mat:
+def inner_poly_gcd(a: Poly, b: Poly) -> Mat:
     p = [a[::], b[::]]
     FPS.shrink(p[0]); FPS.shrink(p[1])
     n = len(p[0]); m = len(p[1])
@@ -65,7 +65,7 @@ def inner_poly_gcd(a: list, b: list) -> Mat:
         if not p[1]: return m1 * res
         res = m1 * res
 
-def poly_gcd(a: list, b: list) -> list:
+def poly_gcd(a: Poly, b: Poly) -> Poly:
     p = [a, b]
     m = inner_poly_gcd(a, b)
     p = m * p
@@ -74,10 +74,11 @@ def poly_gcd(a: list, b: list) -> list:
         for i, x in enumerate(p[0]): p[0][i] = x * coef % MOD
     return p[0]
 
-def poly_inv(f: list, g: list) -> list:
+def poly_inv(f: Poly, g: Poly) -> Poly:
+    '''return: h s.t. f*h == 1 (mod g)'''
     p = [f, g]
     m = inner_poly_gcd(f, g)
     gcd = (m * p)[0]
     if len(gcd) != 1: return [0, []]
     x = [[1], g]
-    return [1, FPS.mul(FPS.mod((m * x)[0], g), modinv(gcd[0], MOD))]
+    return [1, FPS.mul(FPS.modulo((m * x)[0], g), modinv(gcd[0], MOD))]

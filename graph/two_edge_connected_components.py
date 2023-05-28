@@ -3,7 +3,7 @@ from graph.lowlink import *
 # my module
 # https://nyaannyaan.github.io/library/graph/two-edge-connected-components.hpp
 class TwoEdgeConnectedComponents:
-    def __init__(self, g) -> None:
+    def __init__(self, g: Graph) -> None:
         N = len(g)
         self.g = g
         self.low = LowLink(g)

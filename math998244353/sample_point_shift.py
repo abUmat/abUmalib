@@ -2,7 +2,12 @@
 from math998244353.ntt import *
 # my module
 # https://nyaannyaan.github.io/library/fps/sample-point-shift.hpp
-def sample_point_shift(y: list, t: int, m: int=-1) -> list:
+def sample_point_shift(y: Vector, t: int, m: int=-1) -> Vector:
+    '''
+    y: sample point f(0), f(1),... f(N - 1)
+    t: shift
+    return: f(t + i) for i in range(m)
+    '''
     if m == -1: m == len(y)
     T = t
     k = len(y) - 1

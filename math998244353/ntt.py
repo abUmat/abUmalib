@@ -1,5 +1,6 @@
 # my module
 from modulo.modinv import *
+from misc.typing_template import *
 # my module
 MOD = 998244353
 _IMAG = 911660635
@@ -10,7 +11,7 @@ _irate3 = (0, 509520358, 929031873, 170256584, 839780419, 282974284, 395914482, 
 
 class NTT:
     @staticmethod
-    def _fft(a):
+    def _fft(a: Vector) -> None:
         n = len(a)
         h = (n - 1).bit_length()
         le = 0
@@ -43,7 +44,7 @@ class NTT:
                 rot = rot * _rate2[(~s & -~s).bit_length()] % MOD
 
     @staticmethod
-    def _ifft(a):
+    def _ifft(a: Vector) -> None:
         n = len(a)
         h = (n - 1).bit_length()
         le = h
@@ -74,19 +75,19 @@ class NTT:
                 a[i + p] = l - r if l - r >= 0 else l - r + MOD
 
     @classmethod
-    def ntt(cls, a) -> None:
+    def ntt(cls, a: Vector) -> None:
         if len(a) <= 1: return
         cls._fft(a)
 
     @classmethod
-    def intt(cls, a) -> None:
+    def intt(cls, a:Vector) -> None:
         if len(a) <= 1: return
         cls._ifft(a)
         iv = modinv(len(a), MOD)
         for i, x in enumerate(a): a[i] = x * iv % MOD
 
     @classmethod
-    def multiply(cls, s: list, t: list) -> list:
+    def multiply(cls, s: Vector, t: Vector) -> Vector:
         n, m = len(s), len(t)
         l = n + m - 1
         if min(n, m) <= 60:
@@ -107,7 +108,7 @@ class NTT:
         return [x * iz % MOD for x in a]
 
     @classmethod
-    def pow2(cls, s: list) -> list:
+    def pow2(cls, s: Vector) -> Vector:
         n = len(s)
         l = (n << 1) - 1
         if n <= 60:
@@ -126,7 +127,7 @@ class NTT:
         return [x * iz % MOD for x in a]
 
     @classmethod
-    def ntt_doubling(cls, a: list) -> None:
+    def ntt_doubling(cls, a: Vector) -> None:
         M = len(a)
         b = a[:]
         cls.intt(b)

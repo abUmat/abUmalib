@@ -2,7 +2,8 @@
 from fps.ntt_friendly_fps import *
 # my module
 # https://nyaannyaan.github.io/library/fps/fast-multieval.hpp
-def multipoint_evaluation_fast(f: list, xs: list, mod: int) -> list:
+def multipoint_evaluation_fast(f: Poly, xs: Vector, mod: int) -> Vector:
+    '''return: f(x) for x in xs'''
     fps = FPS(mod)
     s = len(xs)
     N = 1 << (s - 1).bit_length() if s != 1 else 2

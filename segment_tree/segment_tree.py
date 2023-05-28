@@ -1,5 +1,8 @@
+# my module
+from misc.typing_template import *
+# my module
 class SegmentTree:
-    def __init__(self, n: int, e: int, op: callable, arr: list=None):
+    def __init__(self, n: int, e: int, op: Func21, arr: Vector=None) -> None:
         self.n = n
         self.log = (n - 1).bit_length()
         self.size = 1 << self.log

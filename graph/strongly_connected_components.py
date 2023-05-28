@@ -1,15 +1,18 @@
-# https://nyaannyaan.github.io/library/graph/strongly-connected-components.hpp
+# my module
+from misc.typing_template import *
+# my module
+# # https://nyaannyaan.github.io/library/graph/strongly-connected-components.hpp
 class StronglyConnectedComponents:
-    _order = []
-    def __init__(self, G):
-        self._g = G
-        self._used = [0] * len(G)
+    def __init__(self, g: Graph) -> None:
+        self._g = g
+        self._used = [0] * len(g)
+        self._order: List[int]= []
         self._build()
 
     def __getitem__(self, k: int) -> int:
         return self._comp[k]
 
-    def belong(self, i: int) -> list:
+    def belong(self, i: int) -> List[int]:
         return self._blng[i]
 
     def _dfs(self, s: int) -> None:
@@ -35,7 +38,7 @@ class StronglyConnectedComponents:
                 for vv in self._rg[v]:
                     q.append(vv)
 
-    def _build(self):
+    def _build(self) -> None:
         for v in range(len(self._g)): self._dfs(v)
         self._order.reverse()
         self._comp = comp = [-1] * len(self._g)
@@ -48,8 +51,8 @@ class StronglyConnectedComponents:
             if comp[v] == -1:
                 self._rdfs(v, ptr)
                 ptr += 1
-        self.dag = [[] for _ in range(ptr)]
-        self._blng = [[] for _ in range(ptr)]
+        self.dag: List[List[int]] = [[] for _ in range(ptr)]
+        self._blng: List[List[int]] = [[] for _ in range(ptr)]
         for v in range(len(self._g)):
             self._blng[comp[v]].append(v)
             for vv in self._g[v]:

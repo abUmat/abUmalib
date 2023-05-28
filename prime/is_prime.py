@@ -1,6 +1,8 @@
 # https://nyaannyaan.github.io/library/prime/fast-factorize.hpp
-def is_prime(n):
-    'O(logN) miller rabin algorithm'
+def is_prime(n: int) -> bool:
+    '''
+    O(logN) miller rabin algorithm
+    '''
     if n == 2: return 1
     if n == 1 or not n&1: return 0
     #miller_rabin

@@ -3,7 +3,8 @@ from fps.fps import *
 from modulo.binomial import *
 # my module
 # https://nyaannyaan.github.io/library/fps/taylor-shift.hpp
-def taylor_shift(f: list, a: int, C: Binomial):
+def taylor_shift(f: Poly, a: int, C: Binomial) -> Poly:
+    '''return: g s.t. g(x) == f(x + a)'''
     mod = C.mod
     n = len(f)
     res = [x * C.fac(i) % mod for i, x in enumerate(f)]

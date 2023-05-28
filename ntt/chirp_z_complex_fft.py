@@ -3,7 +3,8 @@ from modulo.modinv import *
 from ntt.complex_fft import *
 # my module
 # https://nyaannyaan.github.io/library/ntt/chirp-z.hpp
-def chirp_z(f: list, W: int, N: int=-1, A: int=1, mod: int=998244353) -> list:
+# abst. https://yoneh.hatenadiary.org/entry/20080109/1199862684
+def chirp_z(f: Vector, W: int, N: int=-1, A: int=1, mod: int=998244353) -> Vector:
     if N == -1: N = len(f)
     if not f or N == 0: return []
     M = len(f)

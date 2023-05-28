@@ -2,7 +2,8 @@
 from ntt.ntt import *
 # my module
 # https://judge.yosupo.jp/submission/73323
-def multiplicative_convolution_mod2n(A: list, B: list, mod: int) -> list:
+def multiplicative_convolution_mod2n(A: Vector, B: Vector, mod: int) -> Vector:
+    '''return: c = [sum(a * b for i, a in enumerat(A) for j, b in enumerate(B)) if i*j == k (mod 2**N)]'''
     N = 0
     while 1 << N < len(A): N += 1
     assert(1 << N == len(A) and 1 << N == len(B))

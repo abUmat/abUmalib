@@ -1,4 +1,4 @@
-import bisect
+from bisect import bisect_left as lower_bound, bisect_right as upper_bound
 class Multiset:
     """
     n: サイズ
@@ -66,10 +66,10 @@ class Multiset:
         return x
 
     def bisect_left(self, x):
-        return self.sum(bisect.bisect_left(self.inv_compress, x))
+        return self.sum(lower_bound(self.inv_compress, x))
 
     def bisect_right(self, x):
-        return self.sum(bisect.bisect_right(self.inv_compress, x))
+        return self.sum(upper_bound(self.inv_compress, x))
 
     def count(self, x):
         return self.counter[self.compress[x]] if x in self.compress else 0

@@ -1,8 +1,12 @@
+# my module
+from misc.typing_template import *
+# my module
+# https://nyaannyaan.github.io/library/tree/centroid-decomposition.hpp
 class CentroidDecomposition:
-    def __init__(self, G, isbuild=1) -> None:
-        self.g = G
-        self.sub = [0] * len(G)
-        self.v = bytearray(len(G))
+    def __init__(self, g: Graph, isbuild: bool=1) -> None:
+        self.g = g
+        self.sub = [0] * len(g)
+        self.v = bytearray(len(g))
         if isbuild: self.build()
 
     def build(self) -> None:

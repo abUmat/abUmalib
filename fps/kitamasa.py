@@ -2,8 +2,8 @@
 from fps.fps import *
 # my module
 # https://nyaannyaan.github.io/library/fps/kitamasa.hpp
-def linear_recurrence(k: int, Q: list, P: list, mod: int) -> int:
-    'destructive'
+def linear_recurrence(k: int, Q: Poly, P: Poly, mod: int) -> int:
+    '''return: [x**k](P/Q)'''
     fps = FPS(mod)
     FPS.shrink(Q)
     ret = 0
@@ -71,7 +71,7 @@ def linear_recurrence(k: int, Q: list, P: list, mod: int) -> int:
     intt(Q)
     return ret + fps.mul(P, fps.inv(Q))[k]
 
-def kitamasa(N: int, Q: list, a: list, mod: int) -> int:
+def kitamasa(N: int, Q: Poly, a: Poly, mod: int) -> int:
     if N < len(a): return a[N]
     P = FPS(mod).mul(a[:len(Q) - 1], Q)
     FPS.resize(P, len(Q) - 1)

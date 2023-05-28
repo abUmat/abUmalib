@@ -2,7 +2,8 @@
 from math998244353.multieval import *
 # my module
 # https://nyaannyaan.github.io/library/fps/polynomial-interpolation.hpp
-def polynomial_interpolation(xs: list, ys: list) -> list:
+def polynomial_interpolation(xs: Vector, ys: Vector) -> Poly:
+    '''return: f s.t. f(x[i]) == y[i] for all i'''
     assert(len(xs) == len(ys))
     ptree = ProductTree(xs)
     w = FPS.diff(ptree.buf[1])

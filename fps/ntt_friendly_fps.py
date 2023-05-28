@@ -8,7 +8,11 @@ def __init__(self, mod: int) -> None:
     self.ntt = NTT(mod)
 FPS.__init__ = __init__
 
-def mul(self: FPS, l: list, r) -> list:
+def mul(self: FPS, l: Poly, r: Union[Poly, int]) -> Poly:
+    '''
+    if r is int: l *= r
+    if r is Polynomial: convolve l and r
+    '''
     mod = self.mod
     if type(r) is int: return [x * r % mod for x in l]
     if type(r) is list:
@@ -17,7 +21,8 @@ def mul(self: FPS, l: list, r) -> list:
     raise TypeError()
 FPS.mul = mul
 
-def inv(self: FPS, a: list, deg=-1) -> list:
+def inv(self: FPS, a: Poly, deg: int=-1) -> Poly:
+    '''return: g s.t. a*g == 1 (mod x**deg)'''
     # assert(self[0] != 0)
     mod = self.mod
     if deg == -1: deg = len(a)
@@ -45,10 +50,11 @@ def inv(self: FPS, a: list, deg=-1) -> list:
     return res
 FPS.inv = inv
 
-def exp(self: FPS, a: list, deg=-1) -> list:
+def exp(self: FPS, f: Poly, deg: int=-1) -> Poly:
+    '''return: g s.t. log(g) == f (mod x ** deg)'''
     # assert(not self or self[0] == 0)
     mod = self.mod
-    if deg == -1: deg = len(a)
+    if deg == -1: deg = len(f)
     inv = [0, 1]
 
     def integral(f: list) -> list:
@@ -61,7 +67,7 @@ def exp(self: FPS, a: list, deg=-1) -> list:
     def diff(f: list) -> list:
         return [x * i % mod for i, x in enumerate(f) if i]
 
-    b = [1, (a[1] if 1 < len(a) else 0)]
+    b = [1, (f[1] if 1 < len(f) else 0)]
     c = [1]
     z1 = []
     z2 = [1, 1]
@@ -79,8 +85,8 @@ def exp(self: FPS, a: list, deg=-1) -> list:
         c[m >> 1:] = z[m >> 1:]
         z2 = c + [0] * m
         self.ntt.ntt(z2)
-        tmp = min(len(a), m)
-        x = a[:tmp] + [0] * (m - tmp)
+        tmp = min(len(f), m)
+        x = f[:tmp] + [0] * (m - tmp)
         x = diff(x)
         x.append(0)
         self.ntt.ntt(x)
@@ -97,7 +103,7 @@ def exp(self: FPS, a: list, deg=-1) -> list:
         x.pop()
         x = integral(x)
         x[:m] = [0] * m
-        for i in range(m, min(len(a), m << 1)): x[i] += a[i]
+        for i in range(m, min(len(f), m << 1)): x[i] += f[i]
         self.ntt.ntt(x)
         for i, p in enumerate(y): x[i] = x[i] * p % mod
         self.ntt.intt(x)

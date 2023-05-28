@@ -1,3 +1,6 @@
+# my module
+from misc.typing_template import *
+# my module
 class UnionFind():
     def __init__(self, n: int) -> None:
         self.n = n
@@ -35,12 +38,12 @@ class UnionFind():
         'True if x and y belong to same tree, else False'
         return self.leader(x) == self.leader(y)
 
-    def members(self, x: int) -> 'List[int]':
+    def members(self, x: int) -> List[int]:
         'All nodes of the tree x belong to'
         leader = self.leader(x)
         return [i for i in range(self.n) if self.leader(i) == leader]
 
-    def leaders(self) -> 'List[int]':
+    def leaders(self) -> List[int]:
         'All roots of trees'
         return [i for i, x in enumerate(self.parents) if x < 0]
 
@@ -48,7 +51,7 @@ class UnionFind():
         'Count of trees'
         return len(self.leaders())
 
-    def groups(self) -> 'List[List[int]]':
+    def groups(self) -> List[List[int]]:
         'nodes grouped by tree'
         res = [[] for _ in range(self.n)]
         for v in range(self.n): res[self.leader(v)].append(v)

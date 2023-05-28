@@ -1,3 +1,6 @@
+# my module
+from misc.typing_template import *
+# my module
 # https://judge.yosupo.jp/submission/46633
 # cooley_tukey ?
 # maybe https://nyaannyaan.github.io/library/ntt/complex-fft.hpp
@@ -37,7 +40,7 @@ class CooleyTukey:
             j >>= 1
         self.genw(0, k - 1, 1, 0)
 
-    def fft(self, ar: list, ai: list, k: int) -> None:
+    def fft(self, ar: List[float], ai: List[float], k: int) -> None:
         if k == 0: return
         if k == 1:
             ar[0], ar[1] = ar[0] + ar[1], ar[0] - ar[1]
@@ -81,7 +84,7 @@ class CooleyTukey:
             u <<= 2
             v >>= 2
 
-    def ifft(self, ar: list, ai: list, k: int) -> None:
+    def ifft(self, ar: List[float], ai: List[float], k: int) -> None:
         if k == 0: return
         if k == 1:
             ar[0], ar[1] = ar[0] + ar[1], ar[0] - ar[1]
@@ -125,7 +128,7 @@ class CooleyTukey:
                 ar[j], ar[j + u] = ar[j] + ar[j + u], ar[j] - ar[j + u]
                 ai[j], ai[j + u] = ai[j] + ai[j + u], ai[j] - ai[j + u]
 
-    def fft_real(self, ALr: list, ALi: list, AHr: list, AHi: list, k: int) -> None:
+    def fft_real(self, ALr: List[float], ALi: List[float], AHr: List[float], AHi: List[float], k: int) -> None:
         self.fft(ALr, ALi, k)
         AHr[0] = ALi[0] * 2; AHi[0] = 0
         ALr[0] = ALr[0] * 2; ALi[0] = 0
@@ -142,7 +145,7 @@ class CooleyTukey:
                 i += 2
             y <<= 1
 
-    def karatsuba(self, a: list, b: list, mod: int) -> list:
+    def karatsuba(self, a: Vector, b: Vector, mod: int) -> Vector:
         B = 32000
         bbmod = B * B % mod
         l = len(a) + len(b) - 1
@@ -193,7 +196,7 @@ class CooleyTukey:
             u[i] = x
         return u
 
-    def karatsuba_pow2(self, a: list, mod: int) -> list:
+    def karatsuba_pow2(self, a: Vector, mod: int) -> Vector:
         B = 32000
         l = len(a) * 2 - 1
         k = 2; M = 4

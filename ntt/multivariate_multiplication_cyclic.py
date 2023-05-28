@@ -3,7 +3,7 @@ from mymath.primitive_root import *
 from ntt.chirp_z import *
 # my module
 # https://judge.yosupo.jp/submission/136277
-def multivariate_multiplication_cyclic(f: list, g: list, base: list, mod: int) -> list:
+def multivariate_multiplication_cyclic(f: List[int], g: List[int], base: List[int], mod: int) -> List[int]:
     for n in base: assert((mod - 1) % n == 0)
     pr = primitive_root(mod)
     ipr = modinv(pr, mod)

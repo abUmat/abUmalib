@@ -1,4 +1,7 @@
-def euler_tour(g: list, root: int=0) -> tuple:
+# my module
+from misc.typing_template import *
+# my module
+def euler_tour(g: Graph, root: int=0) -> Tuple[List, List, List, List, List]:
     '''
     隣接リストと根を与えると
     通る辺, 通る頂点, 頂点に到達した時刻, 頂点を最後に通った時刻, 頂点の深さ

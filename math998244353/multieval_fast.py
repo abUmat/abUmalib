@@ -2,7 +2,8 @@
 from math998244353.fps import *
 # my module
 # https://nyaannyaan.github.io/library/fps/fast-multieval.hpp
-def multipoint_evaluation_fast(f: list, xs: list) -> list:
+def multipoint_evaluation_fast(f: Poly, xs: Vector) -> Vector:
+    '''return: f(x) for x in xs'''
     s = len(xs)
     N = 1 << (s - 1).bit_length() if s != 1 else 2
     if not f or not xs: return [0] * s

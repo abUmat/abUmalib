@@ -5,16 +5,18 @@ from math998244353.ntt import *
 # https://nyaannyaan.github.io/library/fps/ntt-friendly-fps.hpp
 class FPS:
     @staticmethod
-    def shrink(a: list) -> None:
+    def shrink(a: Poly) -> None:
+        '''remove high degree coef == 0'''
         while a and not a[-1]: a.pop()
 
     @staticmethod
-    def resize(a: list, length: int, val: int=0) -> None:
+    def resize(a: Poly, length: int, val: int=0) -> None:
         a[length:] = []
         a[len(a):] = [val] * (length - len(a))
 
     @staticmethod
-    def add(l: list, r) -> list:
+    def add(l: Poly, r: Union[Poly, int]) -> Poly:
+        '''l += r'''
         if type(r) is int:
             res = l[:]
             res[0] = (res[0] + r) % MOD
@@ -30,17 +32,23 @@ class FPS:
         raise TypeError()
 
     @classmethod
-    def sub(cls, l: list, r) -> list:
+    def sub(cls, l: Poly, r: Union[Poly, int]) -> Poly:
+        '''l -= r'''
         if type(r) is int: return cls.add(l, -r)
         if type(r) is list: return cls.add(l, cls.neg(r))
         raise TypeError()
 
     @staticmethod
-    def neg(a: list) -> list:
+    def neg(a: Poly) -> Poly:
+        '''a *= -1'''
         return [MOD - x if x else 0 for x in a]
 
     @staticmethod
-    def mul(l: list, r) -> list:
+    def mul(l: Poly, r: Union[Poly, int]) -> Poly:
+        '''
+        if r is int: l *= r
+        if r is Polynomial: convolve l and r
+        '''
         if type(r) is int: return [x * r % MOD for x in l]
         if type(r) is list:
             if not l or not r: return []
@@ -48,12 +56,13 @@ class FPS:
         raise TypeError()
 
     @staticmethod
-    def matmul(l: list, r: list) -> list:
+    def matmul(l: Poly, r: Poly) -> Poly:
         'not verified'
         return [x * r[i] % MOD for i, x in enumerate(l)]
 
     @classmethod
-    def div(cls, l: list, r: list) -> list:
+    def div(cls, l: Poly, r: Poly) -> Poly:
+        '''return: quo s.t. l = r*quo + rem'''
         if len(l) < len(r): return []
         n = len(l) - len(r) + 1
         if len(r) > 64:
@@ -75,20 +84,22 @@ class FPS:
         return cls.mul(quo, coef) + [0] * cnt
 
     @classmethod
-    def mod(cls, l: list, r: list) -> list:
+    def modulo(cls, l: Poly, r: Poly) -> Poly:
+        '''return: rem s.t. l = r*quo + rem'''
         res = cls.sub(l, NTT.multiply(cls.div(l, r), r))
         cls.shrink(res)
         return res
 
     @classmethod
-    def divmod(cls, l: list, r: list):
+    def divmod(cls, l: Poly, r: Poly) -> Tuple[Poly, Poly]:
+        '''return: quo, rem s.t. l = r*quo + rem'''
         quo = cls.div(l, r)
         rem = cls.sub(l, NTT.multiply(quo, r))
         cls.shrink(rem)
         return quo, rem
 
     @staticmethod
-    def eval(a: list, x: int) -> int:
+    def eval(a: Poly, x: int) -> int:
         r = 0; w = 1
         for v in a:
             r += w * v % MOD
@@ -96,7 +107,8 @@ class FPS:
         return r % MOD
 
     @staticmethod
-    def inv(a: list, deg: int=-1) -> list:
+    def inv(a: Poly, deg: int=-1) -> Poly:
+        '''return: g s.t. a*g == 1 (mod x**deg)'''
         # assert(self[0] != 0)
         if deg == -1: deg = len(a)
         res = [0] * deg
@@ -123,18 +135,19 @@ class FPS:
         return res
 
     @classmethod
-    def pow(cls, a: list, k: int, deg=-1) -> list:
-        n = len(a)
+    def pow(cls, f: Poly, k: int, deg=-1) -> Poly:
+        '''return: g s.t. g == f**k (mod x**deg)'''
+        n = len(f)
         if deg == -1: deg = n
         if k == 0:
             if not deg: return []
             ret = [0] * deg
             ret[0] = 1
             return ret
-        for i, x in enumerate(a):
+        for i, x in enumerate(f):
             if x:
                 rev = modinv(x, MOD)
-                ret = cls.mul(cls.exp(cls.mul(cls.log(cls.mul(a, rev)[i:], deg),  k), deg), pow(x, k, MOD))
+                ret = cls.mul(cls.exp(cls.mul(cls.log(cls.mul(f, rev)[i:], deg),  k), deg), pow(x, k, MOD))
                 ret[:0] = [0] * (i * k)
                 if len(ret) < deg:
                     cls.resize(ret, deg)
@@ -144,25 +157,26 @@ class FPS:
         return [0] * deg
 
     @staticmethod
-    def exp(a: list, deg=-1) -> list:
+    def exp(f: Poly, deg: int=-1) -> Poly:
+        '''return: g s.t. log(g) == f (mod x ** deg)'''
         # assert(not self or self[0] == 0)
-        if deg == -1: deg = len(a)
+        if deg == -1: deg = len(f)
         inv = [0, 1]
 
-        def integral(f: list) -> list:
+        def integral(f: Poly) -> Poly:
             n = len(f)
             while len(inv) <= n:
                 j, k = divmod(MOD, len(inv))
                 inv.append((-inv[k] * j) % MOD)
             return [0] + [x * inv[i + 1] % MOD for i, x in enumerate(f)]
 
-        def diff(f: list) -> list:
+        def diff(f: Poly) -> Poly:
             return [x * i % MOD for i, x in enumerate(f) if i]
 
-        b = [1, (a[1] if 1 < len(a) else 0)]
-        c = [1]
-        z1 = []
-        z2 = [1, 1]
+        b: Poly = [1, (f[1] if 1 < len(f) else 0)]
+        c: Poly = [1]
+        z1: Poly= []
+        z2: Poly = [1, 1]
         m = 2
         while m < deg:
             y = b + [0] * m
@@ -177,8 +191,8 @@ class FPS:
             c[m >> 1:] = z[m >> 1:]
             z2 = c + [0] * m
             NTT.ntt(z2)
-            tmp = min(len(a), m)
-            x = a[:tmp] + [0] * (m - tmp)
+            tmp = min(len(f), m)
+            x = f[:tmp] + [0] * (m - tmp)
             x = diff(x)
             x.append(0)
             NTT.ntt(x)
@@ -195,7 +209,7 @@ class FPS:
             x.pop()
             x = integral(x)
             x[:m] = [0] * m
-            for i in range(m, min(len(a), m << 1)): x[i] += a[i]
+            for i in range(m, min(len(f), m << 1)): x[i] += f[i]
             NTT.ntt(x)
             for i, p in enumerate(y): x[i] = x[i] * p % MOD
             NTT.intt(x)
@@ -204,22 +218,24 @@ class FPS:
         return b[:deg]
 
     @classmethod
-    def log(cls, a: list, deg=-1) -> list:
+    def log(cls, f: Poly, deg=-1) -> Poly:
+        '''return: g s.t. g == log(f) (mod x**deg)'''
         # assert(a[0] == 1)
-        if deg == -1: deg = len(a)
-        return cls.integral(cls.mul(cls.diff(a), cls.inv(a, deg))[:deg - 1])
+        if deg == -1: deg = len(f)
+        return cls.integral(cls.mul(cls.diff(f), cls.inv(f, deg))[:deg - 1])
 
     @staticmethod
-    def integral(a: list) -> list:
-        n = len(a)
+    def integral(f: Poly) -> Poly:
+        n = len(f)
         res = [0] * (n + 1)
         if n: res[1] = 1
         for i in range(2, n + 1):
             j, k = divmod(MOD, i)
             res[i] = (-res[k] * j) % MOD
-        for i, x in enumerate(a): res[i + 1] = res[i + 1] * x % MOD
+        for i, x in enumerate(f): res[i + 1] = res[i + 1] * x % MOD
         return res
 
     @staticmethod
-    def diff(a: list) -> list:
-        return [i * x % MOD for i, x in enumerate(a) if i]
+    def diff(f: Poly) -> Poly:
+        '''return: dfdx'''
+        return [i * x % MOD for i, x in enumerate(f) if i]

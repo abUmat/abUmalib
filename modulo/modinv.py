@@ -1,5 +1,5 @@
 def modinv(a: int, m: int) -> int:
-    '''mod mでのaの逆元を求める'''
+    '''return x s.t. x == a^(-1) (mod m)'''
     b = m; u = 1; v = 0
     while b:
         t = a // b

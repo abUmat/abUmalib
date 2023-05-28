@@ -1,6 +1,6 @@
 # https://nyaannyaan.github.io/library/math/sum-of-floor.hpp
 def sum_of_floor(n: int, m: int, a: int, b: int) -> int:
-    'sum of floor((a * i + b)/m) for i in range(n)'
+    'return: sum of floor((a * i + b)/m) for i in range(n)'
     res = 0
     if a >= m:
         quo, a = divmod(a, m)

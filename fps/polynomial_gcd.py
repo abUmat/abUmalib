@@ -3,11 +3,11 @@ from fps.fps import *
 # my module
 # https://nyaannyaan.github.io/library/fps/polynomial-gcd.hpp
 class Mat:
-    def __init__(self, a00: list, a01: list, a10: list, a11: list) -> None:
+    def __init__(self, a00: Poly, a01: Poly, a10: Poly, a11: Poly) -> None:
         self.arr = [a00, a01, a10, a11]
 
     @staticmethod
-    def mul(l, r, fps: FPS) -> None:
+    def mul(l, r, fps: FPS) -> List[Poly]:
         a00, a01, a10, a11 = l.arr
         if type(r) is Mat:
             ra00, ra01, ra10, ra11 = r.arr
@@ -26,7 +26,7 @@ class Mat:
     def I():
         return Mat([1], [], [], [1])
 
-def inner_naive_gcd(m: Mat, p: list, fps: FPS) -> None:
+def inner_naive_gcd(m: Mat, p: List[Poly], fps: FPS) -> None:
     quo, rem = fps.divmod(p[0], p[1])
     b10 = fps.sub(m.arr[0], fps.mul(m.arr[2], quo))
     b11 = fps.sub(m.arr[1], fps.mul(m.arr[3], quo))
@@ -34,7 +34,7 @@ def inner_naive_gcd(m: Mat, p: list, fps: FPS) -> None:
     m.arr = [m.arr[2], m.arr[3], b10, b11]
     p[0], p[1] = p[1], rem
 
-def inner_half_gcd(p: list, fps: FPS) -> Mat:
+def inner_half_gcd(p: List[Poly], fps: FPS) -> Mat:
     n = len(p[0]); m = len(p[1])
     k = n + 1 >> 1
     if m <= k: return Mat.I()
@@ -49,7 +49,7 @@ def inner_half_gcd(p: list, fps: FPS) -> Mat:
     p[1] = p[1][j:]
     return Mat.mul(inner_half_gcd(p, fps), m1, fps)
 
-def inner_poly_gcd(a: list, b: list, mod: int) -> Mat:
+def inner_poly_gcd(a: Poly, b: Poly, mod: int) -> Mat:
     p = [a[::], b[::]]
     FPS.shrink(p[0]); FPS.shrink(p[1])
     n = len(p[0]); m = len(p[1])
@@ -67,7 +67,7 @@ def inner_poly_gcd(a: list, b: list, mod: int) -> Mat:
         if not p[1]: return Mat.mul(m1, res, fps)
         res = Mat.mul(m1, res, fps)
 
-def poly_gcd(a: list, b: list, mod: int) -> list:
+def poly_gcd(a: Poly, b: Poly, mod: int) -> Poly:
     fps = FPS(mod)
     p = [a, b]
     m = inner_poly_gcd(a, b, mod)
@@ -77,7 +77,8 @@ def poly_gcd(a: list, b: list, mod: int) -> list:
         p[0] = fps.mul(p[0], coef)
     return p[0]
 
-def poly_inv(f: list, g: list, mod: int) -> list:
+def poly_inv(f: Poly, g: Poly, mod: int) -> Poly:
+    '''return: h s.t. f*h == 1 (mod g)'''
     fps = FPS(mod)
     p = [f, g]
     m = inner_poly_gcd(f, g, mod)

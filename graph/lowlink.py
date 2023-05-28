@@ -1,12 +1,15 @@
+# my modle
+from misc.typing_template import *
+# my module
 # https://nyaannyaan.github.io/library/graph/lowlink.hpp
 class LowLink:
-    def __init__(self, g) -> None:
+    def __init__(self, g: Graph) -> None:
         self.g = g
         self.N = N = len(g)
         self.ord = ord = [-1] * N
         self.low = [-1] * N
-        self.bridge = []
-        self.articulation = []
+        self.bridge: List[int]= []
+        self.articulation: List[int]= []
         k = 0
         for i in range(N):
             if ord[i] == -1:

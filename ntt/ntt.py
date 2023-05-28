@@ -1,6 +1,7 @@
 # my module
 from gcc_builtins import *
 from modulo.modinv import *
+from misc.typing_template import *
 # my module
 # https://nyaannyaan.github.io/library/ntt/ntt.hpp
 class NTT:
@@ -56,7 +57,7 @@ class NTT:
             self.dw[i] = tmpdw = (tmpdw * y[i - 2] % mod) * w[i] % mod
             self.dy[i] = tmpdy = (tmpdy * w[i - 2] % mod) * y[i] % mod
 
-    def _fft(self, a: list, k: int) -> None:
+    def _fft(self, a: Vector, k: int) -> None:
         mod = self.mod
         if len(a) <= 1: return
         if k == 1:
@@ -98,7 +99,7 @@ class NTT:
             v >>= 2
         for i, x in enumerate(a): a[i] = x % mod
 
-    def _ifft(self, a: list, k: int) -> None:
+    def _ifft(self, a: Vector, k: int) -> None:
         mod = self.mod
         if len(a) <= 1: return
         if k == 1:
@@ -143,18 +144,18 @@ class NTT:
                 a[j], a[j + u] = l + r, l - r
         for i, x in enumerate(a): a[i] = x % mod
 
-    def ntt(self, a: list) -> None:
+    def ntt(self, a: Vector) -> None:
         if len(a) <= 1: return
         self._fft(a, ctz(len(a)))
 
-    def intt(self, a: list) -> None:
+    def intt(self, a: Vector) -> None:
         if len(a) <= 1: return
         self._ifft(a, ctz(len(a)))
         mod = self.mod
         iv = modinv(len(a), mod)
         for i, x in enumerate(a): a[i] = x * iv % mod
 
-    def multiply(self, a: list, b: list) -> list:
+    def multiply(self, a: Vector, b: Vector) -> Vector:
         mod = self.mod
         l = len(a) + len(b) - 1
         if min(len(a), len(b)) <= 60:
@@ -176,7 +177,7 @@ class NTT:
         invm = modinv(M, mod)
         return [x * invm % mod for x in s]
 
-    def pow2(self, a: list) -> list:
+    def pow2(self, a: Vector) -> Vector:
         mod = self.mod
         l = (len(a) << 1) - 1
         if len(a) <= 40:
@@ -196,7 +197,7 @@ class NTT:
         invm = modinv(M, mod)
         return [x * invm % mod for x in s]
 
-    def ntt_doubling(self, a: list) -> None:
+    def ntt_doubling(self, a: Vector) -> None:
         mod = self.mod
         M = len(a)
         b = a[:]

@@ -3,10 +3,10 @@ from graph.lowlink import *
 # my module
 # https://nyaannyaan.github.io/library/graph/biconnected-components.hpp
 class BiConnectedComponents(LowLink):
-    def __init__(self, g) -> None:
+    def __init__(self, g: Graph) -> None:
         super().__init__(g)
-        self.tmp = []
-        self.bc = []
+        self.tmp: List[Tuple[int, int]]= []
+        self.bc: List[List[int]]= []
         self.build()
 
     def build(self) -> None:

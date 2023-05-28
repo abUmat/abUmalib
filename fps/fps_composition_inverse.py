@@ -1,12 +1,12 @@
 # my module
-from fps.fps_composition import *
+from fps.fps import *
 # my module
 # https://judge.yosupo.jp/submission/139183
-def composition_inverse(f: list, mod: int, deg: int=-1) -> None:
-    def composition_multi(Ps: list, Q: list, deg: int) -> list:
+def composition_inverse(f: Poly, mod: int, deg: int=-1) -> Poly:
+    '''return: g s.t. f(g(x)) == g(f(x)) == x'''
+    def composition_multi(Ps: List[Poly], Q: Poly, deg: int) -> Poly:
         k = int(deg ** .5+ 1)
         d = (deg + k) // k
-
         X = [[] for _ in range(k + 1)]
         X[0] = [1]
         for i, x in enumerate(X):

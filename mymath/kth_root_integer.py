@@ -1,5 +1,5 @@
 def kth_root_integer(a: int, k: int) -> int:
-    'floor(a ** (1/k))'
+    'return: floor(a ** (1/k))'
     if a <= 1 or k == 1: return a
     if 64 <= k: return 1
     def check(n: int) -> bool:

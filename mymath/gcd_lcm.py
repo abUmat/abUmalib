@@ -1,16 +1,21 @@
 from functools import reduce
-
+# my module
+from misc.typing_template import *
+# my module
 def gcd2(a: int, b: int) -> int:
     while a: a, b = b % a, a
     return b
 
-def gcd(*numbers) -> int: return reduce(gcd2, numbers)
+def gcd(*numbers) -> int:
+    return reduce(gcd2, numbers)
 
-def lcm2(x: int, y: int) -> int: return (x * y) // gcd2(x, y)
+def lcm2(x: int, y: int) -> int:
+    return (x * y) // gcd2(x, y)
 
-def lcm(*integers) -> int: return reduce(lcm2, integers)
+def lcm(*integers) -> int:
+    return reduce(lcm2, integers)
 
-def extgcd(a: int, b: int):
+def extgcd(a: int, b: int) -> Tuple[int, int, int]:
     'Tuple[gcd(a, b), x, y] s.t. ax + by = gcd(a, b) (Extended Euclidean algorithm)'
     if b:
         d, y, x = extgcd(b, a % b)
@@ -18,8 +23,10 @@ def extgcd(a: int, b: int):
         return d, x, y
     return a, 1, 0
 
-def crt(V):
-    'V: [(X_i, Y_i), ...]: X_i (mod Y_i)'
+def crt(V: List[Tuple[int, int]]) -> Tuple[int, int]:
+    '''
+    V: [(x_i, y_i), ...]: x_i (mod y_i)
+    return: x, r s.t. x == r (mod lcm(y))'''
     x = 0; d = 1
     for X, Y in V:
         g, a, b = extgcd(d, Y)

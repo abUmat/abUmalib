@@ -1,4 +1,7 @@
-def z_algo(s):
+# my module
+from misc.typing_template import *
+# my module
+def z_algo(s: str) -> List[int]:
     n = len(s)
     res = [0] * n
     res[0] = n

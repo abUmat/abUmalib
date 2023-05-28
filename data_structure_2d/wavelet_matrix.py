@@ -1,5 +1,6 @@
 # my module
 from gcc_builtins import *
+from misc.typing_template import *
 # my module
 # https://nyaannyaan.github.io/library/data-structure-2d/wavelet-matrix.hpp
 class _BitVector:
@@ -59,7 +60,7 @@ class WaveletMatrix:
         self.arr[i] = x
 
     def access(self, k: int) -> int:
-        'get arr[i]'
+        'arr[i]'
         res = 0
         for h in range(self.lg)[::-1]:
             f = self.bv[h].get(k)
@@ -68,7 +69,7 @@ class WaveletMatrix:
         return res
 
     def kth_smallest(self, l: int, r: int, k: int) -> int:
-        'get kth smallest number in [l, r)'
+        'kth smallest number in [l, r)'
         res = 0
         for h in range(self.lg)[::-1]:
             l0, r0 = self.bv[h].rank0(l), self.bv[h].rank0(r)
@@ -83,11 +84,11 @@ class WaveletMatrix:
         return res
 
     def kth_largest(self, l: int, r: int, k: int) -> int:
-        'get kth largest number in [l, r)'
+        'kth largest number in [l, r)'
         return self.kth_smallest(l, r, r - l - k - 1)
 
     def pref_freq(self, l: int, r: int, upper: int) -> int:
-        'get the number of x in [l, r) s.t. x < upper'
+        'the number of x in [l, r) s.t. x < upper'
         if upper >= 1 << self.lg: return r-l
         res = 0
         for h in range(self.lg)[::-1]:
@@ -102,15 +103,15 @@ class WaveletMatrix:
         return res
 
     def range_freq(self, l: int, r: int, lower: int, upper: int) -> int:
-        'get the number of x in [l, r) s.t. lower <= x < upper'
+        'the number of x in [l, r) s.t. lower <= x < upper'
         return self.pref_freq(l, r, upper) - self.pref_freq(l, r, lower)
 
     def prev_value(self, l: int, r: int, upper: int) -> int:
-        'get the maximan x in [l, r) s.t. x < upper'
+        'the maximan x in [l, r) s.t. x < upper'
         cnt = self.pref_freq(l, r, upper)
         return self.kth_smallest(l, r, cnt-1) if cnt else -1
 
     def next_value(self, l: int, r: int, lower: int) -> int:
-        'get the minimum x in [l, r) s.t. x >= lower'
+        'the minimum x in [l, r) s.t. x >= lower'
         cnt = self.pref_freq(l, r, lower)
         return -1 if cnt == r-l else self.kth_smallest(l, r, cnt)

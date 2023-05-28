@@ -2,7 +2,8 @@
 from math998244353.fps import *
 # my module
 # https://judge.yosupo.jp/submission/83016
-def composition(P: list, Q: list, deg: int=-1) -> list:
+def composition(P: Poly, Q: Poly, deg: int=-1) -> Poly:
+    '''return: P(Q), O((n logn)**1.5)'''
     if deg == -1: deg = min(len(P), len(Q))
     k = int(deg ** .5+ 1)
     d = (deg + k) // k
@@ -35,7 +36,8 @@ def composition(P: list, Q: list, deg: int=-1) -> list:
     F.pop()
     return [x % MOD for x in F]
 
-def composition_multi(Ps: list, Q: list, deg: int) -> list:
+def composition_multi(Ps: List[Poly], Q: Poly, deg: int) -> List[Poly]:
+    '''return: P(Q) for P in Ps, O((n logn)**1.5)'''
     k = int(deg ** .5+ 1)
     d = (deg + k) // k
 

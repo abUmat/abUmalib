@@ -1,10 +1,13 @@
+# my module
+from misc.typing_template import *
+# my module
 # https://nyaannyaan.github.io/library/data-structure/binary-indexed-tree.hpp
 class BIT:
     """
     n: size
     data: Iterable
     """
-    def __init__(self, size: int, data=None) -> None:
+    def __init__(self, size: int, data: List[int]=None) -> None:
         self.N = size + 2
         self.data = [0] * (size + 3)
         self.all = 0
@@ -67,7 +70,7 @@ class BIT:
             k >>= 1
         return x + 1
 
-def inversion_number(arr):
+def inversion_number(arr: list) -> int:
     inv = {a:i for i, a in enumerate(sorted(set(arr)))}
     compressed = [inv[a] for a in arr]
     bit = BIT(len(inv))

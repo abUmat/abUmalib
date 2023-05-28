@@ -1,9 +1,10 @@
 # my module
+from misc.typing_template import *
 from data_structure.bit import *
 from data_structure.sparse_table import *
 # my module
 class EulerTour:
-    def __init__(self, g, root: int=0) -> None:
+    def __init__(self, g: Graph, root: int=0) -> None:
         '''
         euler tourを行い初期化
         ete: 通る辺の順番
@@ -45,7 +46,7 @@ class EulerTour:
         self.depth = depth
         self.st = SparseTable([depth[v] << 20 | v for v in etv])
 
-    def build(self, arr: list) -> None:
+    def build(self, arr: List[int]) -> None:
         '''arrで値を初期化する'''
         arr_for_path = [0] * (self.n << 1)
         for i, e in enumerate(self.ete):

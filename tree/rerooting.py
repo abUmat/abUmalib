@@ -1,6 +1,9 @@
-from typing import List, Callable
+# my module
+from misc.typing_template import *
+# my module
+# https://nyaannyaan.github.io/library/tree/rerooting.hpp
 class Rerooting:
-    def __init__(self, g: List[List[int]], f1: Callable[[int, int], int], f2: Callable[[int, int, int], int], e: int, arr: List[int]=None) -> None:
+    def __init__(self, g: Graph, f1: Func21, f2: Func31, e: int, arr: List[int]=None) -> None:
         '''
         g: Graph
         f1: f1(c1, c2) merge value of child node
