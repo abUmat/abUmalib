@@ -1,11 +1,11 @@
-from atexit import register
+from atexit import register as atexist_register
 from os import read as os_read, write as os_write
 import sys
-from __pypy__ import builders
+from __pypy__.builders import StringBuilder
 class Fastio:
     ibuf = bytes()
     pil = pir = 0
-    sb = builders.StringBuilder()
+    sb = StringBuilder()
     def load(self):
         self.ibuf = self.ibuf[self.pil:]
         self.ibuf += os_read(0, 131072)
@@ -21,11 +21,22 @@ class Fastio:
             self.pil += 1
         if minus: return -x
         return x
+    def fastin_string(self):
+        if self.pir - self.pil < 64: self.load()
+        while self.ibuf[self.pil] <= 32: self.pil += 1
+        res = bytearray()
+        while self.ibuf[self.pil] > 32:
+            if self.pir - self.pil < 64: self.load()
+            res.append(self.ibuf[self.pil])
+            self.pil += 1
+        return res
     def fastout(self, x): self.sb.append(str(x))
     def fastoutln(self, x): self.sb.append(str(x)); self.sb.append('\n')
 fastio = Fastio()
-rd = fastio.fastin; wt = fastio.fastout; wtn = fastio.fastoutln; flush = fastio.flush
-register(flush)
+rd = fastio.fastin; rds = fastio.fastin_string; wt = fastio.fastout; wtn = fastio.fastoutln; flush = fastio.flush
+atexist_register(flush)
 sys.stdin = None; sys.stdout = None
 def rdl(n): return [rd() for _ in range(n)]
 def wtnl(l): wtn(' '.join(map(str, l)))
+def wtn_yes(): wtn("Yes")
+def wtn_no(): wtn("No")
