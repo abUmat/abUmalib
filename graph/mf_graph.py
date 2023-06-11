@@ -1,94 +1,100 @@
-from typing import List
 from collections import deque
+# my module
+from misc.typing_template import *
+# my module
 class MFGraph:
-    class edge:
-        def __init__(self, frm: int, to: int, cap: int, flow: int) -> None:
-            self.frm = frm
-            self.to = to
-            self.cap = cap
-            self.flow = flow
-
-    class _edge:
-        def __init__(self, to: int, rev: int, cap: int) -> None:
-            self.to = to
-            self.rev = rev
-            self.cap = cap
-
-    def __init__(self, n: int=0) -> None:
-        self._n = n
-        self.g = [[] for _ in range(n)]
+    def __init__(self, n: int) -> None:
+        self.n = n
+        self.g: List[List[List[int]]] = [[] for _ in range(n)]
         self.pos = []
 
-    def add_edge(self, frm: int, to: int, cap: int) -> int:
-        self.pos.append((frm, len(self.g[frm])))
-        self.g[frm].append(self._edge(to, len(self.g[to]), cap))
-        self.g[to].append(self._edge(frm, len(self.g[frm]) - 1, 0))
+    def add_edge(self, src: int, dst: int, cap: int) -> int:
+        self.pos.append((src, len(self.g[src])))
+        self.g[src].append([dst, cap, len(self.g[dst])])
+        self.g[dst].append([src, 0, len(self.g[src]) - 1])
         return len(self.pos)
 
-    def get_edge(self, i: int) -> edge:
-        _e = self.g[self.pos[i][0]][self.pos[i][1]]
-        _re = self.g[_e.to][_e.rev]
-        return self.edge(self.pos[i][0], _e.to, _e.cap + _re.cap, _re.cap)
+    def get_edge(self, i: int) -> List[int]:
+        src, eidx = self.pos[i]
+        e_dst, e_cap, e_revidx = self.g[src][eidx]
+        re_dst, re_cap, re_revidx = self.g[e_dst][e_revidx]
+        return [src, e_dst, e_cap + re_cap, re_cap]
 
-    def edges(self) -> List[edge]:
+    def edges(self) -> List[List[int]]:
         return [self.get_edge(i) for i in range(len(self.pos))]
 
     def change_edge(self, i: int, new_cap: int, new_flow: int) -> None:
-        _e = self.g[self.pos[i][0]][self.pos[i][1]]
-        _re = self.g[_e.to][_e.rev]
-        _e.cap = new_cap - new_flow
-        _re.cap = new_flow
+        src, eidx = self.pos[i]
+        e = self.g[src][eidx]
+        re = self.g[e[0]][e[2]]
+        e[1] = new_cap - new_flow
+        re[1] = new_flow
 
-    def flow(self, s: int, t: int, flow_limit: int=0xfffffffffffffff) -> int:
+    def flow(self, s: int, t: int, flow_limit: Optional[int] = None) -> int:
+        if flow_limit is None:
+            flow_limit = sum(e[1] for e in self.g[s])
+
         def bfs() -> List[int]:
-            level = [-1] * self._n
+            level = [-1] * self.n
             level[s] = 0
             que = deque()
             que.append(s)
             while que:
                 v = que.popleft()
-                for e in self.g[v]:
-                    if e.cap == 0 or level[e.to] >= 0: continue
-                    level[e.to] = level[v] + 1
-                    if e.to == t: return
-                    que.append(e.to)
+                for to, cap, revidx in self.g[v]:
+                    if (not cap) or level[to] >= 0: continue
+                    level[to] = level[v] + 1
+                    if to == t: return level
+                    que.append(to)
             return level
 
-        def dfs(v: int, up: int) -> int:
-            if v == s: return up
-            res = 0
-            level_v = level[v]
-            for i in range(iter[v], len(self.g[v])):
-                e = self.g[v][i]
-                if level_v <= level[e.to] or self.g[e.to][e.rev].cap == 0: continue
-                d = dfs(e.to, min(up - res, self.g[e.to][e.rev].cap))
-                if d <= 0: continue
-                self.g[v][i].cap += d
-                self.g[e.to][e.rev].cap -= d
-                res += d
-                if res == up: break
-            return res
+        def dfs(lim: int) -> int:
+            stack = []
+            edge_stack: List[List[int]] = []
+            stack.append(t)
+            while stack:
+                v = stack.pop()
+                if v == s:
+                    flow = min(lim, min(e[1] for e in edge_stack))
+                    for e in edge_stack:
+                        e[1] -= flow
+                        re = self.g[e[0]][e[2]]
+                        re[1] += flow
+                    return flow
+
+                next_level = level[v] - 1
+                for i in range(current_edge[v], len(self.g[v])):
+                    e = self.g[v][i]
+                    re = self.g[e[0]][e[2]]
+                    if level[e[0]] != next_level or not re[1]: continue
+                    stack.append(e[0])
+                    edge_stack.append(re)
+                    break
+                else:
+                    if edge_stack: edge_stack.pop()
+                    level[v] = self.n
+                current_edge[v] = i
+            return 0
 
         flow = 0
         while flow < flow_limit:
             level = bfs()
             if level[t] == -1: break
-            iter = [0] * len(self.g)
+            current_edge = [0] * self.n
             while flow < flow_limit:
-                f = dfs(t, flow_limit - flow)
+                f = dfs(flow_limit - flow)
                 if not f: break
                 flow += f
         return flow
 
-    def min_cut(self, s: int) -> bytearray:
-        visited = bytearray(self._n)
-        q = deque()
-        q.append(s)
-        while q:
-            p = q.popleft()
-            visited[p] = 1
-            for e in self.g[p]:
-                if e.cap and not visited[e.to]:
-                    visited[e.to] = 1
-                    q.append(e.to)
+    def min_cut(self, s: int) -> List[bool]:
+        visited = [False] * self.n
+        stack = [s]
+        visited[s] = True
+        while stack:
+            v = stack.pop()
+            for e_dst, e_cap, e_revidx in self.g[v]:
+                if e_cap > 0 and not visited[e_dst]:
+                    visited[e_dst] = True
+                    stack.append(e_dst)
         return visited
