@@ -1,21 +1,21 @@
-# my modle
+# my module
 from misc.typing_template import *
 # my module
 # https://nyaannyaan.github.io/library/graph/lowlink.hpp
 class LowLink:
     def __init__(self, g: Graph) -> None:
         self.g = g
-        self.N = N = len(g)
-        self.ord = ord = [-1] * N
-        self.low = [-1] * N
+        self.n = n = len(g)
+        self.ord = ord = [-1] * n
+        self.low = [-1] * n
         self.bridge: List[int]= []
         self.articulation: List[int]= []
         k = 0
-        for i in range(N):
+        for i in range(n):
             if ord[i] == -1:
-                k = self._dfs(i, k, -1)
+                k = self.dfs(i, k, -1)
 
-    def _dfs(self, idx: int, k: int, par: int) -> int:
+    def dfs(self, idx: int, k: int, par: int) -> int:
         ord, low = self.ord, self.low
         k += 1
         low[idx] = ord[idx] = k
@@ -24,7 +24,7 @@ class LowLink:
         for to in self.g[idx]:
             if ord[to] == -1:
                 cnt += 1
-                k = self._dfs(to, k, idx)
+                k = self.dfs(to, k, idx)
                 low[idx] = min(low[idx], low[to])
                 arti |= (par != -1) & (low[to] >= ord[idx])
                 if ord[idx] < low[to]:

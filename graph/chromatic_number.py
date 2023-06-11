@@ -15,6 +15,7 @@ def _calc(n: int, _hist, mod: int) -> int:
     return n
 
 def chromatic_number(g: Graph) -> int:
+    '''chromatic_number, O(2^n n)'''
     n = len(g)
     adj = [0] * n
     dp = [0] * (1 << n)

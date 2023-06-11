@@ -7,14 +7,15 @@ class BiConnectedComponents(LowLink):
         super().__init__(g)
         self.tmp: List[Tuple[int, int]]= []
         self.bc: List[List[int]]= []
-        self.build()
+        self.used: List[int]= [0] * self.n
+        self._build()
 
-    def build(self) -> None:
-        self.used = [0] * len(self.g)
+    def _build(self) -> None:
         for i in range(len(self.used)):
-            if not self.used[i]: self.dfs(i, -1)
+            if not self.used[i]:
+                self._dfs(i, -1)
 
-    def dfs(self, idx: int, par: int) -> None:
+    def _dfs(self, idx: int, par: int) -> None:
         self.used[idx] = 1
         for to in self.g[idx]:
             if to == par: continue
@@ -24,7 +25,7 @@ class BiConnectedComponents(LowLink):
                 else:
                     self.tmp.append((to, idx))
             if not self.used[to]:
-                self.dfs(to, idx)
+                self._dfs(to, idx)
                 if self.low[to] >= self.ord[idx]:
                     self.bc.append([])
                     while 1:
