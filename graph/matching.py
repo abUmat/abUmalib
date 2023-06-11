@@ -20,7 +20,7 @@ class Matching(MFGraph):
     def edges(self):
         es = super().edges()
         ret = []
-        for e in es:
-            if e.flow > 0 and e.frm != self.s and e.to != self.t:
-                ret.append((e.frm, e.to - self.L))
+        for frm, to, cap, flow in es:
+            if flow > 0 and frm != self.s and to != self.t:
+                ret.append((frm, to - self.L))
         return ret
