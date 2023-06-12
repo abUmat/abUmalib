@@ -10,7 +10,10 @@ class Fastio:
         self.ibuf = self.ibuf[self.pil:]
         self.ibuf += os_read(0, 131072)
         self.pil = 0; self.pir = len(self.ibuf)
-    def flush(self): os_write(1, self.sb.build().encode())
+    def flush_atexit(self): os_write(1, self.sb.build().encode())
+    def flush(self):
+        os_write(1, self.sb.build().encode())
+        self.sb = StringBuilder()
     def fastin(self):
         if self.pir - self.pil < 64: self.load()
         minus = x = 0
@@ -34,7 +37,7 @@ class Fastio:
     def fastoutln(self, x): self.sb.append(str(x)); self.sb.append('\n')
 fastio = Fastio()
 rd = fastio.fastin; rds = fastio.fastin_string; wt = fastio.fastout; wtn = fastio.fastoutln; flush = fastio.flush
-atexist_register(flush)
+atexist_register(fastio.flush_atexit)
 sys.stdin = None; sys.stdout = None
 def rdl(n): return [rd() for _ in range(n)]
 def wtnl(l): wtn(' '.join(map(str, l)))

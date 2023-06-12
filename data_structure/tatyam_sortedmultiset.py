@@ -1,8 +1,8 @@
+# my module
+from misc.typing_template import *
+# my module
 # https://github.com/tatyam-prime/SortedSet/blob/main/SortedMultiset.py
 from bisect import bisect_left, bisect_right, insort
-from typing import Generic, Iterable, Iterator, TypeVar, Union, List
-T = TypeVar('T')
-
 class SortedMultiset(Generic[T]):
     BUCKET_RATIO = 50
     REBUILD_RATIO = 170
