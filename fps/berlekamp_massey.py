@@ -1,6 +1,6 @@
 # my module
-from modulo.modinv import *
 from misc.typing_template import *
+from modulo.modinv import *
 # my module
 # https://nyaannyaan.github.io/library/fps/berlekamp-massey.hpp
 def berlekamp_massey(s: Vector, mod: int) -> Vector:
