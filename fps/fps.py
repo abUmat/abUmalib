@@ -139,14 +139,14 @@ class FPS:
         mod = self.mod
         return [i * x % mod for i, x in enumerate(f) if i]
 
-    def mul(self, l: list, r) -> list:
-        raise AttributeError("type object 'FPS' has no attribute 'mul'")
+    def mul(self, l: list, r: Union[list, int]) -> list:
+        raise AttributeError("'mul' method is virtual function. please override")
 
     def mul2(self, l: list) -> list:
-        raise AttributeError("type object 'FPS' has no attribute 'mul2'")
+        raise AttributeError("'mul2' method is virtual function. please override")
 
     def inv(self, a: list, deg: int=-1) -> list:
-        raise AttributeError("type object 'FPS' has no attribute 'inv'")
+        raise AttributeError("'inv' method is virtual function. please override")
 
     def exp(self, a: list, deg: int=-1) -> list:
-        raise AttributeError("type object 'FPS' has no attribute 'exp'")
+        raise AttributeError("'exp' method is virtual function. please override")
