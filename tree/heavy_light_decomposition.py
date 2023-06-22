@@ -78,24 +78,24 @@ class HeavyLightDecomposition:
     def dist(self, u: int, v: int) -> int:
         return self.depth[u] + self.depth[v] - (self.depth[self.lca(u, v)] << 1)
 
-    def path(self, r: int, c: int, include_root: bool=1, reverse: bool=0) -> List[Tuple[int, int]]:
+    def path(self, r: int, c: int, include_root: bool=1, reverse: bool=0) -> List[int]:
         '''
-        return: [(l0, r0), (l1, r1)...] s.t. path(r, c) == ord[l0, r0) + ord[l1, r1) + ...
+        return: [l0 << 20 | r0, l1 << 20 | r1...] s.t. path(r, c) == ord[l0, r0) + ord[l1, r1) + ...
         '''
         parent, d, p = self.parent, self.hld_depth, self.heavy_root
         if d[c] < d[r]: return []
-        res: List[Tuple[int, int]] = [0] * (d[c] - d[r] + 1)
+        res: List[int] = [0] * (d[c] - d[r] + 1)
         for i in range(len(res) - 1):
-            res[i] = self.down[p[c]], self.down[c] + 1
+            res[i] = self.down[p[c]] << 20 | (self.down[c] + 1)
             c = parent[p[c]]
         if p[r] != p[c] or self.depth[r] > self.depth[c]: return []
-        res[-1] = self.down[r] + int(not include_root), self.down[c] + 1
-        if res[-1][0] == res[-1][1]: res.pop()
+        res[-1] = (self.down[r] + int(not include_root)) << 20 | (self.down[c] + 1)
+        if res[-1] >> 20 == res[-1] & 0xfffff: res.pop()
         if not reverse:
             res.reverse()
         else:
-            for i, (a, b) in enumerate(res):
-                res[i] = b, a
+            for i, ab in enumerate(res):
+                res[i] = (ab & 0xfffff) << 20 | (ab >> 20)
         return res
 
     def subtree(self, p: int) -> Tuple[int, int]:
@@ -117,15 +117,15 @@ class HeavyLightDecomposition:
 
     def path_query(self, u: int, v: int, vertex: bool, f: Func20) -> None:
         lca = self.lca(u, v)
-        for l, r in self.path(lca, u, 0): f(l, r)
+        for lr in self.path(lca, u, 0): f(lr >> 20, lr & 0xfffff)
         if vertex: f(self.down[lca], self.down[lca] + 1)
-        for l, r in self.path(lca, v, 0): f(l, r)
+        for lr in self.path(lca, v, 0): f(lr >> 20, lr & 0xfffff)
 
     def path_noncommutative_query(self, u: int, v: int, vertex: bool, f: Func20) -> None:
         lca = self.lca(u, v)
-        for l, r in self.path(lca, u, 0, 1): f(l, r)
+        for lr in self.path(lca, u, 0, 1): f(lr >> 20, lr & 0xfffff)
         if vertex: f(self.down[lca], self.down[lca] + 1)
-        for l, r in self.path(lca, v, 0): f(l, r)
+        for lr in self.path(lca, v, 0): f(lr >> 20, lr & 0xfffff)
 
     def subtree_query(self, u: int, vertex: bool, f: Func20) -> None:
         f(self.down[u] + int(not vertex), self.up[u])
