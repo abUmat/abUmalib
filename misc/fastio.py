@@ -43,3 +43,4 @@ def rdl(n): return [rd() for _ in range(n)]
 def wtnl(l): wtn(' '.join(map(str, l)))
 def wtn_yes(): wtn("Yes")
 def wtn_no(): wtn("No")
+def print(*arg): wtnl(arg)
