@@ -91,8 +91,8 @@ class _PrimePowerBinomial:
 
 class ArbitraryModBinomial:
     @staticmethod
-    def _crt(V: List[Tuple[int, int]]) -> Tuple[int, int]:
-        def extgcd(a: int, b: int) -> Tuple[int, int]:
+    def _crt(V: List[Pair]) -> Pair:
+        def extgcd(a: int, b: int) -> Pair:
             if b:
                 d, y, x = extgcd(b, a % b)
                 y -= (a // b) * x

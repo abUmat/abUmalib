@@ -5,7 +5,7 @@ from graph.lowlink import *
 class BiConnectedComponents(LowLink):
     def __init__(self, g: Graph) -> None:
         super().__init__(g)
-        self.tmp: List[Tuple[int, int]]= []
+        self.tmp: List[Pair]= []
         self.bc: List[List[int]]= []
         self.used: List[int]= [0] * self.n
         self._build()

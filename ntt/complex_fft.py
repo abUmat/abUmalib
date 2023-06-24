@@ -16,7 +16,7 @@ class CooleyTukey:
         self.isbuilt = 1
 
     @staticmethod
-    def mul(xr: float, xi: float, yr: float, yi: float) -> tuple:
+    def mul(xr: float, xi: float, yr: float, yi: float) -> Tuple[float, float]:
         return xr * yr - xi * yi, xr * yi + yr * xi
 
     def genw(self, i: int, b: int, zr: float, zi: float) -> None:

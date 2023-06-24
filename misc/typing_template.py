@@ -1,5 +1,6 @@
 from typing import Generic, Iterator, List, Tuple, Dict, Iterable, Sequence, Callable, Union, Optional, TypeVar
 T = TypeVar('T')
+Pair = Tuple[int, int]
 Graph = List[List[int]]
 Poly = List[int]
 Vector = List[int]

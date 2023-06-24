@@ -98,7 +98,7 @@ class HeavyLightDecomposition:
                 res[i] = (ab & 0xfffff) << 20 | (ab >> 20)
         return res
 
-    def subtree(self, p: int) -> Tuple[int, int]:
+    def subtree(self, p: int) -> Pair:
         return self.down[p], self.up[p]
 
     def la(self, frm: int, to: int, d: int) -> int:

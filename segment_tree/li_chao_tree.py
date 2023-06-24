@@ -3,10 +3,10 @@ from bisect import bisect_left as lower_bound, bisect_right as upper_bound
 from misc.typing_template import *
 # my module
 # https://nyaannyaan.github.io/library/segment-tree/li-chao-tree.hpp
-def _get(line: Tuple[int, int], x: int) -> int:
+def _get(line: Pair, x: int) -> int:
     return line[0] *  x + line[1]
 
-def _over(l: Tuple[int, int], r: Tuple[int, int], x: int) -> bool:
+def _over(l: Pair, r: Pair, x: int) -> bool:
     return _get(l, x) < _get(r, x)
 
 class LiChaoTree:

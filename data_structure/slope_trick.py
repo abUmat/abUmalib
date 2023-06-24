@@ -10,21 +10,21 @@ class SlopeTrick:
     def _pushR(self, x: int, c: int=1) -> None:
         heappush(self._R, (x - self._addR, c))
 
-    def _getL(self) -> Tuple[int, int]:
+    def _getL(self) -> Pair:
         lx, lc = heappop(self._L)
         heappush(self._L, (lx, lc))
         return -lx + self._addL, -lc
 
-    def _getR(self) -> Tuple[int, int]:
+    def _getR(self) -> Pair:
         rx, rc = heappop(self._R)
         heappush(self._R, (rx, rc))
         return rx + self._addR, rc
 
-    def _popL(self) -> Tuple[int, int]:
+    def _popL(self) -> Pair:
         lx, lc = heappop(self._L)
         return -lx + self._addL, -lc
 
-    def _popR(self) -> Tuple[int, int]:
+    def _popR(self) -> Pair:
         rx, rc = heappop(self._R)
         return rx + self._addR, rc
 
@@ -35,7 +35,7 @@ class SlopeTrick:
         self._L = []
         self._R = []
 
-    def get_min(self) -> Tuple[int, int]:
+    def get_min(self) -> Pair:
         '''
         return: (x, y) s.t. (argmin, min)
         '''

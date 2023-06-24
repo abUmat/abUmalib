@@ -3,7 +3,7 @@ from misc.typing_template import *
 from modulo.modinv import *
 # my module
 # https://nyaannyaan.github.io/library/matrix/gauss-elimination.hpp
-def gauss_elimination(a: Matrix, mod: int, pivot_end: int=-1, diagonalize: bool=False) -> Tuple[int, int]:
+def gauss_elimination(a: Matrix, mod: int, pivot_end: int=-1, diagonalize: bool=False) -> Pair:
     H = len(a); W = len(a[0]); rank = 0
     if pivot_end == -1: pivot_end = W
     det = 1

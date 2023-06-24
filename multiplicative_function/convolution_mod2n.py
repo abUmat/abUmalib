@@ -15,7 +15,7 @@ def multiplicative_convolution_mod2n(A: Vector, B: Vector, mod: int) -> Vector:
     BB = [[[]] for _ in range(N + 1)]
     CC = [[[]] for _ in range(N + 1)]
 
-    def shape(n: int) -> tuple:
+    def shape(n: int) -> Pair:
         H = 2 if N - n >= 2 else 1
         W = 1 << max(N - n - 2, 0)
         return H, W

@@ -32,7 +32,7 @@ class Map:
         self.keys.add(k)
         self.dic[k] = v
 
-    def get_by_iter(self, it: int) -> Tuple[int, int]:
+    def get_by_iter(self, it: int) -> Pair:
         '''O(abs(it) / (N ** 0.5))'''
         key = self.keys[it]
         val = self.dic[key]
@@ -49,7 +49,7 @@ def manhattan_mst(X: List[int], Y: List[int]) -> Dict[int, int]:
     return: dict(key = i << 30 | j, value = cost)'''
     assert(len(X) == len(Y))
     N = len(X)
-    dat: List[Tuple[int, int]]= []
+    dat: List[Pair]= []
     idx = list(range(N))
     mX = [-x for x in X]
     for _ in range(2):

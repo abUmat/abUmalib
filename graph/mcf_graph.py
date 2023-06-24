@@ -38,11 +38,11 @@ class MCFGraph:
         return [self.get_edge(i) for i in range(len(self._edges))]
 
     def flow(self, s: int, t: int,
-             flow_limit: Optional[int] = None) -> Tuple[int, int]:
+             flow_limit: Optional[int] = None) -> Pair:
         return self.slope(s, t, flow_limit)[-1]
 
     def slope(self, s: int, t: int,
-              flow_limit: Optional[int] = None) -> List[Tuple[int, int]]:
+              flow_limit: Optional[int] = None) -> List[Pair]:
         if flow_limit is None:
             flow_limit = sum(e.cap for e in self._g[s])
 
