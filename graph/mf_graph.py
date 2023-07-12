@@ -1,100 +1,146 @@
-from collections import deque
 # my module
 from misc.typing_template import *
 # my module
 class MFGraph:
+    def edge_zip(self, cap: int, dst: int, idx: int) -> int:
+        return cap << 40 | dst << 20 | idx
+
     def __init__(self, n: int) -> None:
-        self.n = n
-        self.g: List[List[List[int]]] = [[] for _ in range(n)]
-        self.pos = []
+        self._n = n
+        self._g: List[List[int]] = [[] for _ in range(n)]
+        self._edges: List[int] = []
+        self.idx = 0
 
     def add_edge(self, src: int, dst: int, cap: int) -> int:
-        self.pos.append((src, len(self.g[src])))
-        self.g[src].append([dst, cap, len(self.g[dst])])
-        self.g[dst].append([src, 0, len(self.g[src]) - 1])
-        return len(self.pos)
+        assert 0 <= src < self._n
+        assert 0 <= dst < self._n
+        assert 0 <= cap
+        # e := cap << 40 | dst << 20 | index of reverse edge in self._edges
+        e = self.edge_zip(cap, dst, self.idx + 1)
+        re = self.edge_zip(0, src, self.idx)
+        self._g[src].append(self.idx)
+        self._g[dst].append(self.idx + 1)
+        self._edges.append(e)
+        self._edges.append(re)
+        self.idx += 2
+        return self.idx >> 1
 
-    def get_edge(self, i: int) -> List[int]:
-        src, eidx = self.pos[i]
-        e_dst, e_cap, e_revidx = self.g[src][eidx]
-        re_dst, re_cap, re_revidx = self.g[e_dst][e_revidx]
-        return [src, e_dst, e_cap + re_cap, re_cap]
 
-    def edges(self) -> List[List[int]]:
-        return [self.get_edge(i) for i in range(len(self.pos))]
+    def get_edge(self, i: int, unpack: bool=0) -> Union[Pair, Tuple[int, int, int, int]]:
+        '''
+        unpack is true: tuple(src, dst, cap, flow)
+        unpack is false: tuple(flow << 20 | src, cap << 20 | dst)
+        '''
+        i <<= 1
+        assert 0 <= i < len(self._edges)
+        tmp = self._edges[i]
+        cap_dst, revidx = tmp >> 20, tmp & 0xfffff
+        rcap_rdst = self._edges[revidx] >> 20
+        if unpack: return rcap_rdst & 0xfffff, cap_dst & 0xfffff, cap_dst + rcap_rdst >> 20, rcap_rdst >> 20
+        return rcap_rdst, cap_dst + (rcap_rdst & 0xfffff00000)
+
+    def edges(self, unpack: bool=0) -> List[Union[Pair, Tuple[int, int, int, int]]]:
+        '''
+        unpack is true: list of tuple(src, dst, cap, flow)
+        unpack is false: list of tuple(flow << 20 | src, cap << 20 | dst)
+        '''
+        if unpack:
+            ret = [self.get_edge(i) for i in range(len(self._edges) >> 1)]
+            return [(flow_src & 0xfffff, cap_dst & 0xfffff, cap_dst >> 20, flow_src >> 20) for flow_src, cap_dst in ret]
+        return [self.get_edge(i) for i in range(len(self._edges) >> 1)]
 
     def change_edge(self, i: int, new_cap: int, new_flow: int) -> None:
-        src, eidx = self.pos[i]
-        e = self.g[src][eidx]
-        re = self.g[e[0]][e[2]]
-        e[1] = new_cap - new_flow
-        re[1] = new_flow
+        assert 0 <= i < len(self._edges)
+        assert 0 <= new_flow <= new_cap
+        tmp = self._edges[i]
+        revidx = tmp & 0xfffff
+        self._edges[i] = self.edge_zip(new_cap - new_flow, tmp & 0xfffff00000, revidx)
+        self._edges[revidx] = new_flow << 40 | (self._edges[revidx] & 0xffffffffff)
 
     def flow(self, s: int, t: int, flow_limit: Optional[int] = None) -> int:
+        assert 0 <= s < self._n
+        assert 0 <= t < self._n
+        assert s != t
         if flow_limit is None:
-            flow_limit = sum(e[1] for e in self.g[s])
+            flow_limit = sum(self._edges[idx] >> 40 for idx in self._g[s])
 
-        def bfs() -> List[int]:
-            level = [-1] * self.n
+        current_edge = [0] * self._n
+        level = [0] * self._n
+
+        def fill(arr: List[int], value: int) -> None:
+            for i in range(len(arr)):
+                arr[i] = value
+
+        def bfs() -> bool:
+            fill(level, self._n)
+            queue = [s]
             level[s] = 0
-            que = deque()
-            que.append(s)
-            while que:
-                v = que.popleft()
-                for to, cap, revidx in self.g[v]:
-                    if (not cap) or level[to] >= 0: continue
-                    level[to] = level[v] + 1
-                    if to == t: return level
-                    que.append(to)
-            return level
+            for v in queue:
+                next_level = level[v] + 1
+                for idx in self._g[v]:
+                    cap_dst = self._edges[idx] >> 20
+                    cap, dst = cap_dst >> 20, cap_dst & 0xfffff
+                    if cap == 0 or level[dst] <= next_level:
+                        continue
+                    level[dst] = next_level
+                    if dst == t:
+                        return 1
+                    queue.append(dst)
+            return 0
 
         def dfs(lim: int) -> int:
             stack = []
-            edge_stack: List[List[int]] = []
+            edge_stack: List[int] = []
             stack.append(t)
             while stack:
-                v = stack.pop()
+                v = stack[-1]
                 if v == s:
-                    flow = min(lim, min(e[1] for e in edge_stack))
-                    for e in edge_stack:
-                        e[1] -= flow
-                        re = self.g[e[0]][e[2]]
-                        re[1] += flow
+                    flow = min(lim, min(self._edges[idx] >> 40 for idx in edge_stack))
+                    for idx in edge_stack:
+                        self._edges[idx] -= flow << 40
+                        self._edges[self._edges[idx] & 0xfffff] += flow << 40
                     return flow
-
                 next_level = level[v] - 1
-                for i in range(current_edge[v], len(self.g[v])):
-                    e = self.g[v][i]
-                    re = self.g[e[0]][e[2]]
-                    if level[e[0]] != next_level or not re[1]: continue
-                    stack.append(e[0])
-                    edge_stack.append(re)
+                gv = self._g[v]
+                leng = len(gv)
+                while current_edge[v] < leng:
+                    idx = gv[current_edge[v]]
+                    dst_revidx = self._edges[idx] & 0xffffffffff
+                    dst, revidx = dst_revidx >> 20, dst_revidx & 0xfffff
+                    if level[dst] != next_level or not self._edges[revidx] >> 40:
+                        current_edge[v] += 1
+                        continue
+                    stack.append(dst)
+                    edge_stack.append(revidx)
                     break
                 else:
-                    if edge_stack: edge_stack.pop()
-                    level[v] = self.n
-                current_edge[v] = i
+                    stack.pop()
+                    if edge_stack:
+                        edge_stack.pop()
+                    level[v] = self._n
             return 0
 
         flow = 0
         while flow < flow_limit:
-            level = bfs()
-            if level[t] == -1: break
-            current_edge = [0] * self.n
+            if not bfs():
+                break
+            fill(current_edge, 0)
             while flow < flow_limit:
                 f = dfs(flow_limit - flow)
-                if not f: break
-                flow += f
+                if f: flow += f
+                else: break
         return flow
 
     def min_cut(self, s: int) -> List[bool]:
-        visited = [False] * self.n
+        visited = bytearray(self._n)
         stack = [s]
-        visited[s] = True
+        visited[s] = 1
         while stack:
             v = stack.pop()
-            for e_dst, e_cap, e_revidx in self.g[v]:
-                if e_cap > 0 and not visited[e_dst]:
-                    visited[e_dst] = True
-                    stack.append(e_dst)
+            for e in self._g[v]:
+                cap, dst = e >> 40, e >> 20 & 0xfffff
+                if cap > 0 and not visited[dst]:
+                    visited[dst] = 1
+                    stack.append(dst)
         return visited
+

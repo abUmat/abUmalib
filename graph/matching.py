@@ -17,10 +17,10 @@ class Matching(MFGraph):
     def flow(self) -> int:
         return super().flow(self.s, self.t)
 
-    def edges(self):
+    def edges(self) -> List[Pair]:
         es = super().edges()
         ret = []
-        for frm, to, cap, flow in es:
-            if flow > 0 and frm != self.s and to != self.t:
-                ret.append((frm, to - self.L))
+        for flow_src, cap_dst in es:
+            if flow_src >> 20 > 0 and flow_src & 0xfffff != self.s and cap_dst & 0xfffff != self.t:
+                ret.append((flow_src & 0xfffff, (cap_dst & 0xfffff) - self.L))
         return ret
