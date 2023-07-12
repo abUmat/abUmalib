@@ -6,14 +6,12 @@ from misc.typing_template import *
 # maybe https://nyaannyaan.github.io/library/ntt/complex-fft.hpp
 from math import pi, sin, cos
 class CooleyTukey:
-    isbuilt = 0
     def __init__(self, k: int=20) -> None:
         self.wr = [0] * (1 << 20)
         self.wi = [0] * (1 << 20)
         self.baser = [0] * 20
         self.basei = [0] * 20
         self.setw(k)
-        self.isbuilt = 1
 
     @staticmethod
     def mul(xr: float, xi: float, yr: float, yi: float) -> Tuple[float, float]:
@@ -67,7 +65,7 @@ class CooleyTukey:
                 ar[j0 + v * 3] = (t0r - t2r) - t1m3r; ai[j0 + v * 3] = (t0i - t2i) - t1m3i
 
             for jh in range(1, u):
-                p = jh * v * 4
+                p = jh * v << 2
                 Wr = self.wr[jh]; Wi = self.wi[jh]
                 Xr = self.wr[jh << 1]; Xi = self.wi[jh << 1]
                 WXr, WXi = self.mul(Wr, Wi, Xr, Xi)
@@ -105,10 +103,10 @@ class CooleyTukey:
                 ar[j0 + v] = (t0r - t1r) + t2m3r; ai[j0 + v] = (t0i - t1i) + t2m3i
                 ar[j0 + v * 3] = (t0r - t1r) - t2m3r; ai[j0 + v * 3] = (t0i - t1i) - t2m3i
             for jh in range(1, u):
-                p = jh * v * 4
+                p = jh * v << 2
                 Wr = self.wr[jh]; Wi = -self.wi[jh]
-                Xr = self.wr[(jh << 1) + 0]; Xi = -self.wi[(jh << 1) + 0]
-                Yr = self.wr[(jh << 1) + 1]; Yi = -self.wi[(jh << 1) + 1]
+                Xr = self.wr[(jh << 1) | 0]; Xi = -self.wi[(jh << 1) | 0]
+                Yr = self.wr[(jh << 1) | 1]; Yi = -self.wi[(jh << 1) | 1]
                 for offset in range(v):
                     t0r = ar[p + offset]; t0i = ai[p + offset]
                     t1r = ar[p + offset + v]; t1i = ai[p + offset + v]
@@ -139,7 +137,7 @@ class CooleyTukey:
             while i < y << 1:
                 j = i ^ (y - 1)
                 AHr[i] = ALi[j] + ALi[i]; AHi[i] = ALr[j] - ALr[i]
-                ALr[i] = ALr[j] + ALr[i]; ALi[i] = -ALi[j] + ALi[i]
+                ALr[i] += ALr[j]; ALi[i] -= ALi[j]
                 AHr[j] = AHr[i]; AHi[j] = -AHi[i]
                 ALr[j] = ALr[i]; ALi[j] = -ALi[i]
                 i += 2
@@ -151,33 +149,30 @@ class CooleyTukey:
         l = len(a) + len(b) - 1
         k = max(2, l.bit_length())
         M = 1 << k
-        if not self.isbuilt: self.setw(k)
 
         alr = [float()] * M
         ali = [float()] * M
         ahr = [float()] * M
         ahi = [float()] * M
-        for i, x in enumerate(a):
-            quo, rem = divmod(x, B)
-            alr[i], ali[i] = float(rem), float(quo)
-        self.fft_real(alr, ali, ahr, ahi, k)
-
         blr = [float()] * M
         bli = [float()] * M
         bhi = [float()] * M
         bhr = [float()] * M
+
+        for i, x in enumerate(a):
+            quo, rem = divmod(x, B)
+            alr[i] = float(rem); ali[i] = float(quo)
         for i, x in enumerate(b):
             quo, rem = divmod(x, B)
-            blr[i], bli[i] = float(rem), float(quo)
+            blr[i] = float(rem); bli[i] = float(quo)
+        self.fft_real(alr, ali, ahr, ahi, k)
         self.fft_real(blr, bli, bhr, bhi, k)
 
         for i in range(M):
-            alri = alr[i]; alii = ali[i]
-            mahii = -ahi[i]; ahri = ahr[i]
-            tmp1r, tmp1i = self.mul(alri, alii, blr[i], bli[i])
-            tmp2r, tmp2i = self.mul(mahii, ahri, bhr[i], bhi[i])
-            tmp3r, tmp3i = self.mul(alri, alii, bhr[i], bhi[i])
-            tmp4r, tmp4i = self.mul(mahii, ahri, blr[i], bli[i])
+            tmp1r, tmp1i = self.mul(alr[i], ali[i], blr[i], bli[i])
+            tmp2r, tmp2i = self.mul(-ahi[i], ahr[i], bhr[i], bhi[i])
+            tmp3r, tmp3i = self.mul(alr[i], ali[i], bhr[i], bhi[i])
+            tmp4r, tmp4i = self.mul(-ahi[i], ahr[i], blr[i], bli[i])
             blr[i] = tmp1r + tmp2r; bli[i] = tmp1i + tmp2i
             bhr[i] = tmp3r + tmp4r; bhi[i] = tmp3i + tmp4i
 
@@ -196,33 +191,89 @@ class CooleyTukey:
             u[i] = x
         return u
 
+    def karatsuba_mod2_64(self, a: Vector, b: Vector) -> Vector:
+        B = 32000
+        n, m = len(a), len(b)
+        l = n + m - 1
+        k = max(2, l.bit_length())
+        M = 1 << k
+        def karatsuba_mod2n(s: Vector, t: Vector, mask: int) -> Vector:
+            alr = [float()] * M
+            ali = [float()] * M
+            ahr = [float()] * M
+            ahi = [float()] * M
+            blr = [float()] * M
+            bli = [float()] * M
+            bhi = [float()] * M
+            bhr = [float()] * M
+            bbmod = B * B & mask
+            for i, x in enumerate(s):
+                quo, rem = divmod(x, B)
+                alr[i] = float(rem); ali[i] = float(quo)
+            for i, x in enumerate(t):
+                quo, rem = divmod(x, B)
+                blr[i] = float(rem); bli[i] = float(quo)
+            self.fft_real(alr, ali, ahr, ahi, k)
+            self.fft_real(blr, bli, bhr, bhi, k)
+
+            for i in range(M):
+                tmp1r, tmp1i = self.mul(alr[i], ali[i], blr[i], bli[i])
+                tmp2r, tmp2i = self.mul(-ahi[i], ahr[i], bhr[i], bhi[i])
+                tmp3r, tmp3i = self.mul(alr[i], ali[i], bhr[i], bhi[i])
+                tmp4r, tmp4i = self.mul(-ahi[i], ahr[i], blr[i], bli[i])
+                blr[i] = tmp1r + tmp2r; bli[i] = tmp1i + tmp2i
+                bhr[i] = tmp3r + tmp4r; bhi[i] = tmp3i + tmp4i
+
+            self.ifft(blr, bli, k)
+            self.ifft(bhr, bhi, k)
+
+            im = float(1 / (4 * M))
+            return [round(blr[i] * im) + ((round(bhr[i] * im) + round(bhi[i] * im)) * B) + (round(bli[i] * im) * bbmod) & mask for i in range(l)]
+
+        mask64 = (1 << 64) - 1
+        mask42 = (1 << 42) - 1
+        mask22 = (1 << 22) - 1
+        mask20 = (1 << 20) - 1
+        au = [ai >> 42 for ai in a]
+        am = [(ai >> 22) & mask20 for ai in a]
+        al = [ai & mask22 for ai in a]
+        bu = [bi >> 42 for bi in b]
+        bm = [(bi >> 22) & mask20 for bi in b]
+        bl = [bi & mask22 for bi in b]
+        a1 = karatsuba_mod2n(au, bl, mask22)
+        a2 = karatsuba_mod2n(am, bm, mask20)
+        a3 = karatsuba_mod2n(am, bl, mask42)
+        a4 = karatsuba_mod2n(al, bu, mask22)
+        a5 = karatsuba_mod2n(al, bm, mask42)
+        a6 = karatsuba_mod2n(al, bl, mask64)
+        return [(a1[i] + a4[i] << 42) + (a2[i] << 44) + (a3[i] + a5[i] << 22) + a6[i] & mask64 for i in range(l)]
+
     def karatsuba_pow2(self, a: Vector, mod: int) -> Vector:
         B = 32000
+        bbmod = B * B % mod
         l = len(a) * 2 - 1
         k = 2; M = 4
         while M < l:
             M <<= 1
             k += 1
-        self.setw(k)
+
         alr = [float()] * M
         ali = [float()] * M
         ahr = [float()] * M
         ahi = [float()] * M
         for i, x in enumerate(a):
             quo, rem = divmod(x, B)
-            alr[i], ali[i] = float(rem), float(quo)
+            alr[i] = float(rem); ali[i] = float(quo)
 
         self.fft_real(alr, ali, ahr, ahi, k)
 
         for i in range(M):
-            tmp1r = alr[i]; tmp1i = ali[i]
-            tmp2r = -ahi[i]; tmp2i = ahr[i]
-            tmp3r = tmp1r; tmp3i = tmp1i
-            tmp4r = tmp2r; tmp4i = tmp2i
-            tmp1r, tmp1i = self.mul(tmp1r, tmp1i, alr[i], ali[i])
-            tmp2r, tmp2i = self.mul(tmp2r, tmp2i, ahr[i], ahi[i])
-            tmp3r, tmp3i = self.mul(tmp3r, tmp3i, ahr[i], ahi[i])
-            tmp4r, tmp4i = self.mul(tmp4r, tmp4i, alr[i], ali[i])
+            alri = alr[i]; alii = ali[i]
+            ahii = ahi[i]; ahri = ahr[i]
+            tmp1r, tmp1i = self.mul(alri, alii, alri, alii)
+            tmp2r, tmp2i = self.mul(-ahii, ahri, ahri, ahii)
+            tmp3r, tmp3i = self.mul(alri, alii, ahri, ahii)
+            tmp4r, tmp4i = self.mul(-ahii, ahri, alri, alii)
             alr[i] = tmp1r + tmp2r; ali[i] = tmp1i + tmp2i
             ahr[i] = tmp3r + tmp4r; ahi[i] = tmp3i + tmp4i
 
@@ -232,14 +283,11 @@ class CooleyTukey:
         u = [0] * l
         im = float(1 / (4 * M))
         for i in range(l):
-            alr[i] *= im; ali[i] *= im
-            ahr[i] *= im; ahi[i] *= im
-            x1 = round(alr[i]) % mod
-            x2 = (round(ahr[i]) + round(ahi[i])) % mod * B % mod
-            x3 = round(ali[i]) % mod * (B * B % mod) % mod
-            x1 += x2
-            if x1 >= mod: x1 -= mod
-            x1 += x3
-            if x1 >= mod: x1 -= mod
-            u[i] = x1
+            x1 = round(alr[i] * im) % mod
+            x2 = (round(ahr[i] * im) + round(ahi[i] * im)) % mod * B % mod
+            x3 = round(ali[i] * im) % mod * bbmod % mod
+            x = x1 + x2 + x3
+            if x >= mod: x -= mod
+            if x >= mod: x -= mod
+            u[i] = x
         return u
