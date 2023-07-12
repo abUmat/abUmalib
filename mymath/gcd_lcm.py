@@ -23,7 +23,7 @@ def extgcd(a: int, b: int) -> Tuple[int, int, int]:
         return d, x, y
     return a, 1, 0
 
-def crt(V: List[Tuple[int, int]]) -> Tuple[int, int]:
+def crt(V: List[Pair]) -> Pair:
     '''
     V: [(x_i, y_i), ...]: x_i (mod y_i)
     return: x, r s.t. x == r (mod lcm(y))'''

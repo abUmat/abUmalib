@@ -53,7 +53,7 @@ class Point:
         return 1
 
 def ccw(a: Point, b: Point, c: Point) -> int:
-    '1 anti-clockwise / 0 straight / -1 clockwise'
+    'return: a->b->c is ... anti-clockwise 1 / straight 0 / clockwise -1'
     t = (b - a) | (c - a)
     if t < 0: return -1
     if t == 0: return 0
