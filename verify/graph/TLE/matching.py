@@ -3,8 +3,6 @@
 from misc.fastio import *
 from graph.matching import *
 # my module
-import sys
-sys.setrecursionlimit(10**8)
 L, R, M = rd(), rd(), rd()
 graph = Matching(L, R)
 for i in range(M):

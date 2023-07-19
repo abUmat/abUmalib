@@ -3,7 +3,6 @@
 from misc.fastio import *
 from set_function.subset_convolution import *
 # my module
-from time import time
 mod = 998244353
 N = rd()
 A = rdl(1 << N)
