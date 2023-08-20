@@ -32,7 +32,7 @@ class Fastio:
             if self.pir - self.pil < 64: self.load()
             res.append(self.ibuf[self.pil])
             self.pil += 1
-        return res
+        return res.decode()
     def fastout(self, x): self.sb.append(str(x))
     def fastoutln(self, x): self.sb.append(str(x)); self.sb.append('\n')
 fastio = Fastio()
