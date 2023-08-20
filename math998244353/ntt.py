@@ -94,8 +94,8 @@ class NTT:
             a = [0] * l
             for i, x in enumerate(s):
                 for j, y in enumerate(t):
-                    a[i + j] += x * y
-            return [x % MOD for x in a]
+                    a[i + j] = (a[i + j] + x * y) % MOD
+            return a
         z = 1 << (l - 1).bit_length()
         a = s + [0] * (z - n)
         b = t + [0] * (z - m)
@@ -115,8 +115,8 @@ class NTT:
             a = [0] * l
             for i, x in enumerate(s):
                 for j, y in enumerate(s):
-                    a[i + j] += x * y
-            return [x % MOD for x in a]
+                    a[i + j] = (a[i + j] + x * y) % MOD
+            return a
         z = 1 << (l - 1).bit_length()
         a = s + [0] * (z - n)
         cls._fft(a)
