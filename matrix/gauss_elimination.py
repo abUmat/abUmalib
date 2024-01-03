@@ -4,6 +4,7 @@ from modulo.modinv import *
 # my module
 # https://nyaannyaan.github.io/library/matrix/gauss-elimination.hpp
 def gauss_elimination(a: Matrix, mod: int, pivot_end: int=-1, diagonalize: bool=False) -> Pair:
+    if not a: return 0, 1
     H = len(a); W = len(a[0]); rank = 0
     if pivot_end == -1: pivot_end = W
     det = 1
