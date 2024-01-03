@@ -11,8 +11,8 @@ class BiConnectedComponents(LowLink):
         self._build()
 
     def _build(self) -> None:
-        for i in range(len(self.used)):
-            if not self.used[i]:
+        for i, x in enumerate(self.used):
+            if not x:
                 self._dfs(i, -1)
 
     def _dfs(self, idx: int, par: int) -> None:

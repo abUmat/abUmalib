@@ -11,8 +11,8 @@ class LowLink:
         self.bridge: List[int]= []
         self.articulation: List[int]= []
         k = 0
-        for i in range(n):
-            if ord[i] == -1:
+        for i, x in enumerate(ord):
+            if x == -1:
                 k = self.dfs(i, k, -1)
 
     def dfs(self, idx: int, k: int, par: int) -> int:
