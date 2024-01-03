@@ -28,16 +28,16 @@ class SternBrocotTreeNode:
 
     def get(self) -> Pair:
         return self.x, self.y
-    
+
     def lower_bound(self) -> Pair:
         return self.lx, self.ly
-    
+
     def upper_bound(self) -> Pair:
         return self.rx, self.ry
-    
+
     def depth(self) -> int:
         return sum(abs(s) for s in self.seq)
-    
+
     def go_left(self, d: int=1) -> None:
         if d <= 0:
             return
@@ -88,7 +88,7 @@ class SternBrocotTreeNode:
                 break
         self.lx, self.ly, self.x, self.y, self.rx, self.ry = lx, ly, x, y, rx, ry
         return 1
-    
+
     @staticmethod
     def lca(lhs, rhs):
         n = SternBrocotTreeNode()
@@ -103,12 +103,12 @@ class SternBrocotTreeNode:
             if val1 != val2:
                 break
         return n
-    
+
     def __eq__(self, __value: object) -> bool:
         return self.x == __value.x and self.y == __value.y
-    
+
     def __le__(self, __value: object) -> bool:
         return self.x * __value.y < self.y * __value.x
-    
+
     def __ge__(self, __value: object) -> bool:
         return self.x * __value.y > self.y * __value.x
