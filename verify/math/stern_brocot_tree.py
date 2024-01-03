@@ -47,4 +47,3 @@ for _ in range(T):
         a, b = rd(), rd()
         f = SternBrocotTreeNode(a, b)
         print(*f.lower_bound(), *f.upper_bound())
-        

@@ -53,7 +53,7 @@ class RollingHash:
         return self._calc_mod(self._mul(h1, self._power[h2len]) + h2)
 
     def lcp(self, rh, l1: int, r1: int, l2: int, r2: int) -> int:
-        'longetst common prefix of self.s[l1, r1) and rh2.s[l2, r2) O(log(length))'
+        'longest common prefix of self.s[l1, r1) and rh2.s[l2, r2) O(log(length))'
         length = min(r1 - l1, r2 - l2)
         ok = 0
         ng = length + 1
